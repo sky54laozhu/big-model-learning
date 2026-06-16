@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 360" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t3 d3">
+  <title id="t3">Tokenization：文字怎么拆成 Token</title>
+  <desc id="d3">展示中文和英文文本的 Token 拆分方式，以及子词（subword）策略解决词表爆炸问题的思路。</desc>
+  <style>
+    .h { font-weight: 700; fill: #1a1a1a; text-anchor: middle; font-size: 16px; }
+    .h2 { font-weight: 600; fill: #1a1a1a; font-size: 14px; }
+    .token { fill: #fff; stroke: #1a2233; stroke-width: 1.5; rx: 6; }
+    .token-text { fill: #1a2233; font-weight: 600; font-size: 15px; text-anchor: middle; }
+    .arrow { fill: none; stroke: #5a5a5a; stroke-width: 1.5; marker-end: url(#mk); }
+    .source-text { fill: #1a2233; font-size: 16px; font-weight: 500; }
+    .note { fill: #6b7280; font-size: 12px; }
+    .label-box { fill: #f1f5f9; stroke: #94a3b8; stroke-width: 1; rx: 4; }
+    .t-cn { fill: #eff6ff; stroke: #3b82f6; stroke-width: 1.5; rx: 6; }
+    .t-en { fill: #fef3c7; stroke: #d97706; stroke-width: 1.5; rx: 6; }
+    .t-new { fill: #f0fdf4; stroke: #16a34a; stroke-width: 1.5; rx: 6; }
+  </style>
+  <defs>
+    <marker id="mk" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#5a5a5a"/>
+    </marker>
+  </defs>
+
+  <text x="440" y="30" class="h">Tokenization：文字怎么拆成 Token</text>
+
+  <!-- Example 1: Chinese -->
+  <text x="40" y="80" class="h2">中文：通常按字拆分</text>
+  <rect x="40" y="95" width="280" height="36" rx="6" fill="#f8fafc" stroke="#1a2233" stroke-width="1.5"/>
+  <text x="180" y="119" class="source-text" text-anchor="middle">这 家 餐 厅 的 菜 真 好 吃</text>
+
+  <path d="M320,113 L370,113" class="arrow"/>
+
+  <rect x="380" y="95" width="36" height="36" class="t-cn"/><text x="398" y="119" class="token-text">这</text>
+  <rect x="422" y="95" width="36" height="36" class="t-cn"/><text x="440" y="119" class="token-text">家</text>
+  <rect x="464" y="95" width="36" height="36" class="t-cn"/><text x="482" y="119" class="token-text">餐</text>
+  <rect x="506" y="95" width="36" height="36" class="t-cn"/><text x="524" y="119" class="token-text">厅</text>
+  <rect x="548" y="95" width="36" height="36" class="t-cn"/><text x="566" y="119" class="token-text">的</text>
+  <rect x="590" y="95" width="36" height="36" class="t-cn"/><text x="608" y="119" class="token-text">菜</text>
+  <rect x="632" y="95" width="36" height="36" class="t-cn"/><text x="650" y="119" class="token-text">真</text>
+  <rect x="674" y="95" width="36" height="36" class="t-cn"/><text x="692" y="119" class="token-text">好</text>
+  <rect x="716" y="95" width="36" height="36" class="t-cn"/><text x="734" y="119" class="token-text">吃</text>
+  <text x="790" y="119" class="note">9 个 token</text>
+
+  <!-- Example 2: English -->
+  <text x="40" y="175" class="h2">英文：按子词（subword）拆分</text>
+  <rect x="40" y="190" width="280" height="36" rx="6" fill="#f8fafc" stroke="#1a2233" stroke-width="1.5"/>
+  <text x="180" y="214" class="source-text" text-anchor="middle">unhappiness</text>
+
+  <path d="M320,208 L370,208" class="arrow"/>
+
+  <rect x="380" y="190" width="48" height="36" class="t-en"/><text x="404" y="214" class="token-text">un</text>
+  <rect x="436" y="190" width="72" height="36" class="t-en"/><text x="472" y="214" class="token-text">happi</text>
+  <rect x="516" y="190" width="60" height="36" class="t-en"/><text x="546" y="214" class="token-text">ness</text>
+  <text x="610" y="214" class="note">3 个 token</text>
+
+  <text x="404" y="243" fill="#92400e" font-size="11" text-anchor="middle">否定</text>
+  <text x="472" y="243" fill="#92400e" font-size="11" text-anchor="middle">快乐</text>
+  <text x="546" y="243" fill="#92400e" font-size="11" text-anchor="middle">名词化</text>
+
+  <!-- Example 3: New word -->
+  <text x="40" y="282" class="h2">新词：用已有的 token 组合拼出</text>
+  <rect x="40" y="297" width="280" height="36" rx="6" fill="#f8fafc" stroke="#1a2233" stroke-width="1.5"/>
+  <text x="180" y="321" class="source-text" text-anchor="middle">ChatGPT</text>
+
+  <path d="M320,315 L370,315" class="arrow"/>
+
+  <rect x="380" y="297" width="60" height="36" class="t-new"/><text x="410" y="321" class="token-text">Chat</text>
+  <rect x="448" y="297" width="36" height="36" class="t-new"/><text x="466" y="321" class="token-text">G</text>
+  <rect x="492" y="297" width="48" height="36" class="t-new"/><text x="516" y="321" class="token-text">PT</text>
+  <text x="574" y="321" class="note">3 个 token</text>
+
+  <!-- Bottom summary -->
+  <rect x="100" y="348" width="680" height="4" rx="2" fill="#e2e8f0"/>
+  <text x="440" y="355" class="note" text-anchor="middle" fill="#475569" font-size="11">词表约 5~10 万个 token，像"组件"一样组合，就能表示任意文本（包括从没见过的新词）</text>
+</svg>
