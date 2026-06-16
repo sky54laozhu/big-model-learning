@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 320" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t4 d4">
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+  <title id="t4">梯度：一次算出所有方向</title>
+  <desc id="d4">对比逐个试探（暴力方法）和梯度（数学方法）在调参数方向上的效率差异。</desc>
+  <style>
+    .h { font-weight: 700; fill: #1a1a1a; text-anchor: middle; font-size: 16px; }
+    .col-head { fill: #fff; font-weight: 600; font-size: 14px; text-anchor: middle; }
+    .cell { font-size: 12px; fill: #2a2a2a; text-anchor: middle; }
+    .cell-b { font-size: 13px; fill: #2a2a2a; text-anchor: middle; font-weight: 600; }
+    .bad { fill: #dc2626; font-weight: 600; }
+    .good { fill: #16a34a; font-weight: 600; }
+    .grid { stroke: #d0d3d8; stroke-width: 1; }
+    .row-a { fill: #f6f7f9; }
+    .row-b { fill: #ffffff; }
+  </style>
+
+  <text x="440" y="32" class="h">怎么知道每个参数该往哪调？</text>
+
+  <!-- Table -->
+  <rect x="80" y="55" width="720" height="240" fill="#fafbfc" stroke="#1a2233" stroke-width="2" rx="4"/>
+
+  <!-- Header -->
+  <rect x="80" y="55" width="720" height="44" fill="#1a2233" rx="4"/>
+  <rect x="80" y="80" width="720" height="19" fill="#1a2233"/>
+  <text x="240" y="83" class="col-head">暴力试探法</text>
+  <text x="560" y="83" class="col-head">梯度（数学方法）</text>
+  <line x1="400" y1="55" x2="400" y2="295" class="grid"/>
+
+  <!-- Row 1 -->
+  <rect x="80" y="99" width="720" height="48" class="row-a"/>
+  <text x="240" y="120" class="cell">w₁ 调大一点 → 损失变大了？变小了？</text>
+  <text x="240" y="137" class="cell">w₂ 调大一点 → 损失变大了？变小了？</text>
+  <text x="560" y="128" class="cell">一次算出所有参数的方向：</text>
+
+  <!-- Row 2 -->
+  <rect x="80" y="147" width="720" height="48" class="row-b"/>
+  <text x="240" y="168" class="cell">w₃ 调大一点 → ……</text>
+  <text x="240" y="185" class="cell">……重复几十亿次</text>
+  <text x="560" y="168" class="cell">w₁→+0.002, w₂→-0.001,</text>
+  <text x="560" y="185" class="cell">w₃→0, … 全部一次算完</text>
+
+  <!-- Row 3: comparison -->
+  <rect x="80" y="195" width="720" height="50" class="row-a"/>
+  <text x="240" y="217" class="cell-b">一步要算的次数</text>
+  <text x="560" y="217" class="cell-b">一步要算的次数</text>
+
+  <!-- Row 4: numbers -->
+  <rect x="80" y="245" width="720" height="50" class="row-b"/>
+  <text x="240" y="275" class="bad" font-size="18" text-anchor="middle">几十亿 × 2 次</text>
+  <text x="560" y="275" class="good" font-size="18" text-anchor="middle">1 次</text>
+
+  <!-- Bottom note -->
+  <text x="440" y="312" fill="#6b7280" font-size="11" text-anchor="middle">梯度利用了微积分中的"链式法则"，能沿着计算图反向传播，一次算出所有参数的方向</text>
+</svg>

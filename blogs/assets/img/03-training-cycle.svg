@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 420" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t2 d2">
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+  <title id="t2">训练四步循环：算预测→算损失→算梯度→调参数</title>
+  <desc id="d2">展示大模型训练的四步循环，以及每一步对应的输入、输出和作用。</desc>
+  <style>
+    .h { font-weight: 700; fill: #1a1a1a; text-anchor: middle; font-size: 16px; }
+    .step-num { fill: #fff; font-weight: 700; font-size: 18px; text-anchor: middle; }
+    .step-title { fill: #fff; font-weight: 700; font-size: 14px; text-anchor: middle; }
+    .step-en { fill: rgba(255,255,255,0.7); font-size: 11px; text-anchor: middle; }
+    .desc-text { fill: #2a2a2a; font-size: 12px; text-anchor: middle; }
+    .example { fill: #6b7280; font-size: 11px; text-anchor: middle; font-style: italic; }
+    .arrow { fill: none; stroke: #5a5a5a; stroke-width: 2; marker-end: url(#mk); }
+    .loop-arrow { fill: none; stroke: #e74c3c; stroke-width: 2.5; stroke-dasharray: 8,4; marker-end: url(#mk-r); }
+    .note { fill: #6b7280; font-size: 11px; text-anchor: middle; }
+  </style>
+  <defs>
+    <marker id="mk" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#5a5a5a"/>
+    </marker>
+    <marker id="mk-r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#e74c3c"/>
+    </marker>
+  </defs>
+
+  <text x="440" y="32" class="h">训练一步 = 四件事</text>
+
+  <!-- Step 1: Forward Pass -->
+  <rect x="60" y="65" width="170" height="90" rx="12" fill="#3b82f6"/>
+  <circle cx="90" cy="88" r="14" fill="rgba(255,255,255,0.2)"/>
+  <text x="90" y="94" class="step-num">1</text>
+  <text x="160" y="93" class="step-title">算预测</text>
+  <text x="145" y="115" class="step-en">Forward Pass</text>
+  <text x="145" y="138" fill="rgba(255,255,255,0.8)" font-size="11" text-anchor="middle">输入文本 → 输出概率</text>
+
+  <!-- Arrow 1→2 -->
+  <path d="M230,110 L270,110" class="arrow"/>
+
+  <!-- Step 2: Loss -->
+  <rect x="270" y="65" width="170" height="90" rx="12" fill="#f59e0b"/>
+  <circle cx="300" cy="88" r="14" fill="rgba(255,255,255,0.2)"/>
+  <text x="300" y="94" class="step-num">2</text>
+  <text x="370" y="93" class="step-title">算损失</text>
+  <text x="355" y="115" class="step-en">Loss Function</text>
+  <text x="355" y="138" fill="rgba(255,255,255,0.8)" font-size="11" text-anchor="middle">预测 vs 正确答案的差距</text>
+
+  <!-- Arrow 2→3 -->
+  <path d="M440,110 L480,110" class="arrow"/>
+
+  <!-- Step 3: Gradient -->
+  <rect x="480" y="65" width="170" height="90" rx="12" fill="#ec4899"/>
+  <circle cx="510" cy="88" r="14" fill="rgba(255,255,255,0.2)"/>
+  <text x="510" y="94" class="step-num">3</text>
+  <text x="580" y="93" class="step-title">算梯度</text>
+  <text x="565" y="115" class="step-en">Backpropagation</text>
+  <text x="565" y="138" fill="rgba(255,255,255,0.8)" font-size="11" text-anchor="middle">每个参数该往哪调</text>
+
+  <!-- Arrow 3→4 -->
+  <path d="M650,110 L690,110" class="arrow"/>
+
+  <!-- Step 4: Update -->
+  <rect x="690" y="65" width="150" height="90" rx="12" fill="#16a34a"/>
+  <circle cx="720" cy="88" r="14" fill="rgba(255,255,255,0.2)"/>
+  <text x="720" y="94" class="step-num">4</text>
+  <text x="780" y="93" class="step-title">调参数</text>
+  <text x="765" y="115" class="step-en">Update</text>
+  <text x="765" y="138" fill="rgba(255,255,255,0.8)" font-size="11" text-anchor="middle">新值 = 旧值 - 学习率×梯度</text>
+
+  <!-- Loop arrow from 4 back to 1 -->
+  <path d="M765,155 Q765,195 440,195 Q145,195 145,160" class="loop-arrow"/>
+  <text x="440" y="218" fill="#e74c3c" font-weight="600" font-size="13" text-anchor="middle">换下一段文本，重复（万亿次）</text>
+
+  <!-- Concrete example below -->
+  <rect x="60" y="248" width="760" height="150" rx="10" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1.5"/>
+  <text x="440" y="275" fill="#1a2233" font-weight="700" font-size="14" text-anchor="middle">具体例子</text>
+  <line x1="80" y1="285" x2="800" y2="285" stroke="#e2e8f0" stroke-width="1"/>
+
+  <!-- Example row 1 -->
+  <circle cx="100" cy="310" r="10" fill="#3b82f6"/>
+  <text x="100" y="315" fill="#fff" font-weight="700" font-size="11" text-anchor="middle">1</text>
+  <text x="120" y="315" fill="#2a2a2a" font-size="12" text-anchor="start">输入"从前有座山山上有座___" → 模型输出 {庙:1%, 楼:3%, 人:5%}</text>
+
+  <circle cx="100" cy="340" r="10" fill="#f59e0b"/>
+  <text x="100" y="345" fill="#fff" font-weight="700" font-size="11" text-anchor="middle">2</text>
+  <text x="120" y="345" fill="#2a2a2a" font-size="12" text-anchor="start">正确答案是"庙"，但只给了 1% → 损失 = 很大</text>
+
+  <circle cx="100" cy="370" r="10" fill="#ec4899"/>
+  <text x="100" y="375" fill="#fff" font-weight="700" font-size="11" text-anchor="middle">3</text>
+  <text x="120" y="375" fill="#2a2a2a" font-size="12" text-anchor="start">算出：参数 w₁ 该 +0.002，w₂ 该 -0.001，w₃ 不动 …</text>
+
+  <circle cx="480" cy="370" r="10" fill="#16a34a"/>
+  <text x="480" y="375" fill="#fff" font-weight="700" font-size="11" text-anchor="middle">4</text>
+  <text x="500" y="375" fill="#2a2a2a" font-size="12" text-anchor="start">调完参数 → 下次"庙"可能变成 3%</text>
+</svg>
