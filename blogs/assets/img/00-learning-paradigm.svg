@@ -58,8 +58,8 @@
   <circle cx="630" cy="110" r="28" fill="#f59e0b"/>
   <text x="630" y="117" class="step-num">4</text>
   <text x="630" y="160" class="step-title" fill="#b45309">命名</text>
-  <text x="630" y="178" class="step-desc">答案出来后，给它正式名字</text>
-  <text x="630" y="196" class="step-example">"你做的这件事叫 Embedding"</text>
+  <text x="630" y="178" class="step-desc">给发现贴正式标签</text>
+  <text x="630" y="196" class="step-example">"这叫 Embedding"</text>
 
   <!-- Arrow 4→5 -->
   <path d="M665,110 L725,110" class="arrow" stroke="#5a5a5a"/>
@@ -68,8 +68,8 @@
   <circle cx="770" cy="110" r="28" fill="#10b981"/>
   <text x="770" y="117" class="step-num">5</text>
   <text x="770" y="160" class="step-title" fill="#047857">追问</text>
-  <text x="770" y="178" class="step-desc">从答案自然引出下一个问题</text>
-  <text x="770" y="196" class="step-example">"那这些向量是谁定的？"</text>
+  <text x="770" y="178" class="step-desc">引出下一个问题</text>
+  <text x="770" y="196" class="step-example">"向量谁定的？"</text>
 
   <!-- Loop arrow from 5 back to 2 -->
   <path d="M770,145 Q770,230 460,230 Q310,230 310,145" class="loop-arrow"/>
