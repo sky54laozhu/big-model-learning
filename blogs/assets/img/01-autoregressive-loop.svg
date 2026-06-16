@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 500" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t2 d2">
+  <title id="t2">自回归生成：大模型一个字一个字蹦出来</title>
+  <desc id="d2">展示大模型生成文本的自回归过程：每一步输入已有文本，经过模型预测概率分布，采样出一个字，拼到末尾继续预测。</desc>
+  <style>
+    .h { font-weight: 700; fill: #1a1a1a; text-anchor: middle; font-size: 16px; }
+    .step-box { fill: #f8fafc; stroke: #1a2233; stroke-width: 1.5; rx: 6; }
+    .step-num { fill: #fff; font-weight: 700; font-size: 12px; text-anchor: middle; }
+    .step-circle { fill: #1a2233; }
+    .input-text { fill: #1a2233; font-weight: 500; font-size: 14px; }
+    .new-token { fill: #e74c3c; font-weight: 700; font-size: 14px; }
+    .arrow { fill: none; stroke: #5a5a5a; stroke-width: 1.5; marker-end: url(#mk); }
+    .note { fill: #6b7280; font-size: 11px; }
+    .prob { fill: #3b82f6; font-size: 11px; font-weight: 500; }
+    .loop-arrow { fill: none; stroke: #e74c3c; stroke-width: 2; stroke-dasharray: 6,3; marker-end: url(#mk-r); }
+    .model-box { fill: #1a2233; rx: 8; }
+    .model-text { fill: #fff; font-weight: 600; font-size: 13px; text-anchor: middle; }
+    .sample-box { fill: #fef3c7; stroke: #d97706; stroke-width: 1.5; rx: 6; }
+    .sample-text { fill: #92400e; font-weight: 600; font-size: 12px; text-anchor: middle; }
+  </style>
+  <defs>
+    <marker id="mk" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#5a5a5a"/>
+    </marker>
+    <marker id="mk-r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#e74c3c"/>
+    </marker>
+  </defs>
+
+  <text x="440" y="32" class="h">自回归生成：每次只预测一个字</text>
+
+  <!-- Step 1 -->
+  <circle cx="52" cy="75" r="12" class="step-circle"/>
+  <text x="52" y="80" class="step-num">1</text>
+  <rect x="72" y="58" width="340" height="36" class="step-box"/>
+  <text x="82" y="82" class="input-text">这家餐厅的菜真好</text>
+  <rect x="430" y="58" width="60" height="36" class="model-box"/>
+  <text x="460" y="81" class="model-text">LLM</text>
+  <path d="M412,76 L430,76" class="arrow"/>
+  <rect x="508" y="58" width="60" height="36" class="sample-box"/>
+  <text x="538" y="81" class="sample-text">采样</text>
+  <path d="M490,76 L508,76" class="arrow"/>
+  <text x="590" y="82" class="new-token">→ 吃</text>
+  <text x="660" y="82" class="prob">P=0.70</text>
+
+  <!-- Step 2 -->
+  <circle cx="52" cy="145" r="12" class="step-circle"/>
+  <text x="52" y="150" class="step-num">2</text>
+  <rect x="72" y="128" width="340" height="36" class="step-box"/>
+  <text x="82" y="152" class="input-text">这家餐厅的菜真好<tspan class="new-token">吃</tspan></text>
+  <rect x="430" y="128" width="60" height="36" class="model-box"/>
+  <text x="460" y="151" class="model-text">LLM</text>
+  <path d="M412,146 L430,146" class="arrow"/>
+  <rect x="508" y="128" width="60" height="36" class="sample-box"/>
+  <text x="538" y="151" class="sample-text">采样</text>
+  <path d="M490,146 L508,146" class="arrow"/>
+  <text x="590" y="152" class="new-token">→ ，</text>
+  <text x="660" y="152" class="prob">P=0.85</text>
+
+  <!-- Step 3 -->
+  <circle cx="52" cy="215" r="12" class="step-circle"/>
+  <text x="52" y="220" class="step-num">3</text>
+  <rect x="72" y="198" width="340" height="36" class="step-box"/>
+  <text x="82" y="222" class="input-text">这家餐厅的菜真好<tspan class="new-token">吃，</tspan></text>
+  <rect x="430" y="198" width="60" height="36" class="model-box"/>
+  <text x="460" y="221" class="model-text">LLM</text>
+  <path d="M412,216 L430,216" class="arrow"/>
+  <rect x="508" y="198" width="60" height="36" class="sample-box"/>
+  <text x="538" y="221" class="sample-text">采样</text>
+  <path d="M490,216 L508,216" class="arrow"/>
+  <text x="590" y="222" class="new-token">→ 尤</text>
+  <text x="660" y="222" class="prob">P=0.45</text>
+
+  <!-- Step 4 -->
+  <circle cx="52" cy="285" r="12" class="step-circle"/>
+  <text x="52" y="290" class="step-num">4</text>
+  <rect x="72" y="268" width="340" height="36" class="step-box"/>
+  <text x="82" y="292" class="input-text">这家餐厅的菜真好<tspan class="new-token">吃，尤</tspan></text>
+  <rect x="430" y="268" width="60" height="36" class="model-box"/>
+  <text x="460" y="291" class="model-text">LLM</text>
+  <path d="M412,286 L430,286" class="arrow"/>
+  <rect x="508" y="268" width="60" height="36" class="sample-box"/>
+  <text x="538" y="291" class="sample-text">采样</text>
+  <path d="M490,286 L508,286" class="arrow"/>
+  <text x="590" y="292" class="new-token">→ 其</text>
+  <text x="660" y="292" class="prob">P=0.92</text>
+
+  <!-- Step N -->
+  <text x="52" y="348" fill="#9ca3af" font-size="20" text-anchor="middle">⋮</text>
+  <text x="300" y="348" fill="#9ca3af" font-size="14" text-anchor="middle">…不断循环…</text>
+
+  <!-- Final step -->
+  <circle cx="52" cy="390" r="12" fill="#0a7c2e"/>
+  <text x="52" y="395" class="step-num">N</text>
+  <rect x="72" y="373" width="480" height="36" fill="#ecfdf5" stroke="#0a7c2e" stroke-width="1.5" rx="6"/>
+  <text x="82" y="397" class="input-text">这家餐厅的菜真好<tspan class="new-token">吃，尤其是红烧肉，强烈推荐！</tspan></text>
+  <text x="590" y="397" fill="#0a7c2e" font-weight="700" font-size="14">→ [END]</text>
+
+  <!-- Loop arrow on right side -->
+  <path d="M720,82 Q780,82 780,150 Q780,220 720,220" class="loop-arrow"/>
+  <text x="808" y="155" fill="#e74c3c" font-size="11" font-weight="600">拼到末尾</text>
+  <text x="808" y="170" fill="#e74c3c" font-size="11" font-weight="600">继续预测</text>
+
+  <!-- Bottom explanation -->
+  <rect x="120" y="430" width="640" height="50" rx="8" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1"/>
+  <text x="440" y="452" fill="#334155" font-size="13" text-anchor="middle" font-weight="500">这就是你用 ChatGPT 时看到回复一个字一个字"蹦"出来的原因</text>
+  <text x="440" y="470" fill="#64748b" font-size="12" text-anchor="middle">这个过程叫 自回归生成（Autoregressive Generation）</text>
+</svg>

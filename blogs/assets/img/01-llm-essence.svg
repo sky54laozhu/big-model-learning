@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 300" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t5 d5">
+  <title id="t5">大模型的本质：一个概率函数</title>
+  <desc id="d5">大模型本质上是一个函数：输入上下文文本，内部通过几十亿参数进行运算，输出下一个 token 的概率分布。</desc>
+  <style>
+    .h { font-weight: 700; fill: #1a1a1a; text-anchor: middle; font-size: 16px; }
+    .arrow { fill: none; stroke: #5a5a5a; stroke-width: 2; marker-end: url(#mk); }
+    .note { fill: #6b7280; font-size: 11px; text-anchor: middle; }
+  </style>
+  <defs>
+    <marker id="mk" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#5a5a5a"/>
+    </marker>
+  </defs>
+
+  <text x="440" y="30" class="h">大模型 = 一个概率函数</text>
+
+  <!-- Input box -->
+  <rect x="40" y="80" width="200" height="120" rx="12" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+  <text x="140" y="110" fill="#1e40af" font-weight="700" font-size="14" text-anchor="middle">输入</text>
+  <text x="140" y="135" fill="#1e40af" font-size="13" text-anchor="middle">上下文文本</text>
+  <line x1="60" y1="150" x2="220" y2="150" stroke="#bfdbfe" stroke-width="1"/>
+  <text x="140" y="172" fill="#3b82f6" font-size="12" text-anchor="middle">"这家餐厅的</text>
+  <text x="140" y="190" fill="#3b82f6" font-size="12" text-anchor="middle">菜真好"</text>
+
+  <!-- Arrow in -->
+  <path d="M240,140 L300,140" class="arrow"/>
+
+  <!-- Model box -->
+  <rect x="300" y="60" width="260" height="160" rx="12" fill="#1a2233"/>
+  <text x="430" y="95" fill="#fff" font-weight="700" font-size="16" text-anchor="middle">LLM</text>
+  <line x1="320" y1="110" x2="540" y2="110" stroke="#374151" stroke-width="1"/>
+  <text x="430" y="135" fill="#94a3b8" font-size="12" text-anchor="middle">内部有几十亿个参数</text>
+  <text x="430" y="155" fill="#94a3b8" font-size="12" text-anchor="middle">w₁=0.003  w₂=-0.78  w₃=1.21</text>
+  <text x="430" y="175" fill="#94a3b8" font-size="12" text-anchor="middle">w₄=0.55   w₅=-0.12  ...</text>
+  <text x="430" y="200" fill="#64748b" font-size="11" text-anchor="middle">这些数字编码了训练数据中的知识</text>
+
+  <!-- Arrow out -->
+  <path d="M560,140 L620,140" class="arrow"/>
+
+  <!-- Output box -->
+  <rect x="620" y="60" width="220" height="160" rx="12" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+  <text x="730" y="90" fill="#15803d" font-weight="700" font-size="14" text-anchor="middle">输出</text>
+  <text x="730" y="112" fill="#15803d" font-size="13" text-anchor="middle">概率分布</text>
+  <line x1="640" y1="122" x2="820" y2="122" stroke="#bbf7d0" stroke-width="1"/>
+
+  <!-- Probability entries -->
+  <rect x="645" y="132" width="120" height="18" rx="3" fill="#16a34a" opacity="0.8"/>
+  <text x="775" y="146" fill="#166534" font-size="12" text-anchor="start"> 吃 70%</text>
+  <rect x="645" y="156" width="40" height="18" rx="3" fill="#16a34a" opacity="0.5"/>
+  <text x="695" y="170" fill="#166534" font-size="12" text-anchor="start"> 看 15%</text>
+  <rect x="645" y="180" width="16" height="18" rx="3" fill="#16a34a" opacity="0.3"/>
+  <text x="671" y="194" fill="#166534" font-size="12" text-anchor="start"> 闻 5%</text>
+  <text x="730" y="214" fill="#6b7280" font-size="11" text-anchor="middle">... 词表中每个字</text>
+
+  <!-- Bottom note -->
+  <rect x="140" y="250" width="600" height="36" rx="6" fill="#fefce8" stroke="#eab308" stroke-width="1"/>
+  <text x="440" y="274" fill="#854d0e" font-size="13" text-anchor="middle" font-weight="500">训练 = 不断调整内部参数，让输出的概率分布越来越接近真实文本的规律</text>
+</svg>

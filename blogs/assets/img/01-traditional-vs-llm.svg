@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 340" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t3 d3">
+  <title id="t3">传统编程 vs 大模型：两种完全不同的范式</title>
+  <desc id="d3">对比传统编程和大模型在知识存储、行为决定方式、修改行为方式、输出特点、处理模糊性五个维度上的本质区别。</desc>
+  <style>
+    .col-head { fill: #fff; font-weight: 600; font-size: 14px; text-anchor: middle; }
+    .row-head { fill: #1a1a1a; font-weight: 600; font-size: 13px; }
+    .cell { font-size: 13px; text-anchor: middle; fill: #2a2a2a; }
+    .grid { stroke: #d0d3d8; stroke-width: 1; }
+    .row-a { fill: #f6f7f9; }
+    .row-b { fill: #ffffff; }
+    .icon { font-size: 18px; text-anchor: middle; }
+  </style>
+
+  <!-- Outer frame -->
+  <rect x="0" y="0" width="880" height="340" fill="#fafbfc" stroke="#1a2233" stroke-width="2" rx="4"/>
+
+  <!-- Header row -->
+  <rect x="0" y="0" width="880" height="48" fill="#1a2233" rx="4"/>
+  <rect x="0" y="24" width="880" height="24" fill="#1a2233"/>
+  <text x="120" y="31" class="col-head">维度</text>
+  <text x="390" y="31" class="col-head">传统编程</text>
+  <text x="700" y="31" class="col-head">大模型</text>
+
+  <!-- Divider lines -->
+  <line x1="230" y1="48" x2="230" y2="340" class="grid"/>
+  <line x1="545" y1="48" x2="545" y2="340" class="grid"/>
+
+  <!-- Row 1: 知识存储 -->
+  <rect x="0" y="48" width="880" height="56" class="row-a"/>
+  <text x="30" y="82" class="icon">💾</text>
+  <text x="120" y="82" class="row-head">知识存储</text>
+  <text x="390" y="82" class="cell">代码逻辑 + 数据库</text>
+  <text x="700" y="82" class="cell">几十亿个参数（数字）</text>
+
+  <!-- Row 2: 行为决定 -->
+  <rect x="0" y="104" width="880" height="56" class="row-b"/>
+  <text x="30" y="138" class="icon">⚙️</text>
+  <text x="120" y="138" class="row-head">行为由谁决定</text>
+  <text x="390" y="138" class="cell">if-else / switch / 规则引擎</text>
+  <text x="700" y="138" class="cell">参数的数值（从训练数据中学来）</text>
+
+  <!-- Row 3: 修改行为 -->
+  <rect x="0" y="160" width="880" height="56" class="row-a"/>
+  <text x="30" y="194" class="icon">🔧</text>
+  <text x="120" y="194" class="row-head">如何修改行为</text>
+  <text x="390" y="194" class="cell">改代码、改配置</text>
+  <text x="700" y="194" class="cell">重新训练 / 微调</text>
+
+  <!-- Row 4: 输出特点 -->
+  <rect x="0" y="216" width="880" height="56" class="row-b"/>
+  <text x="30" y="250" class="icon">📤</text>
+  <text x="120" y="250" class="row-head">输出特点</text>
+  <text x="390" y="250" class="cell">确定性：同输入 → 同输出</text>
+  <text x="700" y="250" class="cell">概率性：同输入 → 每次可能不同</text>
+
+  <!-- Row 5: 处理模糊性 -->
+  <rect x="0" y="272" width="880" height="68" class="row-a"/>
+  <text x="30" y="310" class="icon">🌫️</text>
+  <text x="120" y="310" class="row-head">处理模糊输入</text>
+  <text x="390" y="310" class="cell">报错 / 返回 null</text>
+  <text x="700" y="310" class="cell">给出"最可能"的回答</text>
+</svg>
