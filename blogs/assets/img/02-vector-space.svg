@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 460" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t2 d2">
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
   <title id="t2">向量空间：意思相近的词，距离就近</title>
   <desc id="d2">用简化的二维空间展示词向量的分布：动物类（猫、狗、兔子）聚在一起，交通工具（汽车、飞机、火车）聚在一起，情感词（开心、高兴、快乐）聚在一起，互相远离。</desc>
   <style>

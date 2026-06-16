@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 300" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t5 d5">
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
   <title id="t5">大模型的本质：一个概率函数</title>
   <desc id="d5">大模型本质上是一个函数：输入上下文文本，内部通过几十亿参数进行运算，输出下一个 token 的概率分布。</desc>
   <style>

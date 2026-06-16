@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 500" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t2 d2">
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
   <title id="t2">自回归生成：大模型一个字一个字蹦出来</title>
   <desc id="d2">展示大模型生成文本的自回归过程：每一步输入已有文本，经过模型预测概率分布，采样出一个字，拼到末尾继续预测。</desc>
   <style>

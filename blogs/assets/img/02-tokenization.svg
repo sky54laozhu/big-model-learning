@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 360" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t3 d3">
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
   <title id="t3">Tokenization：文字怎么拆成 Token</title>
   <desc id="d3">展示中文和英文文本的 Token 拆分方式，以及子词（subword）策略解决词表爆炸问题的思路。</desc>
   <style>

@@ -2,40 +2,96 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<title>Blog 01 - SVG Preview</title>
+<title>SVG Dark/Light Preview</title>
 <style>
-  body { max-width: 900px; margin: 40px auto; font-family: -apple-system, 'PingFang SC', sans-serif; background: #f5f5f5; padding: 20px; }
-  h2 { color: #1a2233; border-bottom: 2px solid #1a2233; padding-bottom: 8px; }
-  .svg-container { background: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 16px; margin-bottom: 40px; }
-  img { width: 100%; height: auto; }
+  body { max-width: 960px; margin: 40px auto; font-family: -apple-system, 'PingFang SC', sans-serif; background: #f5f5f5; padding: 20px; }
+  h1 { color: #1a2233; }
+  h2 { color: #1a2233; border-bottom: 2px solid #1a2233; padding-bottom: 8px; margin-top: 40px; }
+  .pair { display: flex; gap: 12px; margin-bottom: 24px; }
+  .light-bg, .dark-bg { flex: 1; border-radius: 8px; padding: 12px; }
+  .light-bg { background: #ffffff; border: 1px solid #ddd; }
+  .dark-bg { background: #1a1a1a; border: 1px solid #333; }
+  .bg-label { font-size: 11px; margin-bottom: 4px; font-weight: 600; }
+  .light-bg .bg-label { color: #999; }
+  .dark-bg .bg-label { color: #666; }
+  img { width: 100%; height: auto; display: block; }
+  .filename { color: #6b7280; font-size: 12px; margin-bottom: 8px; font-family: monospace; }
 </style>
 </head>
 <body>
-<h1>Blog 01 - SVG 图解预览</h1>
+<h1>SVG Dark / Light Background Test</h1>
 
-<h2>1. 概率分布对比</h2>
-<div class="svg-container">
-  <img src="assets/img/01-probability-distribution.svg" alt="概率分布">
+<h2>Blog 00</h2>
+
+<div class="filename">00-learning-paradigm.svg</div>
+<div class="pair">
+  <div class="light-bg"><div class="bg-label">LIGHT</div><img src="assets/img/00-learning-paradigm.svg"></div>
+  <div class="dark-bg"><div class="bg-label">DARK</div><img src="assets/img/00-learning-paradigm.svg"></div>
 </div>
 
-<h2>2. 大模型本质</h2>
-<div class="svg-container">
-  <img src="assets/img/01-llm-essence.svg" alt="大模型本质">
+<div class="filename">00-traditional-vs-guided.svg</div>
+<div class="pair">
+  <div class="light-bg"><div class="bg-label">LIGHT</div><img src="assets/img/00-traditional-vs-guided.svg"></div>
+  <div class="dark-bg"><div class="bg-label">DARK</div><img src="assets/img/00-traditional-vs-guided.svg"></div>
 </div>
 
-<h2>3. 自回归生成</h2>
-<div class="svg-container">
-  <img src="assets/img/01-autoregressive-loop.svg" alt="自回归生成">
+<h2>Blog 01</h2>
+
+<div class="filename">01-probability-distribution.svg</div>
+<div class="pair">
+  <div class="light-bg"><div class="bg-label">LIGHT</div><img src="assets/img/01-probability-distribution.svg"></div>
+  <div class="dark-bg"><div class="bg-label">DARK</div><img src="assets/img/01-probability-distribution.svg"></div>
 </div>
 
-<h2>4. 传统编程 vs 大模型</h2>
-<div class="svg-container">
-  <img src="assets/img/01-traditional-vs-llm.svg" alt="传统编程vs大模型">
+<div class="filename">01-llm-essence.svg</div>
+<div class="pair">
+  <div class="light-bg"><div class="bg-label">LIGHT</div><img src="assets/img/01-llm-essence.svg"></div>
+  <div class="dark-bg"><div class="bg-label">DARK</div><img src="assets/img/01-llm-essence.svg"></div>
 </div>
 
-<h2>5. 训练过程</h2>
-<div class="svg-container">
-  <img src="assets/img/01-training-process.svg" alt="训练过程">
+<div class="filename">01-autoregressive-loop.svg</div>
+<div class="pair">
+  <div class="light-bg"><div class="bg-label">LIGHT</div><img src="assets/img/01-autoregressive-loop.svg"></div>
+  <div class="dark-bg"><div class="bg-label">DARK</div><img src="assets/img/01-autoregressive-loop.svg"></div>
 </div>
+
+<div class="filename">01-traditional-vs-llm.svg</div>
+<div class="pair">
+  <div class="light-bg"><div class="bg-label">LIGHT</div><img src="assets/img/01-traditional-vs-llm.svg"></div>
+  <div class="dark-bg"><div class="bg-label">DARK</div><img src="assets/img/01-traditional-vs-llm.svg"></div>
+</div>
+
+<div class="filename">01-training-process.svg</div>
+<div class="pair">
+  <div class="light-bg"><div class="bg-label">LIGHT</div><img src="assets/img/01-training-process.svg"></div>
+  <div class="dark-bg"><div class="bg-label">DARK</div><img src="assets/img/01-training-process.svg"></div>
+</div>
+
+<h2>Blog 02</h2>
+
+<div class="filename">02-utf8-vs-embedding.svg</div>
+<div class="pair">
+  <div class="light-bg"><div class="bg-label">LIGHT</div><img src="assets/img/02-utf8-vs-embedding.svg"></div>
+  <div class="dark-bg"><div class="bg-label">DARK</div><img src="assets/img/02-utf8-vs-embedding.svg"></div>
+</div>
+
+<div class="filename">02-vector-space.svg</div>
+<div class="pair">
+  <div class="light-bg"><div class="bg-label">LIGHT</div><img src="assets/img/02-vector-space.svg"></div>
+  <div class="dark-bg"><div class="bg-label">DARK</div><img src="assets/img/02-vector-space.svg"></div>
+</div>
+
+<div class="filename">02-tokenization.svg</div>
+<div class="pair">
+  <div class="light-bg"><div class="bg-label">LIGHT</div><img src="assets/img/02-tokenization.svg"></div>
+  <div class="dark-bg"><div class="bg-label">DARK</div><img src="assets/img/02-tokenization.svg"></div>
+</div>
+
+<div class="filename">02-full-pipeline.svg</div>
+<div class="pair">
+  <div class="light-bg"><div class="bg-label">LIGHT</div><img src="assets/img/02-full-pipeline.svg"></div>
+  <div class="dark-bg"><div class="bg-label">DARK</div><img src="assets/img/02-full-pipeline.svg"></div>
+</div>
+
 </body>
 </html>

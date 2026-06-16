@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 520" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t4 d4">
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
   <title id="t4">训练过程：从瞎猜到准确预测</title>
   <desc id="d4">展示大模型训练的核心循环：输入文本 → 模型预测 → 对比正确答案 → 调整参数 → 重复万亿次。下方用曲线展示训练过程中预测准确度的提升。</desc>
   <style>

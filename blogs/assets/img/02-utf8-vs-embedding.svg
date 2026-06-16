@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 400" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t1 d1">
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
   <title id="t1">UTF-8 编码 vs Embedding：一个数字 vs 一组数字</title>
   <desc id="d1">对比 UTF-8 编码（每个字一个数字，与语义无关）和 Embedding（每个字一组数字，编码了语义关系）两种文字转数字的方式。</desc>
   <style>
