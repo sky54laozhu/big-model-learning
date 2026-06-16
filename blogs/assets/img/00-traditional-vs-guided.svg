@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 440" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t2 d2">
+  <title id="t2">传统教学 vs 引导式教学：同一个知识点的不同教法</title>
+  <desc id="d2">以"Embedding"概念为例，对比传统教学（先定义再解释）和引导式教学（先体验再命名）的不同路径和效果。</desc>
+  <style>
+    .h { font-weight: 700; fill: #1a1a1a; text-anchor: middle; font-size: 16px; }
+    .col-head { fill: #fff; font-weight: 600; font-size: 14px; text-anchor: middle; }
+    .step-box { rx: 6; }
+    .step-text { font-size: 12px; fill: #1a1a1a; }
+    .arrow { fill: none; stroke-width: 1.5; marker-end: url(#mk-g); }
+    .note { fill: #6b7280; font-size: 11px; text-anchor: middle; }
+    .emotion { font-size: 20px; text-anchor: middle; }
+  </style>
+  <defs>
+    <marker id="mk-g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#5a5a5a"/>
+    </marker>
+  </defs>
+
+  <text x="440" y="30" class="h">同一个知识点"Embedding"，两种教法对比</text>
+
+  <!-- LEFT: Traditional -->
+  <rect x="40" y="50" width="370" height="44" rx="8" fill="#dc2626"/>
+  <text x="225" y="78" class="col-head">传统方式：先定义，再解释</text>
+
+  <rect x="40" y="104" width="370" height="44" class="step-box" fill="#fef2f2" stroke="#fca5a5" stroke-width="1"/>
+  <text x="55" y="131" class="step-text" font-weight="600">第1步：给定义</text>
+  <text x="225" y="131" class="step-text">"Embedding 是将离散符号映射到</text>
+  <text x="225" y="143" class="step-text"> 连续向量空间的技术"</text>
+
+  <path d="M225,148 L225,162" class="arrow" stroke="#5a5a5a"/>
+
+  <rect x="40" y="162" width="370" height="36" class="step-box" fill="#fef2f2" stroke="#fca5a5" stroke-width="1"/>
+  <text x="55" y="185" class="step-text" font-weight="600">第2步：讲原理</text>
+  <text x="240" y="185" class="step-text">向量空间、余弦相似度、损失函数...</text>
+
+  <path d="M225,198 L225,212" class="arrow" stroke="#5a5a5a"/>
+
+  <rect x="40" y="212" width="370" height="36" class="step-box" fill="#fef2f2" stroke="#fca5a5" stroke-width="1"/>
+  <text x="55" y="235" class="step-text" font-weight="600">第3步：举例子</text>
+  <text x="240" y="235" class="step-text">"比如 Word2Vec 中，king - man + woman = queen"</text>
+
+  <path d="M225,248 L225,262" class="arrow" stroke="#5a5a5a"/>
+
+  <rect x="40" y="262" width="370" height="36" class="step-box" fill="#fef2f2" stroke="#fca5a5" stroke-width="1"/>
+  <text x="55" y="285" class="step-text" font-weight="600">第4步：做练习</text>
+  <text x="225" y="285" class="step-text">用 gensim 库加载预训练 Embedding...</text>
+
+  <text x="225" y="330" class="emotion">😵‍💫</text>
+  <text x="225" y="355" fill="#991b1b" font-weight="600" font-size="13" text-anchor="middle">学习者感受</text>
+  <text x="225" y="375" fill="#991b1b" font-size="12" text-anchor="middle">"每个字都认识，连起来不知道在说啥"</text>
+  <text x="225" y="395" fill="#991b1b" font-size="12" text-anchor="middle">"背住了定义，但不知道为什么需要它"</text>
+
+  <!-- RIGHT: Guided -->
+  <rect x="470" y="50" width="370" height="44" rx="8" fill="#16a34a"/>
+  <text x="655" y="78" class="col-head">引导式：先体验，再命名</text>
+
+  <rect x="470" y="104" width="370" height="44" class="step-box" fill="#f0fdf4" stroke="#86efac" stroke-width="1"/>
+  <text x="485" y="125" class="step-text" font-weight="600">第1步：提问题</text>
+  <text x="655" y="125" class="step-text">"UTF-8 编码里猫=29483，狗=29399</text>
+  <text x="655" y="141" class="step-text"> 这种编号能表示意思相近吗？"</text>
+
+  <path d="M655,148 L655,162" class="arrow" stroke="#5a5a5a"/>
+
+  <rect x="470" y="162" width="370" height="36" class="step-box" fill="#f0fdf4" stroke="#86efac" stroke-width="1"/>
+  <text x="485" y="185" class="step-text" font-weight="600">第2步：让你动手</text>
+  <text x="670" y="185" class="step-text">"给猫、狗、汽车三个属性打分？"</text>
+
+  <path d="M655,198 L655,212" class="arrow" stroke="#5a5a5a"/>
+
+  <rect x="470" y="212" width="370" height="36" class="step-box" fill="#f0fdf4" stroke="#86efac" stroke-width="1"/>
+  <text x="485" y="235" class="step-text" font-weight="600">第3步：你自己发现</text>
+  <text x="670" y="235" class="step-text">"猫(1,0,1) 和狗(1,0.5,1) 好像啊！"</text>
+
+  <path d="M655,248 L655,262" class="arrow" stroke="#5a5a5a"/>
+
+  <rect x="470" y="262" width="370" height="36" class="step-box" fill="#f0fdf4" stroke="#86efac" stroke-width="1"/>
+  <text x="485" y="285" class="step-text" font-weight="600">第4步：揭晓名字</text>
+  <text x="670" y="285" class="step-text">"你做的这件事，就叫 Embedding"</text>
+
+  <text x="655" y="330" class="emotion">🤩</text>
+  <text x="655" y="355" fill="#166534" font-weight="600" font-size="13" text-anchor="middle">学习者感受</text>
+  <text x="655" y="375" fill="#166534" font-size="12" text-anchor="middle">"原来这就是 Embedding！我早就理解了！"</text>
+  <text x="655" y="395" fill="#166534" font-size="12" text-anchor="middle">"这东西我自己推出来的，忘不掉"</text>
+
+  <!-- Bottom -->
+  <rect x="140" y="415" width="600" height="4" rx="2" fill="#e2e8f0"/>
+  <text x="440" y="435" class="note" fill="#475569" font-size="12">核心区别：传统方式让你记住答案，引导式让你自己成为答案的发现者</text>
+</svg>

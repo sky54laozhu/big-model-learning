@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 520" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t1 d1">
+  <title id="t1">六步引导式学习法</title>
+  <desc id="d1">展示引导式学习的六个步骤：锚定→架桥→推导→命名→追问→输出，形成一个循环。</desc>
+  <style>
+    .h { font-weight: 700; fill: #1a1a1a; text-anchor: middle; font-size: 16px; }
+    .step-num { fill: #fff; font-weight: 700; font-size: 16px; text-anchor: middle; }
+    .step-title { font-weight: 700; font-size: 15px; text-anchor: middle; }
+    .step-desc { fill: #4b5563; font-size: 12px; text-anchor: middle; }
+    .step-example { fill: #6b7280; font-size: 11px; text-anchor: middle; font-style: italic; }
+    .arrow { fill: none; stroke-width: 2; marker-end: url(#mk); }
+    .loop-arrow { fill: none; stroke: #e74c3c; stroke-width: 2; stroke-dasharray: 6,3; marker-end: url(#mk-r); }
+    .note { fill: #6b7280; font-size: 12px; text-anchor: middle; }
+  </style>
+  <defs>
+    <marker id="mk" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#5a5a5a"/>
+    </marker>
+    <marker id="mk-r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#e74c3c"/>
+    </marker>
+  </defs>
+
+  <text x="440" y="32" class="h">六步引导式学习法</text>
+
+  <!-- Step 1: 锚定 -->
+  <circle cx="150" cy="110" r="28" fill="#3b82f6"/>
+  <text x="150" y="117" class="step-num">1</text>
+  <text x="150" y="160" class="step-title" fill="#1d4ed8">锚定</text>
+  <text x="150" y="178" class="step-desc">找到学习者已经懂的东西</text>
+  <text x="150" y="196" class="step-example">"你写过函数对吧？"</text>
+
+  <!-- Arrow 1→2 -->
+  <path d="M185,110 L265,110" class="arrow" stroke="#5a5a5a"/>
+
+  <!-- Step 2: 架桥 -->
+  <circle cx="310" cy="110" r="28" fill="#8b5cf6"/>
+  <text x="310" y="117" class="step-num">2</text>
+  <text x="310" y="160" class="step-title" fill="#6d28d9">架桥</text>
+  <text x="310" y="178" class="step-desc">提一个连接已知→未知的问题</text>
+  <text x="310" y="196" class="step-example">"如果函数输入文字输出下一个字呢？"</text>
+
+  <!-- Arrow 2→3 -->
+  <path d="M345,110 L425,110" class="arrow" stroke="#5a5a5a"/>
+
+  <!-- Step 3: 推导 -->
+  <circle cx="470" cy="110" r="28" fill="#ec4899"/>
+  <text x="470" y="117" class="step-num">3</text>
+  <text x="470" y="160" class="step-title" fill="#be185d">推导</text>
+  <text x="470" y="178" class="step-desc">引导学习者自己得出答案</text>
+  <text x="470" y="196" class="step-example">"你给猫狗汽车打个分？"</text>
+
+  <!-- Arrow 3→4 -->
+  <path d="M505,110 L585,110" class="arrow" stroke="#5a5a5a"/>
+
+  <!-- Step 4: 命名 -->
+  <circle cx="630" cy="110" r="28" fill="#f59e0b"/>
+  <text x="630" y="117" class="step-num">4</text>
+  <text x="630" y="160" class="step-title" fill="#b45309">命名</text>
+  <text x="630" y="178" class="step-desc">答案出来后，给它正式名字</text>
+  <text x="630" y="196" class="step-example">"你做的这件事叫 Embedding"</text>
+
+  <!-- Arrow 4→5 -->
+  <path d="M665,110 L725,110" class="arrow" stroke="#5a5a5a"/>
+
+  <!-- Step 5: 追问 -->
+  <circle cx="770" cy="110" r="28" fill="#10b981"/>
+  <text x="770" y="117" class="step-num">5</text>
+  <text x="770" y="160" class="step-title" fill="#047857">追问</text>
+  <text x="770" y="178" class="step-desc">从答案自然引出下一个问题</text>
+  <text x="770" y="196" class="step-example">"那这些向量是谁定的？"</text>
+
+  <!-- Loop arrow from 5 back to 2 -->
+  <path d="M770,145 Q770,230 460,230 Q310,230 310,145" class="loop-arrow"/>
+  <text x="540" y="250" fill="#e74c3c" font-weight="600" font-size="13" text-anchor="middle">循环：每个答案催生下一个问题</text>
+
+  <!-- Step 6: 输出 (bottom, separate) -->
+  <rect x="270" y="290" width="340" height="110" rx="12" fill="#f8fafc" stroke="#1a2233" stroke-width="2"/>
+  <circle cx="440" cy="320" r="28" fill="#1a2233"/>
+  <text x="440" y="327" class="step-num">6</text>
+  <text x="440" y="360" class="step-title" fill="#1a2233">输出</text>
+  <text x="440" y="380" class="step-desc">用自己的话教别人（写博客、讲给朋友）</text>
+  <text x="440" y="395" class="step-example">"能教会别人 = 真正学会了"</text>
+
+  <!-- Arrow from loop to output -->
+  <path d="M540,258 L540,290" class="arrow" stroke="#5a5a5a"/>
+
+  <!-- Bottom: paradigm comparison -->
+  <rect x="40" y="430" width="380" height="70" rx="8" fill="#fef2f2" stroke="#fca5a5" stroke-width="1"/>
+  <text x="230" y="455" fill="#991b1b" font-weight="600" font-size="13" text-anchor="middle">传统方式 ❌</text>
+  <text x="230" y="475" fill="#991b1b" font-size="12" text-anchor="middle">定义 → 解释 → 举例 → 练习</text>
+  <text x="230" y="492" fill="#b91c1c" font-size="11" text-anchor="middle">先给答案再让你理解（被动接收）</text>
+
+  <rect x="460" y="430" width="380" height="70" rx="8" fill="#f0fdf4" stroke="#86efac" stroke-width="1"/>
+  <text x="650" y="455" fill="#166534" font-weight="600" font-size="13" text-anchor="middle">引导式 ✅</text>
+  <text x="650" y="475" fill="#166534" font-size="12" text-anchor="middle">锚定 → 架桥 → 推导 → 命名 → 追问 → 输出</text>
+  <text x="650" y="492" fill="#15803d" font-size="11" text-anchor="middle">先让你自己想通再告诉你名字（主动发现）</text>
+</svg>
