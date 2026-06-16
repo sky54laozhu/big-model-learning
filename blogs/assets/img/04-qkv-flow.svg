@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 440" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t3 d3">
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+  <title id="t3">Q/K/V 完整流程</title>
+  <desc id="d3">展示 Attention 的完整计算流程：原始向量通过三组参数变换为 Q/K/V，Q 和 K 算相似度得到权重，权重对 V 加权求和得到输出。</desc>
+  <style>
+    .h { font-weight: 700; fill: #1a1a1a; text-anchor: middle; font-size: 16px; }
+    .box { rx: 8; }
+    .label { font-size: 12px; text-anchor: middle; }
+    .label-b { font-size: 12px; text-anchor: middle; font-weight: 600; }
+    .arrow { fill: none; stroke: #5a5a5a; stroke-width: 1.5; marker-end: url(#mk); }
+    .note { fill: #6b7280; font-size: 11px; text-anchor: middle; }
+    .step-num { fill: #fff; font-weight: 700; font-size: 14px; text-anchor: middle; }
+  </style>
+  <defs>
+    <marker id="mk" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#5a5a5a"/>
+    </marker>
+  </defs>
+
+  <text x="440" y="32" class="h">Attention 完整流程（以"吃"为例）</text>
+
+  <!-- Step 1: Original vectors -->
+  <circle cx="55" cy="80" r="14" fill="#64748b"/>
+  <text x="55" y="85" class="step-num">1</text>
+  <text x="110" y="85" class="label-b" fill="#1a1a1a" text-anchor="start">每个 token 的原始向量</text>
+
+  <rect x="40" y="100" width="100" height="36" class="box" fill="#dbeafe" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="90" y="123" class="label" fill="#1d4ed8">猫 向量</text>
+  <rect x="150" y="100" width="100" height="36" class="box" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
+  <text x="200" y="123" class="label" fill="#92400e">吃 向量</text>
+  <rect x="260" y="100" width="100" height="36" class="box" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/>
+  <text x="310" y="123" class="label" fill="#166534">鱼 向量</text>
+
+  <!-- Step 2: Transform to Q/K/V -->
+  <path d="M200,136 L200,165" class="arrow"/>
+
+  <circle cx="55" cy="180" r="14" fill="#64748b"/>
+  <text x="55" y="185" class="step-num">2</text>
+  <text x="110" y="185" class="label-b" fill="#1a1a1a" text-anchor="start">乘以参数矩阵，变换出 Q/K/V</text>
+
+  <rect x="40" y="200" width="100" height="36" class="box" fill="#ec4899" opacity="0.15" stroke="#ec4899" stroke-width="1.5"/>
+  <text x="90" y="223" class="label" fill="#be185d">Q（查询）</text>
+  <rect x="150" y="200" width="100" height="36" class="box" fill="#8b5cf6" opacity="0.15" stroke="#8b5cf6" stroke-width="1.5"/>
+  <text x="200" y="223" class="label" fill="#6d28d9">K（键）</text>
+  <rect x="260" y="200" width="100" height="36" class="box" fill="#f59e0b" opacity="0.15" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="310" y="223" class="label" fill="#b45309">V（值）</text>
+
+  <text x="200" y="258" class="note">× W_q 得到 Q ｜ × W_k 得到 K ｜ × W_v 得到 V</text>
+  <text x="200" y="274" class="note">（W_q、W_k、W_v 是训练学出来的参数）</text>
+
+  <!-- Step 3: Compute similarity -->
+  <circle cx="500" cy="80" r="14" fill="#64748b"/>
+  <text x="500" y="85" class="step-num">3</text>
+  <text x="555" y="85" class="label-b" fill="#1a1a1a" text-anchor="start">Q 和每个 K 算相似度</text>
+
+  <rect x="470" y="100" width="360" height="100" class="box" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1.5"/>
+
+  <text x="530" y="125" class="label" fill="#be185d" text-anchor="start">吃的Q</text>
+  <text x="600" y="125" class="label" text-anchor="start">·</text>
+  <text x="615" y="125" class="label" fill="#6d28d9" text-anchor="start">猫的K</text>
+  <text x="685" y="125" class="label" text-anchor="start">→</text>
+  <text x="710" y="125" class="label-b" text-anchor="start">0.5（高）</text>
+
+  <text x="530" y="152" class="label" fill="#be185d" text-anchor="start">吃的Q</text>
+  <text x="600" y="152" class="label" text-anchor="start">·</text>
+  <text x="615" y="152" class="label" fill="#6d28d9" text-anchor="start">吃的K</text>
+  <text x="685" y="152" class="label" text-anchor="start">→</text>
+  <text x="710" y="152" class="label-b" text-anchor="start">0.1（低）</text>
+
+  <text x="530" y="179" class="label" fill="#be185d" text-anchor="start">吃的Q</text>
+  <text x="600" y="179" class="label" text-anchor="start">·</text>
+  <text x="615" y="179" class="label" fill="#6d28d9" text-anchor="start">鱼的K</text>
+  <text x="685" y="179" class="label" text-anchor="start">→</text>
+  <text x="710" y="179" class="label-b" text-anchor="start">0.4（中）</text>
+
+  <!-- Step 4: Weighted sum -->
+  <circle cx="500" cy="230" r="14" fill="#64748b"/>
+  <text x="500" y="235" class="step-num">4</text>
+  <text x="555" y="235" class="label-b" fill="#1a1a1a" text-anchor="start">用权重对 V 加权求和</text>
+
+  <rect x="470" y="250" width="380" height="44" class="box" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1.5"/>
+  <text x="660" y="277" fill="#1a2233" font-size="12" text-anchor="middle" font-family="'SF Mono',monospace">猫的V×0.5 + 吃的V×0.1 + 鱼的V×0.4</text>
+
+  <!-- Step 5: Result -->
+  <path d="M660,294 L660,320" class="arrow"/>
+
+  <circle cx="500" cy="338" r="14" fill="#16a34a"/>
+  <text x="500" y="343" class="step-num">5</text>
+
+  <rect x="530" y="320" width="280" height="40" rx="8" fill="#16a34a"/>
+  <text x="670" y="345" fill="#fff" font-weight="600" font-size="13" text-anchor="middle">"吃"的新向量（含上下文）</text>
+
+  <!-- Bottom note -->
+  <rect x="100" y="385" width="680" height="40" rx="6" fill="#fefce8" stroke="#eab308" stroke-width="1"/>
+  <text x="440" y="402" fill="#854d0e" font-size="12" text-anchor="middle" font-weight="500">每个 token 都做同样的流程 → 所有 token 都获得了上下文信息</text>
+  <text x="440" y="418" fill="#92400e" font-size="11" text-anchor="middle">这就是 Self-Attention（自注意力）—— 每个 token 关注包括自己在内的所有 token</text>
+</svg>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 360" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t1 d1">
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+  <title id="t1">为什么需要 Attention</title>
+  <desc id="d1">同样的字、同样的 Embedding，但顺序不同意思完全不同，说明每个 token 需要看上下文。</desc>
+  <style>
+    .h { font-weight: 700; fill: #1a1a1a; text-anchor: middle; font-size: 16px; }
+    .token-box { fill: #eff6ff; stroke: #3b82f6; stroke-width: 1.5; rx: 6; }
+    .token-text { fill: #1d4ed8; font-weight: 700; font-size: 18px; text-anchor: middle; }
+    .desc { fill: #2a2a2a; font-size: 13px; text-anchor: middle; }
+    .desc-b { fill: #1a1a1a; font-size: 13px; text-anchor: middle; font-weight: 600; }
+    .arrow { fill: none; stroke: #5a5a5a; stroke-width: 1.5; marker-end: url(#mk); }
+    .note { fill: #6b7280; font-size: 11px; text-anchor: middle; }
+    .highlight { fill: #dc2626; font-weight: 700; }
+    .good { fill: #16a34a; font-weight: 600; }
+  </style>
+  <defs>
+    <marker id="mk" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#5a5a5a"/>
+    </marker>
+  </defs>
+
+  <text x="440" y="32" class="h">为什么需要 Attention？</text>
+
+  <!-- Sentence 1 -->
+  <rect x="60" y="60" width="340" height="120" rx="10" fill="#fef2f2" stroke="#fca5a5" stroke-width="1.5"/>
+  <text x="230" y="88" class="desc-b">句子 A</text>
+
+  <rect x="100" y="100" width="56" height="40" class="token-box"/>
+  <text x="128" y="126" class="token-text">猫</text>
+  <rect x="170" y="100" width="56" height="40" class="token-box"/>
+  <text x="198" y="126" class="token-text">吃</text>
+  <rect x="240" y="100" width="56" height="40" class="token-box"/>
+  <text x="268" y="126" class="token-text">鱼</text>
+
+  <text x="230" y="168" class="desc"><tspan class="highlight">猫</tspan>在吃，吃的是<tspan class="highlight">鱼</tspan></text>
+
+  <!-- Sentence 2 -->
+  <rect x="480" y="60" width="340" height="120" rx="10" fill="#fef2f2" stroke="#fca5a5" stroke-width="1.5"/>
+  <text x="650" y="88" class="desc-b">句子 B</text>
+
+  <rect x="520" y="100" width="56" height="40" class="token-box"/>
+  <text x="548" y="126" class="token-text">鱼</text>
+  <rect x="590" y="100" width="56" height="40" class="token-box"/>
+  <text x="618" y="126" class="token-text">吃</text>
+  <rect x="660" y="100" width="56" height="40" class="token-box"/>
+  <text x="688" y="126" class="token-text">猫</text>
+
+  <text x="650" y="168" class="desc"><tspan class="highlight">鱼</tspan>在吃，吃的是<tspan class="highlight">猫</tspan></text>
+
+  <!-- Problem statement -->
+  <rect x="160" y="205" width="560" height="50" rx="8" fill="#fefce8" stroke="#eab308" stroke-width="1.5"/>
+  <text x="440" y="226" fill="#854d0e" font-weight="600" font-size="13" text-anchor="middle">同样的字 + 同样的 Embedding → 意思完全不同！</text>
+  <text x="440" y="244" fill="#92400e" font-size="12" text-anchor="middle">光看单个 token 的向量无法区分 —— 必须看上下文</text>
+
+  <!-- Solution -->
+  <path d="M440,255 L440,280" class="arrow"/>
+
+  <rect x="160" y="280" width="560" height="60" rx="8" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.5"/>
+  <text x="440" y="305" class="good" font-size="14" text-anchor="middle">Attention 的解决方案</text>
+  <text x="440" y="325" fill="#166534" font-size="12" text-anchor="middle">让每个 token 看一眼所有其他 token，按相关性加权融合信息</text>
+</svg>

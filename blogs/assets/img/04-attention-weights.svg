@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 400" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t2 d2">
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+  <title id="t2">Attention 权重：加权融合</title>
+  <desc id="d2">展示"吃"如何通过权重从"猫"和"鱼"那里收集信息，生成融合了上下文的新向量。</desc>
+  <style>
+    .h { font-weight: 700; fill: #1a1a1a; text-anchor: middle; font-size: 16px; }
+    .token-box { rx: 8; }
+    .token-text { font-weight: 700; font-size: 16px; text-anchor: middle; }
+    .weight { font-weight: 700; font-size: 13px; text-anchor: middle; }
+    .desc { fill: #2a2a2a; font-size: 12px; text-anchor: middle; }
+    .note { fill: #6b7280; font-size: 11px; text-anchor: middle; }
+    .formula { fill: #1a2233; font-size: 13px; text-anchor: middle; font-family: 'SF Mono', monospace; }
+  </style>
+
+  <text x="440" y="32" class="h">Attention = 按相关性加权融合信息</text>
+  <text x="440" y="52" class="note">"吃"要理解自己在这句话中的角色，需要看看其他 token</text>
+
+  <!-- Source tokens on the left -->
+  <rect x="60" y="80" width="80" height="50" class="token-box" fill="#dbeafe" stroke="#3b82f6" stroke-width="2"/>
+  <text x="100" y="112" class="token-text" fill="#1d4ed8">猫</text>
+
+  <rect x="60" y="160" width="80" height="50" class="token-box" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+  <text x="100" y="192" class="token-text" fill="#92400e">吃</text>
+
+  <rect x="60" y="240" width="80" height="50" class="token-box" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+  <text x="100" y="272" class="token-text" fill="#166534">鱼</text>
+
+  <!-- Weight lines to center -->
+  <!-- 猫 → center: thick line (high weight) -->
+  <line x1="140" y1="105" x2="320" y2="185" stroke="#3b82f6" stroke-width="4" opacity="0.7"/>
+  <text x="210" y="130" class="weight" fill="#1d4ed8">× 0.5</text>
+
+  <!-- 吃 → center: thin line (low weight) -->
+  <line x1="140" y1="185" x2="320" y2="185" stroke="#d97706" stroke-width="1.5" opacity="0.5"/>
+  <text x="210" y="178" class="weight" fill="#92400e">× 0.1</text>
+
+  <!-- 鱼 → center: medium line -->
+  <line x1="140" y1="265" x2="320" y2="185" stroke="#16a34a" stroke-width="3" opacity="0.7"/>
+  <text x="210" y="248" class="weight" fill="#166534">× 0.4</text>
+
+  <!-- Fusion circle -->
+  <circle cx="360" cy="185" r="40" fill="#f1f5f9" stroke="#1a2233" stroke-width="2"/>
+  <text x="360" y="180" fill="#1a2233" font-weight="700" font-size="12" text-anchor="middle">加权</text>
+  <text x="360" y="196" fill="#1a2233" font-weight="700" font-size="12" text-anchor="middle">融合</text>
+
+  <!-- Arrow to result -->
+  <line x1="400" y1="185" x2="470" y2="185" stroke="#1a2233" stroke-width="2" marker-end="url(#mk2)"/>
+  <defs>
+    <marker id="mk2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#1a2233"/>
+    </marker>
+  </defs>
+
+  <!-- Result -->
+  <rect x="480" y="155" width="200" height="60" rx="10" fill="#1a2233"/>
+  <text x="580" y="182" fill="#fff" font-weight="700" font-size="14" text-anchor="middle">"吃" 的新向量</text>
+  <text x="580" y="200" fill="#94a3b8" font-size="11" text-anchor="middle">融合了猫和鱼的信息</text>
+
+  <!-- Explanation -->
+  <rect x="480" y="235" width="200" height="50" rx="6" fill="#f0fdf4" stroke="#86efac" stroke-width="1"/>
+  <text x="580" y="256" fill="#166534" font-size="11" text-anchor="middle">不再是孤立的"吃"</text>
+  <text x="580" y="272" fill="#166534" font-size="11" text-anchor="middle">而是"猫对鱼执行的吃"</text>
+
+  <!-- Formula at bottom -->
+  <rect x="100" y="320" width="680" height="60" rx="8" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+  <text x="440" y="345" class="formula">新向量 = 猫的V × 0.5 + 吃的V × 0.1 + 鱼的V × 0.4</text>
+  <text x="440" y="368" class="note">权重由 Q 和 K 的相似度决定 ｜ V 是实际被融合的信息</text>
+</svg>
