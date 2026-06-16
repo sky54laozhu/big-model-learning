@@ -52,17 +52,17 @@
   <text x="660" y="77" class="col-head">Embedding：一个字 → 一组数字</text>
 
   <text x="520" y="120" class="row-head">猫</text>
-  <text x="720" y="120" class="cell-code">(0.82, 0.11, 0.91, ...)</text>
+  <text x="700" y="120" class="cell-code" font-size="12">(0.82, 0.11, …)</text>
 
   <line x1="490" y1="135" x2="830" y2="135" class="grid"/>
 
   <text x="520" y="160" class="row-head">狗</text>
-  <text x="720" y="160" class="cell-code">(0.79, 0.35, 0.88, ...)</text>
+  <text x="700" y="160" class="cell-code" font-size="12">(0.79, 0.35, …)</text>
 
   <line x1="490" y1="175" x2="830" y2="175" class="grid"/>
 
   <text x="520" y="200" class="row-head">汽车</text>
-  <text x="720" y="200" class="cell-code">(0.05, 0.92, 0.03, ...)</text>
+  <text x="700" y="200" class="cell-code" font-size="12">(0.05, 0.92, …)</text>
 
   <line x1="490" y1="220" x2="830" y2="220" class="grid"/>
 
