@@ -43,6 +43,8 @@
 
 ![梯度下降：蒙眼下山](assets/img/03-mountain-descent.svg)
 
+<video src="assets/video/03-mountain-descent.mp4" autoplay loop muted playsinline style="max-width:100%;border-radius:8px;margin:16px 0"></video>
+
 ---
 
 ## 三、几十亿个方向，怎么选？
@@ -54,6 +56,8 @@
 但数学里有一个工具，能**一次性算出所有参数该往哪个方向调**。
 
 ![梯度：一次算出所有方向](assets/img/03-gradient-intuition.svg)
+
+<video src="assets/video/03-gradient-arrows.mp4" autoplay loop muted playsinline style="max-width:100%;border-radius:8px;margin:16px 0"></video>
 
 这个工具叫**梯度（Gradient）**。
 
@@ -77,6 +81,8 @@
 
 ![学习率的影响](assets/img/03-learning-rate.svg)
 
+<video src="assets/video/03-learning-rate-compare.mp4" autoplay loop muted playsinline style="max-width:100%;border-radius:8px;margin:16px 0"></video>
+
 学习率是训练前人为设定的**超参数**（不是模型自己学的，而是人手动调的）。找到合适的学习率是训练大模型的关键技术之一——太大会发散，太小会浪费时间和算力。
 
 实际训练中，学习率通常不是固定的，而是**逐渐减小**——开始时大步走快速接近谷底，后期小步精调避免错过最优点。这叫**学习率衰减（Learning Rate Decay）**。
@@ -88,6 +94,8 @@
 把上面的所有概念串起来，训练一步就是四件事：
 
 ![训练四步循环](assets/img/03-training-cycle.svg)
+
+<video src="assets/video/03-training-loop.mp4" autoplay loop muted playsinline style="max-width:100%;border-radius:8px;margin:16px 0"></video>
 
 用代码思维理解：
 

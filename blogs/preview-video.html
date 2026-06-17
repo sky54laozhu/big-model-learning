@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Animation Preview</title>
+<style>
+  body { max-width: 960px; margin: 40px auto; font-family: -apple-system, 'PingFang SC', sans-serif; background: #f5f5f5; padding: 20px; }
+  h1 { color: #1a2233; }
+  h2 { color: #1a2233; border-bottom: 2px solid #1a2233; padding-bottom: 8px; margin-top: 40px; }
+  .video-card { background: #fff; border-radius: 12px; padding: 16px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+  .video-card .title { font-size: 14px; font-weight: 600; color: #374151; margin-bottom: 8px; }
+  video { width: 100%; border-radius: 8px; display: block; }
+</style>
+</head>
+<body>
+<h1>Blog Animation Preview</h1>
+
+<h2>01 - 从 if-else 到概率预测</h2>
+<div class="video-card">
+  <div class="title">自回归生成：一个字一个字蹦出来</div>
+  <video src="assets/video/01-autoregressive-loop.mp4" autoplay loop muted playsinline controls></video>
+</div>
+<div class="video-card">
+  <div class="title">概率分布随上下文变化</div>
+  <video src="assets/video/01-probability-shift.mp4" autoplay loop muted playsinline controls></video>
+</div>
+
+<h2>02 - Token 与 Embedding</h2>
+<div class="video-card">
+  <div class="title">向量空间：意思相近 = 距离相近</div>
+  <video src="assets/video/02-vector-space.mp4" autoplay loop muted playsinline controls></video>
+</div>
+<div class="video-card">
+  <div class="title">国王 - 男 + 女 = 王后</div>
+  <video src="assets/video/02-king-queen-analogy.mp4" autoplay loop muted playsinline controls></video>
+</div>
+
+<h2>03 - 梯度下降（重点）</h2>
+<div class="video-card">
+  <div class="title">蒙眼下山：小球滚到谷底</div>
+  <video src="assets/video/03-mountain-descent.mp4" autoplay loop muted playsinline controls></video>
+</div>
+<div class="video-card">
+  <div class="title">梯度：一次算出所有方向</div>
+  <video src="assets/video/03-gradient-arrows.mp4" autoplay loop muted playsinline controls></video>
+</div>
+<div class="video-card">
+  <div class="title">学习率对比：太大 / 太小 / 刚好</div>
+  <video src="assets/video/03-learning-rate-compare.mp4" autoplay loop muted playsinline controls></video>
+</div>
+<div class="video-card">
+  <div class="title">训练循环：从瞎猜到精准 (0.8% → 96%)</div>
+  <video src="assets/video/03-training-loop.mp4" autoplay loop muted playsinline controls></video>
+</div>
+
+<h2>04 - Attention 注意力机制</h2>
+<div class="video-card">
+  <div class="title">Attention 权重：按权重融合信息</div>
+  <video src="assets/video/04-attention-weights.mp4" autoplay loop muted playsinline controls></video>
+</div>
+<div class="video-card">
+  <div class="title">Q/K/V 计算流程</div>
+  <video src="assets/video/04-qkv-flow.mp4" autoplay loop muted playsinline controls></video>
+</div>
+
+</body>
+</html>
