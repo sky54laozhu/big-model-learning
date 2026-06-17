@@ -43,7 +43,7 @@
 
 ![梯度下降：蒙眼下山](assets/img/03-mountain-descent.svg)
 
-<video src="assets/video/03-mountain-descent.mp4" autoplay loop muted playsinline style="max-width:100%;border-radius:8px;margin:16px 0"></video>
+▶ [点击查看动画：蒙眼下山过程](assets/video/03-mountain-descent.mp4)
 
 ---
 
@@ -57,7 +57,7 @@
 
 ![梯度：一次算出所有方向](assets/img/03-gradient-intuition.svg)
 
-<video src="assets/video/03-gradient-arrows.mp4" autoplay loop muted playsinline style="max-width:100%;border-radius:8px;margin:16px 0"></video>
+▶ [点击查看动画：梯度一次算出所有方向](assets/video/03-gradient-arrows.mp4)
 
 这个工具叫**梯度（Gradient）**。
 
@@ -81,7 +81,7 @@
 
 ![学习率的影响](assets/img/03-learning-rate.svg)
 
-<video src="assets/video/03-learning-rate-compare.mp4" autoplay loop muted playsinline style="max-width:100%;border-radius:8px;margin:16px 0"></video>
+▶ [点击查看动画：学习率太大/太小/刚好对比](assets/video/03-learning-rate-compare.mp4)
 
 学习率是训练前人为设定的**超参数**（不是模型自己学的，而是人手动调的）。找到合适的学习率是训练大模型的关键技术之一——太大会发散，太小会浪费时间和算力。
 
@@ -95,7 +95,7 @@
 
 ![训练四步循环](assets/img/03-training-cycle.svg)
 
-<video src="assets/video/03-training-loop.mp4" autoplay loop muted playsinline style="max-width:100%;border-radius:8px;margin:16px 0"></video>
+▶ [点击查看动画：训练循环从瞎猜到精准](assets/video/03-training-loop.mp4)
 
 用代码思维理解：
 

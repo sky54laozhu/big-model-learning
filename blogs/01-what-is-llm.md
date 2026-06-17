@@ -101,7 +101,7 @@ function predictNext(text) {
 
 ![概率分布图](assets/img/01-probability-distribution.svg)
 
-<video src="assets/video/01-probability-shift.mp4" autoplay loop muted playsinline style="max-width:100%;border-radius:8px;margin:16px 0"></video>
+▶ [点击查看动画：概率分布随上下文变化](assets/video/01-probability-shift.mp4)
 
 这张图的关键信息是：**同样的输入文字"这家餐厅的菜真好___"，因为隐含的上下文不同（朋友圈 vs 摄影杂志），每个候选字的概率完全不同。**
 
@@ -150,7 +150,7 @@ OK，大模型能预测下一个字。但 ChatGPT 回复的是一整段话，这
 
 ![自回归生成](assets/img/01-autoregressive-loop.svg)
 
-<video src="assets/video/01-autoregressive-loop.mp4" autoplay loop muted playsinline style="max-width:100%;border-radius:8px;margin:16px 0"></video>
+▶ [点击查看动画：自回归生成过程](assets/video/01-autoregressive-loop.mp4)
 
 每一步只干一件事：预测一个字。然后把这个字拼到末尾，作为新的输入，继续预测。
 
