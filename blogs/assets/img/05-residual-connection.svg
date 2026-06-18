@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 340" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t1 d1">
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+  <title id="t1">残差连接</title>
+  <desc id="d1">残差连接：每步变换后加回原始输入，防止信息丢失。</desc>
+  <style>
+    .h { font-weight: 700; fill: #1a1a1a; text-anchor: middle; font-size: 16px; }
+    .box { rx: 8; }
+    .label { font-size: 13px; text-anchor: middle; }
+    .label-b { font-size: 13px; text-anchor: middle; font-weight: 600; }
+    .arrow { fill: none; stroke: #5a5a5a; stroke-width: 1.5; marker-end: url(#mk); }
+    .arrow-skip { fill: none; stroke: #16a34a; stroke-width: 2; stroke-dasharray: 6 3; marker-end: url(#mk-g); }
+    .note { fill: #6b7280; font-size: 11px; text-anchor: middle; }
+  </style>
+  <defs>
+    <marker id="mk" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#5a5a5a"/>
+    </marker>
+    <marker id="mk-g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#16a34a"/>
+    </marker>
+  </defs>
+
+  <text x="390" y="32" class="h">残差连接：每步加回原始信息</text>
+
+  <!-- Left side: Without residual -->
+  <text x="190" y="68" class="label-b" fill="#dc2626">没有残差连接</text>
+
+  <rect x="120" y="82" width="140" height="36" class="box" fill="#dbeafe" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="190" y="105" class="label" fill="#1d4ed8">x（原始输入）</text>
+
+  <path d="M190,118 L190,148" class="arrow"/>
+
+  <rect x="120" y="150" width="140" height="36" class="box" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
+  <text x="190" y="173" class="label" fill="#92400e">Attention 变换</text>
+
+  <path d="M190,186 L190,216" class="arrow"/>
+
+  <rect x="120" y="218" width="140" height="36" class="box" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
+  <text x="190" y="241" class="label" fill="#92400e">FFN 变换</text>
+
+  <path d="M190,254 L190,278" class="arrow"/>
+
+  <rect x="120" y="280" width="140" height="36" class="box" fill="#fecaca" stroke="#dc2626" stroke-width="1.5"/>
+  <text x="190" y="303" class="label" fill="#991b1b">原始信息丢失</text>
+
+  <!-- Right side: With residual -->
+  <text x="560" y="68" class="label-b" fill="#16a34a">有残差连接</text>
+
+  <rect x="490" y="82" width="140" height="36" class="box" fill="#dbeafe" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="560" y="105" class="label" fill="#1d4ed8">x（原始输入）</text>
+
+  <path d="M560,118 L560,148" class="arrow"/>
+
+  <rect x="490" y="150" width="140" height="36" class="box" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
+  <text x="560" y="173" class="label" fill="#92400e">Attention 变换</text>
+
+  <!-- Skip connection 1 -->
+  <path d="M490,100 Q450,100 450,168 Q450,205 490,205" class="arrow-skip"/>
+
+  <circle cx="490" cy="205" r="12" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/>
+  <text x="490" y="210" font-size="16" font-weight="700" fill="#16a34a" text-anchor="middle">+</text>
+
+  <path d="M560,186 L560,198" class="arrow"/>
+  <path d="M502,205 L530,205" stroke="#5a5a5a" stroke-width="1.5" fill="none"/>
+  <path d="M560,217 L560,238" class="arrow"/>
+
+  <rect x="490" y="240" width="140" height="36" class="box" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
+  <text x="560" y="263" class="label" fill="#92400e">FFN 变换</text>
+
+  <!-- Skip connection 2 -->
+  <path d="M630,205 Q670,205 670,258 Q670,295 630,295" class="arrow-skip"/>
+
+  <circle cx="630" cy="295" r="12" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/>
+  <text x="630" y="300" font-size="16" font-weight="700" fill="#16a34a" text-anchor="middle">+</text>
+
+  <path d="M560,276 L560,289" class="arrow"/>
+
+  <text x="448" y="230" font-size="11" fill="#16a34a" text-anchor="end">x 原路传回</text>
+
+  <!-- Bottom note -->
+  <rect x="340" y="312" width="280" height="22" rx="4" fill="#dcfce7" stroke="#16a34a" stroke-width="1"/>
+  <text x="480" y="328" fill="#166534" font-size="11" text-anchor="middle">结果 = 变换后 + 原始输入，信息永不丢失</text>
+</svg>

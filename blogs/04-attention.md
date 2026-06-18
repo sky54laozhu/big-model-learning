@@ -228,4 +228,4 @@ Head 3 的 Q/K/V → 可能学会了关注修饰语（怎么吃）
 
 ---
 
-*这是「全栈工程师的大模型学习笔记」系列第四篇。上一篇：[梯度下降](03-gradient-descent.md)。下一篇：Transformer 完整架构。*
+*这是「全栈工程师的大模型学习笔记」系列第四篇。上一篇：[梯度下降](03-gradient-descent.md)。下一篇：[Transformer 完整架构](05-transformer-architecture.md)。*

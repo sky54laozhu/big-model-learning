@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 400" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t4 d4">
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+  <title id="t4">三个概念在 Transformer 中的位置</title>
+  <desc id="d4">向量、点积、矩阵乘法分别出现在 Transformer 的 Embedding 层、Attention 层和 FFN 层。</desc>
+  <style>
+    .h { font-weight: 700; fill: #1a1a1a; text-anchor: middle; font-size: 16px; }
+    .box { rx: 8; }
+    .label { font-size: 12px; text-anchor: middle; }
+    .label-b { font-size: 13px; text-anchor: middle; font-weight: 600; }
+    .arrow { fill: none; stroke: #5a5a5a; stroke-width: 1.5; marker-end: url(#mk); }
+    .tag { font-size: 11px; font-weight: 600; }
+  </style>
+  <defs>
+    <marker id="mk" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#5a5a5a"/>
+    </marker>
+  </defs>
+
+  <text x="390" y="30" class="h">三个概念在 Transformer 中的位置</text>
+
+  <!-- Step 1: Input -->
+  <rect x="310" y="50" width="160" height="36" class="box" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.5"/>
+  <text x="390" y="73" class="label" fill="#475569">"猫 吃 鱼"</text>
+
+  <path d="M390,86 L390,110" class="arrow"/>
+
+  <!-- Step 2: Embedding — 向量 -->
+  <rect x="280" y="112" width="220" height="40" class="box" fill="#dbeafe" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="390" y="137" class="label-b" fill="#1d4ed8">Embedding（查表得向量）</text>
+
+  <!-- Tag: 向量 -->
+  <rect x="520" y="118" width="80" height="28" rx="14" fill="#3b82f6"/>
+  <text x="560" y="137" fill="#fff" class="tag" text-anchor="middle">向量</text>
+  <line x1="500" y1="132" x2="520" y2="132" stroke="#3b82f6" stroke-width="1.5"/>
+
+  <path d="M390,152 L390,180" class="arrow"/>
+
+  <!-- Step 3: Q/K/V Transform — 矩阵乘法 -->
+  <rect x="260" y="182" width="260" height="40" class="box" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
+  <text x="390" y="207" class="label-b" fill="#92400e">× W_q / W_k / W_v → Q, K, V</text>
+
+  <!-- Tag: 矩阵乘法 -->
+  <rect x="540" y="188" width="100" height="28" rx="14" fill="#d97706"/>
+  <text x="590" y="207" fill="#fff" class="tag" text-anchor="middle">矩阵乘法</text>
+  <line x1="520" y1="202" x2="540" y2="202" stroke="#d97706" stroke-width="1.5"/>
+
+  <path d="M390,222 L390,250" class="arrow"/>
+
+  <!-- Step 4: Attention — 点积 -->
+  <rect x="280" y="252" width="220" height="40" class="box" fill="#ede9fe" stroke="#8b5cf6" stroke-width="1.5"/>
+  <text x="390" y="277" class="label-b" fill="#6d28d9">Attention: dot(Q, K) → 权重</text>
+
+  <!-- Tag: 点积 -->
+  <rect x="520" y="258" width="80" height="28" rx="14" fill="#8b5cf6"/>
+  <text x="560" y="277" fill="#fff" class="tag" text-anchor="middle">点积</text>
+  <line x1="500" y1="272" x2="520" y2="272" stroke="#8b5cf6" stroke-width="1.5"/>
+
+  <path d="M390,292 L390,316" class="arrow"/>
+
+  <!-- Step 5: FFN — 矩阵乘法 -->
+  <rect x="260" y="318" width="260" height="40" class="box" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
+  <text x="390" y="343" class="label-b" fill="#92400e">FFN: × W1 → 激活 → × W2</text>
+
+  <!-- Tag: 矩阵乘法 -->
+  <rect x="540" y="324" width="100" height="28" rx="14" fill="#d97706"/>
+  <text x="590" y="343" fill="#fff" class="tag" text-anchor="middle">矩阵乘法</text>
+  <line x1="520" y1="338" x2="540" y2="338" stroke="#d97706" stroke-width="1.5"/>
+
+  <!-- Left legend -->
+  <rect x="40" y="180" width="16" height="16" rx="4" fill="#3b82f6"/>
+  <text x="64" y="193" fill="#1a1a1a" font-size="11" text-anchor="start">向量 — 数据的表示</text>
+
+  <rect x="40" y="208" width="16" height="16" rx="4" fill="#8b5cf6"/>
+  <text x="64" y="221" fill="#1a1a1a" font-size="11" text-anchor="start">点积 — 比较的方式</text>
+
+  <rect x="40" y="236" width="16" height="16" rx="4" fill="#d97706"/>
+  <text x="64" y="249" fill="#1a1a1a" font-size="11" text-anchor="start">矩阵乘法 — 变换的方式</text>
+
+  <!-- Bottom -->
+  <rect x="130" y="374" width="520" height="18" rx="4" fill="#fefce8" stroke="#eab308" stroke-width="1"/>
+  <text x="390" y="388" fill="#854d0e" font-size="11" text-anchor="middle" font-weight="500">这三个运算撑起了整个 Transformer</text>
+</svg>
