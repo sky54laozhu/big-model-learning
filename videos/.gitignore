@@ -1,0 +1,13 @@
+# Temp files
+tmp_compose/
+__pycache__/
+.venv/
+test-*.mp3
+test_*.mp3
+
+# Large source videos (downloaded from YouTube)
+3b1b-*.mp4
+
+# Voice sample (personal)
+Ai文件.m4a
+my_voice.mp3

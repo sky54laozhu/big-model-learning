@@ -1,0 +1,157 @@
+[
+  {
+    "id": "opening",
+    "text": "大家好，欢迎来到全栈工程师的大模型学习笔记。我是一个写了多年业务代码的全栈开发，最近决定搞懂大模型到底是怎么回事。今天是第一篇，我们来回答一个最基本的问题：大模型到底是什么？",
+    "visual": "title"
+  },
+  {
+    "id": "s1-function-intro",
+    "text": "作为程序员，我们对函数再熟悉不过了。给定输入，产生输出。确定性的，可预测的，写什么逻辑就走什么逻辑。",
+    "visual": "text_slide"
+  },
+  {
+    "id": "s1-function-question",
+    "text": "现在我问自己一个问题：如果有一个函数，输入是一段文字，输出是下一个字，这个函数里面该写什么？",
+    "visual": "text_slide"
+  },
+  {
+    "id": "s1-function-ifelse",
+    "text": "我的第一反应是写 if else。如果输入包含天气，就调用天气API。如果包含股价，就调用股票API。这是工程师的本能。但这个思路马上就撞墙了。你不可能为世界上所有可能的输入都写一条规则。",
+    "visual": "text_slide"
+  },
+  {
+    "id": "s2-human-pattern",
+    "text": "换一个输入。从前有座山，山上有座？庙。你秒答了。没有任何API可以查这个答案，但你就是知道。因为你从小到大听过、读过大量文本，你的大脑在做模式识别和推断。",
+    "visual": "text_slide"
+  },
+  {
+    "id": "s2-human-fuzzy",
+    "text": "再想一步，你真的是记住了这句话吗？从前有座山，山上有个……你还是会接庙。有个庙和有座庙用词不同，但你的大脑自动做了模糊推断。再试：从前有片海，海里有条？龙？鱼？你从来没见过这句话，但你能给出合理答案。",
+    "visual": "text_slide"
+  },
+  {
+    "id": "s3-probability",
+    "text": "来一个没那么确定的例子。这家餐厅的菜真好，下一个字是什么？你可能选吃。但如果这句话出现在美食摄影杂志里呢？下一个字就变成了看。如果出现在美食评测里呢？可能是香。这说明我们给出的不是一个确定的答案，而是一个概率分布。上下文不同，概率分布就不同。",
+    "visual": "svg:01-probability-distribution"
+  },
+  {
+    "id": "s4-llm-essence",
+    "text": "走到这里，我突然意识到，大模型做的事情和我刚才做的一模一样。它不是在思考，不是在理解，不是在查资料。它就是一个函数，输入一段文字，输出词表中每个可能的下一个token的概率。所有概率加起来等于一。这叫下一个token预测。",
+    "visual": "svg:01-llm-essence"
+  },
+  {
+    "id": "s5-autoregressive",
+    "text": "好，大模型能预测下一个字。但ChatGPT回复的是一整段话，这是怎么来的？答案简单得出奇。把预测出的字拼到输入后面，然后再预测下一个字，循环往复。这就是为什么你用ChatGPT时看到回复是一个字一个字蹦出来的。这个过程叫自回归生成。",
+    "visual": "svg:01-autoregressive-loop"
+  },
+  {
+    "id": "s5-transition",
+    "text": "光看文字描述可能还不够直观。接下来我们借助3Blue1Brown的动画，看看这些概念具体长什么样。",
+    "visual": "text_slide"
+  },
+  {
+    "id": "v1-gpt-name",
+    "text": "GPT这个名字，三个字母分别代表Generative生成式、Pre trained预训练、Transformer架构名称。画面左边正在一个字一个字地生成文本，这就是Generative的含义。",
+    "visual": "clip_voice:blog01-predict-sample-repeat:0:25"
+  },
+  {
+    "id": "v2-transformer-3d",
+    "text": "画面中这个立体结构就是Transformer的内部。文本从底部输入，经过层层处理后从顶部输出。右边展示的是Embedding和注意力矩阵的细节。我们后面的篇章会详细拆解。",
+    "visual": "clip_voice:blog01-predict-sample-repeat:25:45"
+  },
+  {
+    "id": "v3-applications",
+    "text": "Transformer不只能做文本生成。画面上依次展示了语音转文字、文字转语音、文字转图片。这些不同的任务背后用的都是同一套Transformer架构。",
+    "visual": "clip_voice:blog01-predict-sample-repeat:45:70"
+  },
+  {
+    "id": "v4-predict-setup",
+    "text": "现在来看实际的预测过程。画面上有一段文字：Behold a wild pi creature foraging in its native，后面是一个空白等待填充。文本和图片一起输入Transformer模型。",
+    "visual": "clip_voice:blog01-predict-sample-repeat:85:100"
+  },
+  {
+    "id": "v5-predict-goal",
+    "text": "这就是next token prediction的本质。给定前面的所有文字，预测下一个最可能的词。右边的概率分布列出了所有候选词和对应的概率。模型从中选择一个，拼到文本末尾，然后继续预测。",
+    "visual": "clip_voice:blog01-predict-sample-repeat:100:125"
+  },
+  {
+    "id": "v6-gpt-compare",
+    "text": "这里展示了不同大小的模型生成效果的差异。更大的模型，参数更多，生成的文本更加连贯和自然。注意看右边的概率分布随着文本变长，模型的预测越来越自信。",
+    "visual": "clip_voice:blog01-predict-sample-repeat:125:160"
+  },
+  {
+    "id": "v7-confident",
+    "text": "到了生成的末尾，模型对下一个词已经非常确定了。你看这个概率分布，to这个词的概率高达百分之九十九，其他选项几乎都是零。上下文越充分，预测就越准确。",
+    "visual": "clip_voice:blog01-predict-sample-repeat:160:180"
+  },
+  {
+    "id": "s5c-temp-transition",
+    "text": "刚才提到模型会从概率分布中采样。那采样的随机性是怎么控制的？这就要提到两个概念：softmax和temperature。",
+    "visual": "text_slide"
+  },
+  {
+    "id": "v8-softmax-formula",
+    "text": "模型内部的原始输出不是概率，而是一组原始分数，叫logits。画面左边这列数字就是logits，有正有负。中间的softmax公式把它们转换成右边的概率：所有值都变成正数，加起来等于一。",
+    "visual": "clip_voice:blog01-softmax-temperature:0:20"
+  },
+  {
+    "id": "v9-softmax-bar",
+    "text": "转换后的概率可以用这样一个柱状图来表示。每个柱子代表一个候选词的概率。上面的算式验证了所有概率加起来刚好等于一。",
+    "visual": "clip_voice:blog01-softmax-temperature:20:45"
+  },
+  {
+    "id": "v10a-softmax-box",
+    "text": "简化来看，softmax就像一个转换盒子。左边输入原始分数，经过指数运算和归一化，右边输出概率分布。",
+    "visual": "clip_voice:blog01-softmax-temperature:45:65"
+  },
+  {
+    "id": "v10b-softmax-extreme",
+    "text": "当某个输入值变得特别大时，概率分布就会发生剧烈变化，概率会集中到那个最大值上。注意看左边的数字，从五点三增加到八点五后，对应的概率从零点八一跳到了零点九九，其他都接近零。",
+    "visual": "clip_voice:blog01-softmax-temperature:65:80"
+  },
+  {
+    "id": "v11-temp-compare",
+    "text": "现在来看temperature的效果。画面左右两边做了对比。左边temperature等于零，模型每次都选概率最高的词，生成的是确定性的文本。右边temperature等于五，概率分布变得平均，选择更随机，生成了完全不同的内容。",
+    "visual": "clip_voice:blog01-softmax-temperature:80:130"
+  },
+  {
+    "id": "v12-temp-formula",
+    "text": "数学上，temperature就是在softmax之前把所有logits除以T。画面中间的公式可以看到，分子是e的x除以T次方。T越大，各个值的差距越小，概率分布越平均。T越小，概率越集中在最大值上。",
+    "visual": "clip_voice:blog01-softmax-temperature:130:175"
+  },
+  {
+    "id": "v13-unembedding",
+    "text": "最后这个画面展示了完整的计算过程。左边的大矩阵叫unembedding矩阵，和token的向量相乘得到logits，再经过softmax变成右边的概率分布。这就是模型从内部运算到输出概率的完整流程。",
+    "visual": "clip_voice:blog01-softmax-temperature:175:221"
+  },
+  {
+    "id": "s6-training",
+    "text": "好，模型能输出概率。但这些概率从哪来的？想想你自己，你为什么能预测从前有座山后面跟庙？因为你从小到大读过、听过大量文本。大模型也一样，它读过互联网上万亿个token的文本。这个读书的过程叫训练。",
+    "visual": "svg:01-training-process"
+  },
+  {
+    "id": "s6-training-detail",
+    "text": "模型的训练就像反复做练习题。从训练数据中取一段文本，遮住最后一个字让模型预测。模型一开始是瞎猜的，因为参数都是随机初始化的。对比正确答案，算出猜得有多离谱，然后微调参数。如此循环万亿次。",
+    "visual": "svg:01-training-process"
+  },
+  {
+    "id": "s7-parameters",
+    "text": "训练完了，学到的知识存在哪？不是数据库，不是一张表。想想九九乘法表，七乘八等于五十六，但你脑子里并没有一个哈希表存着答案。大模型也一样，知识编码在大量数字中。GPT3有一千七百五十亿个参数，GPT4据传上万亿个。这些数字就叫参数或权重。",
+    "visual": "text_slide"
+  },
+  {
+    "id": "s8-paradigm",
+    "text": "传统编程是人类写规则，计算机执行规则。大模型是人类提供数据，计算机自己从数据中学出规则。这是两种根本不同的编程范式。",
+    "visual": "svg:01-traditional-vs-llm"
+  },
+  {
+    "id": "s9-kxb",
+    "text": "你可能会想：说到底这不就是f of x等于kx加b吗？你的直觉抓住了核心。但kx加b只是一条直线。怎么办？把很多个kx加b叠起来，层与层之间加一个激活函数来掰弯，就能拟合任意复杂的曲线。kx加b是砖头，激活函数是水泥，叠在一起才能盖高楼。",
+    "visual": "text_slide"
+  },
+  {
+    "id": "s10-summary",
+    "text": "总结一下。大模型就是一个函数，输入文本，输出下一个token的概率分布。生成一整段话就是自回归：预测一个字、拼上去、继续预测。概率来自训练，知识编码在几十亿个参数里。下一篇我们来看：文字是怎么变成数字的。我们下期见。",
+    "visual": "title"
+  }
+]
