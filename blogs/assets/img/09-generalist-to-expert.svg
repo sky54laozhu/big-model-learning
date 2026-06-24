@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 360" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+  <title id="t">示范喂什么，它就往哪儿专</title>
+  <desc id="d">同一个基座模型（通才），喂入不同的示范数据后，分别微调成法律专家、医疗专家和代码专家。微调决定往哪专，不决定懂不懂。</desc>
+  <style>
+    .h { font-weight: 700; fill: #1a1a1a; text-anchor: middle; font-size: 16px; }
+    .note { fill: #6b7280; font-size: 12px; text-anchor: middle; }
+    .stage-label { fill: #ffffff; font-weight: 600; font-size: 13px; }
+    .base-title { fill: #ffffff; font-weight: 700; font-size: 14px; text-anchor: middle; }
+    .base-sub { fill: #ffffff; font-size: 11px; text-anchor: middle; opacity: 0.92; }
+    .data-blue { fill: #1e40af; font-size: 11px; text-anchor: middle; }
+    .data-green { fill: #166534; font-size: 11px; text-anchor: middle; }
+    .data-amber { fill: #92400e; font-size: 11px; text-anchor: middle; }
+    .exp-blue { fill: #1e40af; font-weight: 700; font-size: 14px; text-anchor: middle; }
+    .exp-green { fill: #166534; font-weight: 700; font-size: 14px; text-anchor: middle; }
+    .exp-amber { fill: #92400e; font-weight: 700; font-size: 14px; text-anchor: middle; }
+    .arrow-blue { fill: none; stroke: #3b82f6; stroke-width: 1.8; marker-end: url(#mkb); }
+    .arrow-green { fill: none; stroke: #16a34a; stroke-width: 1.8; marker-end: url(#mkg); }
+    .arrow-amber { fill: none; stroke: #d97706; stroke-width: 1.8; marker-end: url(#mka); }
+  </style>
+  <defs>
+    <marker id="mkb" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#3b82f6"/>
+    </marker>
+    <marker id="mkg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#16a34a"/>
+    </marker>
+    <marker id="mka" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#d97706"/>
+    </marker>
+  </defs>
+
+  <text x="440" y="32" class="h">示范喂什么，它就往哪儿专</text>
+
+  <!-- 基座模型（通才） -->
+  <rect x="40" y="135" width="150" height="90" rx="10" fill="#1a2233"/>
+  <text x="115" y="172" class="base-title">基座模型</text>
+  <text x="115" y="193" class="base-sub">（通才）</text>
+  <text x="115" y="211" class="base-sub">预训练 = 懂</text>
+
+  <!-- ===== 蓝：法律专家 ===== -->
+  <path class="arrow-blue" d="M190,160 C 360,160 360,82 545,82"/>
+  <text x="370" y="68" class="data-blue">喂：法律问题 → 专业法律回答</text>
+  <rect x="555" y="58" width="285" height="56" rx="9" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
+  <rect x="555" y="58" width="9" height="56" fill="#1e40af"/>
+  <text x="700" y="84" class="exp-blue">法律专家</text>
+  <text x="700" y="103" class="data-blue">合同 · 条款 · 判例</text>
+
+  <!-- ===== 绿：医疗专家 ===== -->
+  <path class="arrow-green" d="M190,180 L 545,180"/>
+  <text x="370" y="168" class="data-green">喂：病例 → 诊断建议</text>
+  <rect x="555" y="152" width="285" height="56" rx="9" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.5"/>
+  <rect x="555" y="152" width="9" height="56" fill="#166534"/>
+  <text x="700" y="178" class="exp-green">医疗专家</text>
+  <text x="700" y="197" class="data-green">症状 · 检查 · 诊断</text>
+
+  <!-- ===== 琥珀：代码专家 ===== -->
+  <path class="arrow-amber" d="M190,200 C 360,200 360,278 545,278"/>
+  <text x="370" y="290" class="data-amber">喂：需求 → 代码</text>
+  <rect x="555" y="252" width="285" height="56" rx="9" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
+  <rect x="555" y="252" width="9" height="56" fill="#92400e"/>
+  <text x="700" y="278" class="exp-amber">代码专家</text>
+  <text x="700" y="297" class="data-amber">函数 · 接口 · 调试</text>
+
+  <!-- 底部分隔线 + note -->
+  <line x1="40" y1="328" x2="840" y2="328" stroke="#e2e8f0" stroke-width="1"/>
+  <text x="440" y="348" class="note">同一基座 + 不同示范 = 不同专家；微调决定"往哪专"，不决定"懂不懂"（懂来自预训练）</text>
+</svg>
