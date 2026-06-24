@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 392" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t7 d7">
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+  <title id="t7">词边界：先有鸡还是先有蛋？</title>
+  <desc id="d7">通过英文、中文、新词三个例子说明：靠"统计已知词汇"来切词行不通，因为"什么算一个词"本身就是要解决的问题，构成鸡生蛋悖论。</desc>
+  <style>
+    .h { font-weight: 700; fill: #1a1a1a; text-anchor: middle; font-size: 16px; }
+    .stage-label { fill: #ffffff; font-weight: 600; font-size: 13px; }
+    .src { fill: #1a2233; font-size: 16px; font-weight: 600; text-anchor: middle; }
+    .seg { font-size: 14px; font-weight: 600; text-anchor: middle; }
+    .note { fill: #6b7280; font-size: 12px; }
+    .qmark { font-weight: 700; font-size: 16px; }
+  </style>
+  <defs>
+    <marker id="mk" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#5a5a5a"/>
+    </marker>
+  </defs>
+
+  <text x="440" y="32" class="h">词边界：先有鸡还是先有蛋？</text>
+
+  <!-- ============ Card 1: English (amber) ============ -->
+  <g>
+    <rect x="30" y="54" width="270" height="280" rx="10" fill="#fffbf3" stroke="#d97706" stroke-width="1.5"/>
+    <!-- header -->
+    <rect x="30" y="54" width="270" height="30" rx="10" fill="#d97706"/>
+    <rect x="30" y="70" width="270" height="14" fill="#d97706"/>
+    <text x="46" y="74" class="stage-label">英文 · 按空格切</text>
+
+    <text x="165" y="112" class="src" fill="#92400e">unhappiness</text>
+
+    <!-- whole-as-one -->
+    <rect x="60" y="128" width="180" height="34" rx="6" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
+    <text x="150" y="150" class="seg" fill="#92400e">unhappiness</text>
+    <text x="150" y="180" class="note" fill="#b45309" text-anchor="middle">空格切：只算 1 个词</text>
+
+    <text x="165" y="207" fill="#d97706" font-size="18" font-weight="700" text-anchor="middle">↓ 但想要</text>
+
+    <!-- desired 3 pieces -->
+    <rect x="52" y="220" width="56" height="32" rx="6" fill="#fff" stroke="#d97706" stroke-width="1.5"/>
+    <text x="80" y="241" class="seg" fill="#92400e">un</text>
+    <rect x="114" y="220" width="62" height="32" rx="6" fill="#fff" stroke="#d97706" stroke-width="1.5"/>
+    <text x="145" y="241" class="seg" fill="#92400e">happi</text>
+    <rect x="182" y="220" width="62" height="32" rx="6" fill="#fff" stroke="#d97706" stroke-width="1.5"/>
+    <text x="213" y="241" class="seg" fill="#92400e">ness</text>
+    <text x="165" y="272" class="note" text-anchor="middle">想要切成 3 块</text>
+
+    <rect x="48" y="288" width="234" height="36" rx="6" fill="#fef3c7"/>
+    <text x="165" y="304" class="note" fill="#92400e" text-anchor="middle" font-size="11.5">空格给不了子词切点：</text>
+    <text x="165" y="319" class="note" fill="#92400e" text-anchor="middle" font-size="11.5">词内部的边界从哪来？</text>
+  </g>
+
+  <!-- ============ Card 2: Chinese (blue) ============ -->
+  <g>
+    <rect x="305" y="54" width="270" height="280" rx="10" fill="#f6f9ff" stroke="#3b82f6" stroke-width="1.5"/>
+    <rect x="305" y="54" width="270" height="30" rx="10" fill="#3b82f6"/>
+    <rect x="305" y="70" width="270" height="14" fill="#3b82f6"/>
+    <text x="321" y="74" class="stage-label">中文 · 无空格</text>
+
+    <text x="440" y="112" class="src" fill="#1e40af">我昨天买了会员</text>
+
+    <text x="440" y="138" class="note" fill="#2563eb" text-anchor="middle">整句一个空格都没有</text>
+
+    <!-- way A -->
+    <rect x="320" y="150" width="240" height="40" rx="6" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
+    <text x="440" y="175" class="seg" fill="#1e40af" font-size="13">我｜昨天｜买｜了｜会员</text>
+    <text x="556" y="175" class="qmark" fill="#3b82f6" text-anchor="end">?</text>
+
+    <text x="440" y="208" fill="#3b82f6" font-size="14" font-weight="700" text-anchor="middle">还是</text>
+
+    <!-- way B -->
+    <rect x="320" y="218" width="240" height="40" rx="6" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
+    <text x="440" y="243" class="seg" fill="#1e40af" font-size="13">我昨｜天买｜了会｜员</text>
+    <text x="556" y="243" class="qmark" fill="#3b82f6" text-anchor="end">?</text>
+
+    <text x="440" y="278" class="note" text-anchor="middle">两种切法都说不准</text>
+
+    <rect x="323" y="288" width="234" height="36" rx="6" fill="#dbeafe"/>
+    <text x="440" y="304" class="note" fill="#1e40af" text-anchor="middle" font-size="11.5">一个空格都没有，</text>
+    <text x="440" y="319" class="note" fill="#1e40af" text-anchor="middle" font-size="11.5">切点完全未知。</text>
+  </g>
+
+  <!-- ============ Card 3: New word (red) ============ -->
+  <g>
+    <rect x="580" y="54" width="270" height="280" rx="10" fill="#fff5f5" stroke="#dc2626" stroke-width="1.5"/>
+    <rect x="580" y="54" width="270" height="30" rx="10" fill="#dc2626"/>
+    <rect x="580" y="70" width="270" height="14" fill="#dc2626"/>
+    <text x="596" y="74" class="stage-label">新词 · 词表没见过</text>
+
+    <text x="715" y="112" class="src" fill="#b91c1c">ChatGPT2024</text>
+
+    <text x="715" y="140" class="note" fill="#dc2626" text-anchor="middle">查词表里有没有它…</text>
+
+    <!-- dictionary lookup -->
+    <rect x="600" y="152" width="230" height="40" rx="6" fill="#fef2f2" stroke="#dc2626" stroke-width="1.5"/>
+    <text x="715" y="177" class="seg" fill="#b91c1c" font-size="13">词表：从没见过 ✕</text>
+
+    <text x="715" y="218" fill="#dc2626" font-size="26" font-weight="700" text-anchor="middle">？？？</text>
+    <text x="715" y="248" class="note" fill="#dc2626" text-anchor="middle">不在词表 → 无法切</text>
+    <text x="715" y="268" class="note" text-anchor="middle">而新词一直在出现</text>
+
+    <rect x="598" y="288" width="234" height="36" rx="6" fill="#fee2e2"/>
+    <text x="715" y="304" class="note" fill="#b91c1c" text-anchor="middle" font-size="11.5">靠"已知词汇"切词，</text>
+    <text x="715" y="319" class="note" fill="#b91c1c" text-anchor="middle" font-size="11.5">永远追不上新词。</text>
+  </g>
+
+  <!-- Bottom conclusion bar -->
+  <rect x="60" y="350" width="760" height="34" rx="8" fill="#1a2233"/>
+  <text x="440" y="372" text-anchor="middle" fill="#ffffff" font-size="13" font-weight="600">「什么算一个词」本身就是要解决的问题，不能拿来当前提 —— 鸡生蛋悖论</text>
+</svg>

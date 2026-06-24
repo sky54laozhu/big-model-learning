@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 340" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t7cn d7cn">
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+  <title id="t7cn">为什么中文更费 token、模型数不清字母</title>
+  <desc id="d7cn">同样语义中文常占更多 token，更费钱更快撑满上下文；strawberry 在模型眼里是 straw 加 berry 两个 token，没有字母这一层级，所以数不准 r 的个数。</desc>
+  <style>
+    .h { font-weight: 700; fill: #1a2233; text-anchor: middle; font-size: 18px; }
+    .stage-label { fill: #ffffff; font-weight: 700; font-size: 13px; }
+    .note { fill: #6b7280; font-size: 12px; }
+    .lbl { fill: #6b7280; font-size: 12px; }
+    .tok { fill: #1a2233; font-weight: 600; font-size: 15px; text-anchor: middle; }
+    .cnt { font-size: 12px; font-weight: 600; }
+    .arrow { fill: none; stroke: #6b7280; stroke-width: 1.6; marker-end: url(#mk); }
+  </style>
+  <defs>
+    <marker id="mk" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/>
+    </marker>
+  </defs>
+
+  <text x="440" y="32" class="h">为什么中文更费 token、模型数不清字母</text>
+
+  <!-- ===== 左卡片：中英文 token 数对比 ===== -->
+  <rect x="30" y="52" width="400" height="26" rx="6" fill="#1a2233"/>
+  <rect x="30" y="64" width="400" height="14" fill="#1a2233"/>
+  <text x="44" y="70" class="stage-label">同样语义，token 数差很多</text>
+  <rect x="30" y="78" width="400" height="200" rx="0" fill="#f8fafc" stroke="#e2e8f0"/>
+
+  <!-- 英文 apple -->
+  <text x="50" y="106" class="lbl">英文（高频词）</text>
+  <rect x="50" y="116" width="86" height="34" rx="6" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
+  <text x="93" y="138" class="tok">apple</text>
+  <path d="M146,133 L182,133" class="arrow"/>
+  <rect x="192" y="116" width="86" height="34" rx="6" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
+  <text x="235" y="138" class="tok">apple</text>
+  <text x="296" y="138" class="cnt" fill="#d97706">1 个 token</text>
+
+  <!-- 中文 苹果 -->
+  <text x="50" y="178" class="lbl">中文（每字约 3 字节）</text>
+  <rect x="50" y="188" width="86" height="34" rx="6" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="93" y="210" class="tok">苹果</text>
+  <path d="M146,205 L182,205" class="arrow"/>
+  <rect x="192" y="188" width="42" height="34" rx="6" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="213" y="210" class="tok">苹</text>
+  <rect x="240" y="188" width="42" height="34" rx="6" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="261" y="210" class="tok">果</text>
+  <text x="296" y="210" class="cnt" fill="#3b82f6">2~4 个 token</text>
+
+  <!-- 左卡批注 -->
+  <rect x="50" y="240" width="360" height="26" rx="4" fill="#eff6ff" stroke="#3b82f6" stroke-width="1"/>
+  <text x="62" y="257" fill="#1d4ed8" font-size="11.5">中文常占更多 token → 更费钱、更快撑满上下文窗口</text>
+
+  <!-- ===== 右卡片：strawberry 有几个 r ===== -->
+  <rect x="450" y="52" width="400" height="26" rx="6" fill="#1a2233"/>
+  <rect x="450" y="64" width="400" height="14" fill="#1a2233"/>
+  <text x="464" y="70" class="stage-label">“strawberry 有几个 r？” 翻车</text>
+  <rect x="450" y="78" width="400" height="200" rx="0" fill="#f8fafc" stroke="#e2e8f0"/>
+
+  <!-- 人眼看到 -->
+  <text x="470" y="106" class="lbl">你以为模型看到的是字母</text>
+  <rect x="470" y="116" width="360" height="32" rx="6" fill="#ffffff" stroke="#94a3b8" stroke-width="1.2"/>
+  <text x="650" y="137" class="tok" font-size="14">s · t · r · a · w · b · e · r · r · y</text>
+
+  <path d="M650,150 L650,168" class="arrow"/>
+
+  <!-- 模型眼里 -->
+  <text x="470" y="184" class="lbl">模型眼里只有 token，没有字母</text>
+  <rect x="520" y="190" width="120" height="36" rx="6" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
+  <text x="580" y="214" class="tok">straw</text>
+  <rect x="656" y="190" width="120" height="36" rx="6" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
+  <text x="716" y="214" class="tok">berry</text>
+  <text x="500" y="214" class="cnt" fill="#dc2626" text-anchor="middle">数不清</text>
+
+  <!-- 右卡批注 -->
+  <rect x="470" y="240" width="360" height="26" rx="4" fill="#fef2f2" stroke="#dc2626" stroke-width="1"/>
+  <text x="482" y="257" fill="#dc2626" font-size="11.5">字母被藏进 token 里 → 不是笨，是看不见“字母”这一层</text>
+
+  <!-- ===== 底部 note ===== -->
+  <rect x="100" y="298" width="680" height="1.5" fill="#e2e8f0"/>
+  <text x="440" y="320" class="note" text-anchor="middle">tokenization 不只是技术细节：它直接决定成本、上下文长度，以及模型能不能做某件事</text>
+</svg>

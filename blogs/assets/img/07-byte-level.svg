@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 392" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t7 d7">
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+  <title id="t7">字节级 BPE：一个汉字为什么是 3 个 token</title>
+  <desc id="d7">展示为什么分词退到字节层级：字符层级有 15 万以上 Unicode 字符会让词表爆炸，而字节只有 256 个固定值。以汉字"鱼"为例，UTF-8 编码为 3 个字节，高频字会被 BPE 合并成 1 个 token，生僻字则一直保持 3 个 token。</desc>
+  <style>
+    .h { font-weight: 700; fill: #1a1a1a; text-anchor: middle; font-size: 16px; }
+    .sub { fill: #6b7280; font-size: 12px; text-anchor: middle; }
+    .stage-label { fill: #fff; font-weight: 600; font-size: 12px; text-anchor: middle; }
+    .h2 { font-weight: 600; fill: #1a2233; font-size: 13px; }
+    .note { fill: #6b7280; font-size: 12px; }
+    .content { fill: #2a2a2a; font-size: 13px; text-anchor: middle; }
+    .big { fill: #1a2233; font-weight: 700; text-anchor: middle; }
+    .byte-text { fill: #1a2233; font-weight: 600; font-size: 13px; text-anchor: middle; }
+    .arrow { fill: none; stroke: #5a5a5a; stroke-width: 1.5; marker-end: url(#mk); }
+    .arrow-g { fill: none; stroke: #16a34a; stroke-width: 1.8; marker-end: url(#mkg); }
+    .arrow-r { fill: none; stroke: #dc2626; stroke-width: 1.8; marker-end: url(#mkr); }
+  </style>
+  <defs>
+    <marker id="mk" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#5a5a5a"/>
+    </marker>
+    <marker id="mkg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#16a34a"/>
+    </marker>
+    <marker id="mkr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#dc2626"/>
+    </marker>
+  </defs>
+
+  <text x="440" y="28" class="h">字节级：一个汉字 = 几个 token？</text>
+  <text x="440" y="46" class="sub">字节级 BPE：一个汉字为什么是 3 个 token</text>
+
+  <!-- ===== 上半部分：为什么退到字节 ===== -->
+  <!-- 字符层级卡片 -->
+  <rect x="40" y="66" width="360" height="92" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
+  <rect x="40" y="66" width="360" height="28" rx="10" fill="#d97706"/>
+  <rect x="40" y="80" width="360" height="14" fill="#d97706"/>
+  <text x="220" y="85" class="stage-label">方案一：字符层级</text>
+  <text x="220" y="118" class="big" font-size="22" fill="#dc2626">15 万+ 字符</text>
+  <text x="220" y="140" class="note" text-anchor="middle">基础词表爆炸 + 生僻字漏收　✗</text>
+
+  <!-- VS -->
+  <text x="440" y="118" class="big" font-size="15" fill="#6b7280">VS</text>
+
+  <!-- 字节层级卡片 -->
+  <rect x="480" y="66" width="360" height="92" rx="10" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.5"/>
+  <rect x="480" y="66" width="360" height="28" rx="10" fill="#16a34a"/>
+  <rect x="480" y="80" width="360" height="14" fill="#16a34a"/>
+  <text x="660" y="85" class="stage-label">方案二：字节层级</text>
+  <text x="660" y="118" class="big" font-size="22" fill="#16a34a">只有 256 个字节</text>
+  <text x="660" y="140" class="note" text-anchor="middle">UTF-8 下任何字符 = 1~4 字节　✓</text>
+
+  <!-- 分隔线 -->
+  <rect x="100" y="178" width="680" height="3" rx="1.5" fill="#e2e8f0"/>
+
+  <!-- ===== 下半部分：汉字"鱼"演示 ===== -->
+  <text x="40" y="208" class="h2">演示：汉字"鱼"在 UTF-8 下是 3 个字节</text>
+
+  <!-- 鱼 字 -->
+  <rect x="40" y="222" width="58" height="58" rx="8" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="69" y="259" class="big" font-size="28" fill="#3b82f6">鱼</text>
+
+  <text x="118" y="246" class="note">UTF-8</text>
+  <path d="M104,256 L150,256" class="arrow"/>
+
+  <!-- 3 个字节方块 -->
+  <rect x="158" y="222" width="60" height="58" rx="6" fill="#f8fafc" stroke="#1a2233" stroke-width="1.5"/>
+  <text x="188" y="256" class="byte-text">0xE9</text>
+  <rect x="224" y="222" width="60" height="58" rx="6" fill="#f8fafc" stroke="#1a2233" stroke-width="1.5"/>
+  <text x="254" y="256" class="byte-text">0xB1</text>
+  <rect x="290" y="222" width="60" height="58" rx="6" fill="#f8fafc" stroke="#1a2233" stroke-width="1.5"/>
+  <text x="320" y="256" class="byte-text">0xBC</text>
+  <text x="254" y="298" class="note" text-anchor="middle">3 个字节</text>
+
+  <!-- 分两种结局：高频字 -->
+  <path d="M356,242 L408,228" class="arrow-g"/>
+  <path d="M356,270 L408,300" class="arrow-r"/>
+
+  <!-- 高频字结局 -->
+  <text x="430" y="222" class="h2" fill="#16a34a">高频字（的 / 是 / 我 / 鱼）</text>
+  <rect x="430" y="232" width="150" height="36" rx="6" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.5"/>
+  <text x="505" y="255" class="content" fill="#16a34a" font-weight="600">3 字节被 BPE 合并</text>
+  <path d="M584,250 L624,250" class="arrow-g"/>
+  <rect x="630" y="232" width="106" height="36" rx="6" fill="#16a34a"/>
+  <text x="683" y="255" class="stage-label" font-size="13">1 个 token</text>
+
+  <!-- 生僻字结局 -->
+  <text x="430" y="300" class="h2" fill="#dc2626">生僻字（鳕 / 饕）</text>
+  <rect x="430" y="310" width="150" height="36" rx="6" fill="#fef2f2" stroke="#dc2626" stroke-width="1.5"/>
+  <text x="505" y="333" class="content" fill="#dc2626" font-weight="600">低频，不被合并</text>
+  <path d="M584,328 L624,328" class="arrow-r"/>
+  <rect x="630" y="310" width="106" height="36" rx="6" fill="#fef2f2" stroke="#dc2626" stroke-width="1.5"/>
+  <text x="683" y="333" class="content" fill="#dc2626" font-weight="600">一直是 3 token</text>
+
+  <!-- 底部 note -->
+  <rect x="100" y="364" width="680" height="3" rx="1.5" fill="#e2e8f0"/>
+  <text x="440" y="384" class="note" text-anchor="middle" fill="#475569">没人给中文设规则，这纯粹是频率统计的副作用</text>
+</svg>
