@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 380" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+  <title id="t">从随机噪声到语言能力</title>
+  <desc id="d">预训练把一堆杂乱的随机参数，通过万亿 token 的四步训练循环，一点点调成编码了知识与推理能力的参数：训练前输出胡言乱语，训练后输出通顺、有知识的文本。</desc>
+  <style>
+    .h { font-weight: 700; fill: #1a1a1a; text-anchor: middle; font-size: 17px; }
+    .h2 { font-weight: 700; fill: #1a2233; font-size: 13px; text-anchor: middle; }
+    .note { fill: #6b7280; font-size: 12px; text-anchor: middle; }
+    .num { fill: #1a2233; font-size: 11px; text-anchor: middle; font-weight: 600; }
+    .stage-label { fill: #ffffff; font-weight: 700; font-size: 13px; text-anchor: middle; }
+    .step { fill: #2a2a2a; font-size: 12px; }
+    .bad { fill: #dc2626; font-weight: 700; font-size: 12px; text-anchor: middle; }
+    .good { fill: #166534; font-weight: 700; font-size: 12px; text-anchor: middle; }
+    .arrow { fill: none; stroke: #5a5a5a; stroke-width: 1.5; marker-end: url(#mk); }
+  </style>
+  <defs>
+    <marker id="mk" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#5a5a5a"/>
+    </marker>
+    <marker id="mkb" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#b45309"/>
+    </marker>
+  </defs>
+
+  <text x="440" y="30" class="h">从随机噪声到语言能力</text>
+
+  <!-- ============ 左侧卡片：训练前 ============ -->
+  <!-- 卡片底 -->
+  <rect x="30" y="56" width="230" height="220" rx="10" fill="#f8fafc" stroke="#dc2626" stroke-width="1.5"/>
+  <!-- 标题栏：圆角顶 + 补方角 -->
+  <rect x="30" y="56" width="230" height="30" rx="10" fill="#dc2626"/>
+  <rect x="30" y="71" width="230" height="15" fill="#dc2626"/>
+  <text x="145" y="76" class="stage-label">训练前 · 随机参数</text>
+
+  <!-- 参数网格 4x4 随机数 -->
+  <g class="num">
+    <rect x="46" y="98" width="198" height="116" rx="6" fill="#ffffff" stroke="#e2e8f0"/>
+    <text x="78" y="120">0.83</text><text x="125" y="120">-1.2</text><text x="172" y="120">0.04</text><text x="216" y="120">2.1</text>
+    <text x="78" y="146">-0.7</text><text x="125" y="146">1.55</text><text x="172" y="146">-2.0</text><text x="216" y="146">0.31</text>
+    <text x="78" y="172">1.9</text><text x="125" y="172">-0.5</text><text x="172" y="172">0.62</text><text x="216" y="172">-1.4</text>
+    <text x="78" y="198">0.08</text><text x="125" y="198">2.4</text><text x="172" y="198">-0.9</text><text x="216" y="198">1.1</text>
+  </g>
+
+  <!-- 输出示意 -->
+  <rect x="46" y="228" width="198" height="34" rx="6" fill="#fff5f5" stroke="#dc2626" stroke-width="1"/>
+  <text x="145" y="243" class="bad">输出：胡言乱语</text>
+  <text x="145" y="257" class="note">xq#了的的 ▢▢ 7zk…</text>
+
+  <!-- ============ 中间：预训练箭头 ============ -->
+  <!-- 进箭头 -->
+  <line x1="262" y1="166" x2="312" y2="166" class="arrow"/>
+  <!-- 中间面板 -->
+  <rect x="316" y="76" width="248" height="180" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
+  <rect x="316" y="76" width="248" height="30" rx="10" fill="#d97706"/>
+  <rect x="316" y="91" width="248" height="15" fill="#d97706"/>
+  <text x="440" y="96" class="stage-label">预训练 · 万亿 token</text>
+
+  <text x="440" y="126" class="h2" fill="#b45309">Blog 03 的四步循环 × 反复迭代</text>
+  <g class="step">
+    <text x="346" y="152">① 前向：算出下一词的预测</text>
+    <text x="346" y="178">② 算损失：预测离正确差多少</text>
+    <text x="346" y="204">③ 反向传播：求每个参数的梯度</text>
+    <text x="346" y="230">④ 更新参数：朝更对的方向挪一点</text>
+  </g>
+
+  <!-- 出箭头 -->
+  <line x1="566" y1="166" x2="616" y2="166" class="arrow"/>
+
+  <!-- ============ 右侧卡片：训练后 ============ -->
+  <rect x="620" y="56" width="230" height="220" rx="10" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.5"/>
+  <rect x="620" y="56" width="230" height="30" rx="10" fill="#16a34a"/>
+  <rect x="620" y="71" width="230" height="15" fill="#16a34a"/>
+  <text x="735" y="76" class="stage-label">训练后 · 懂知识的参数</text>
+
+  <!-- 参数网格（同形状，已调好的值） -->
+  <g class="num">
+    <rect x="636" y="98" width="198" height="116" rx="6" fill="#ffffff" stroke="#e2e8f0"/>
+    <text x="668" y="120">0.21</text><text x="715" y="120">0.88</text><text x="762" y="120">-0.3</text><text x="806" y="120">0.55</text>
+    <text x="668" y="146">0.40</text><text x="715" y="146">-0.1</text><text x="762" y="146">0.72</text><text x="806" y="146">0.09</text>
+    <text x="668" y="172">-0.2</text><text x="715" y="172">0.63</text><text x="762" y="172">0.18</text><text x="806" y="172">0.47</text>
+    <text x="668" y="198">0.91</text><text x="715" y="198">0.05</text><text x="762" y="198">-0.4</text><text x="806" y="198">0.33</text>
+  </g>
+  <text x="735" y="222" class="note">编码了：知识 + 推理</text>
+
+  <!-- 输出示意 -->
+  <rect x="636" y="230" width="198" height="34" rx="6" fill="#f0fdf4" stroke="#16a34a" stroke-width="1"/>
+  <text x="735" y="245" class="good">输出：通顺、有知识</text>
+  <text x="735" y="259" class="note">巴黎是法国的首都。</text>
+
+  <!-- ============ 底部分隔线 + note ============ -->
+  <line x1="40" y1="318" x2="840" y2="318" stroke="#e2e8f0" stroke-width="1"/>
+  <text x="440" y="340" class="note">学到的一切都压进参数里（Embedding 表 + 各层权重矩阵）——预训练就是把随机数一点点调对。</text>
+</svg>

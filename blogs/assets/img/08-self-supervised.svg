@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 420" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+  <title id="t">答案就在句子里：自监督学习</title>
+  <desc id="d">用例句"我家的猫爱吃鱼"演示滑动窗口：每个前缀作为输入，下一个字作为答案，一句 7 字自动生成 6 对自带答案的训练数据。并对比监督学习与自监督学习。</desc>
+  <style>
+    .h { font-weight: 700; fill: #1a1a1a; text-anchor: middle; font-size: 16px; }
+    .h2 { font-weight: 600; fill: #1a2233; font-size: 14px; }
+    .note { fill: #6b7280; font-size: 12px; }
+    .small { fill: #6b7280; font-size: 11px; }
+    .stage-label { fill: #ffffff; font-weight: 600; font-size: 13px; }
+    .inchar { fill: #1a2233; font-weight: 700; font-size: 15px; }
+    .anschar { fill: #166534; font-weight: 700; font-size: 15px; text-anchor: middle; }
+    .lab { fill: #1a2233; font-weight: 600; font-size: 12px; text-anchor: end; }
+  </style>
+  <defs>
+    <marker id="mk" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#16a34a"/>
+    </marker>
+  </defs>
+
+  <text x="440" y="30" class="h">答案就在句子里：自监督学习</text>
+  <text x="440" y="50" class="note" text-anchor="middle">例句「我家的猫爱吃鱼」滑动窗口：前缀 = 输入，下一个字 = 答案</text>
+
+  <!-- 表头 -->
+  <text x="150" y="78" class="h2" text-anchor="middle">输入（前缀，深蓝灰）</text>
+  <text x="560" y="78" class="h2" text-anchor="middle">答案（下一个字，绿色高亮）</text>
+
+  <!-- 行 1: 我 -> 家 -->
+  <g>
+    <rect x="60" y="90" width="180" height="30" rx="6" fill="#f8fafc" stroke="#1a2233" stroke-width="1"/>
+    <text x="70" y="110" class="inchar">我</text>
+    <line x1="248" y1="105" x2="430" y2="105" stroke="#16a34a" stroke-width="1.5" marker-end="url(#mk)"/>
+    <rect x="445" y="90" width="50" height="30" rx="6" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.5"/>
+    <text x="470" y="111" class="anschar">家</text>
+  </g>
+
+  <!-- 行 2: 我家 -> 的 -->
+  <g>
+    <rect x="60" y="128" width="180" height="30" rx="6" fill="#f8fafc" stroke="#1a2233" stroke-width="1"/>
+    <text x="70" y="148" class="inchar">我家</text>
+    <line x1="248" y1="143" x2="430" y2="143" stroke="#16a34a" stroke-width="1.5" marker-end="url(#mk)"/>
+    <rect x="445" y="128" width="50" height="30" rx="6" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.5"/>
+    <text x="470" y="149" class="anschar">的</text>
+  </g>
+
+  <!-- 行 3: 我家的 -> 猫 -->
+  <g>
+    <rect x="60" y="166" width="180" height="30" rx="6" fill="#f8fafc" stroke="#1a2233" stroke-width="1"/>
+    <text x="70" y="186" class="inchar">我家的</text>
+    <line x1="248" y1="181" x2="430" y2="181" stroke="#16a34a" stroke-width="1.5" marker-end="url(#mk)"/>
+    <rect x="445" y="166" width="50" height="30" rx="6" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.5"/>
+    <text x="470" y="187" class="anschar">猫</text>
+  </g>
+
+  <!-- 行 4: 我家的猫 -> 爱 -->
+  <g>
+    <rect x="60" y="204" width="180" height="30" rx="6" fill="#f8fafc" stroke="#1a2233" stroke-width="1"/>
+    <text x="70" y="224" class="inchar">我家的猫</text>
+    <line x1="248" y1="219" x2="430" y2="219" stroke="#16a34a" stroke-width="1.5" marker-end="url(#mk)"/>
+    <rect x="445" y="204" width="50" height="30" rx="6" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.5"/>
+    <text x="470" y="225" class="anschar">爱</text>
+  </g>
+
+  <!-- 行 5: 我家的猫爱 -> 吃 -->
+  <g>
+    <rect x="60" y="242" width="180" height="30" rx="6" fill="#f8fafc" stroke="#1a2233" stroke-width="1"/>
+    <text x="70" y="262" class="inchar">我家的猫爱</text>
+    <line x1="248" y1="257" x2="430" y2="257" stroke="#16a34a" stroke-width="1.5" marker-end="url(#mk)"/>
+    <rect x="445" y="242" width="50" height="30" rx="6" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.5"/>
+    <text x="470" y="263" class="anschar">吃</text>
+  </g>
+
+  <!-- 行 6: 我家的猫爱吃 -> 鱼 -->
+  <g>
+    <rect x="60" y="280" width="180" height="30" rx="6" fill="#f8fafc" stroke="#1a2233" stroke-width="1"/>
+    <text x="70" y="300" class="inchar">我家的猫爱吃</text>
+    <line x1="248" y1="295" x2="430" y2="295" stroke="#16a34a" stroke-width="1.5" marker-end="url(#mk)"/>
+    <rect x="445" y="280" width="50" height="30" rx="6" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.5"/>
+    <text x="470" y="301" class="anschar">鱼</text>
+  </g>
+
+  <!-- 右侧强调框 -->
+  <rect x="540" y="128" width="290" height="182" rx="8" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.2"/>
+  <text x="560" y="155" class="h2" fill="#1e40af">一句 7 字 = 6 对训练数据</text>
+  <text x="560" y="180" class="note">每对都「自带答案」，无需人工标注。</text>
+  <text x="560" y="205" class="note">免费、海量、即取即用。</text>
+  <line x1="560" y1="222" x2="810" y2="222" stroke="#cbd5e1" stroke-width="1"/>
+  <text x="560" y="248" class="h2" fill="#166534">整个互联网</text>
+  <text x="560" y="272" class="note">= 万亿对零成本</text>
+  <text x="560" y="292" class="note">自动标注的训练数据。</text>
+
+  <!-- 底部对比：监督 vs 自监督 -->
+  <line x1="40" y1="332" x2="840" y2="332" stroke="#e2e8f0" stroke-width="1"/>
+
+  <rect x="60" y="346" width="360" height="56" rx="8" fill="#fff5f5" stroke="#dc2626" stroke-width="1.2"/>
+  <text x="76" y="368" class="h2" fill="#dc2626">监督学习</text>
+  <text x="76" y="390" class="note">答案 = 人工标注 · 贵 · 慢 · 量少</text>
+
+  <rect x="460" y="346" width="360" height="56" rx="8" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.2"/>
+  <text x="476" y="368" class="h2" fill="#166534">自监督学习</text>
+  <text x="476" y="390" class="note">答案 = 数据自带 · 免费 · 快 · 海量</text>
+</svg>

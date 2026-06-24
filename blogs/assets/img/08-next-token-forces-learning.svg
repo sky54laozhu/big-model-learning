@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 400" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+  <title id="t">猜下一个词，被迫学会一切</title>
+  <desc id="d">两道接龙题展示「预测下一个词」如何逼模型学会事实知识与推理常识，底部汇总模型顺带学会的各种能力。</desc>
+  <style>
+    .h { font-weight: 700; fill: #1a1a1a; text-anchor: middle; font-size: 17px; }
+    .note { fill: #6b7280; font-size: 12px; }
+    .stage-label { fill: #ffffff; font-weight: 600; font-size: 13px; }
+    .q { fill: #1a2233; font-weight: 600; font-size: 14px; text-anchor: middle; }
+    .ans-blue { fill: #1e40af; font-weight: 700; font-size: 16px; text-anchor: middle; }
+    .ans-green { fill: #166534; font-weight: 700; font-size: 16px; text-anchor: middle; }
+    .cmt { fill: #6b7280; font-size: 11.5px; text-anchor: middle; }
+    .need-blue { fill: #1e40af; font-weight: 700; font-size: 13px; text-anchor: middle; }
+    .need-green { fill: #166534; font-weight: 700; font-size: 13px; text-anchor: middle; }
+    .tag { fill: #2563eb; font-weight: 600; font-size: 12px; text-anchor: middle; }
+  </style>
+  <defs>
+    <marker id="mk" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#5a5a5a"/>
+    </marker>
+  </defs>
+
+  <text x="440" y="32" class="h">猜下一个词，被迫学会一切</text>
+
+  <!-- 卡片 A：知识 / 记忆（蓝色系） -->
+  <g>
+    <!-- 标题栏 -->
+    <rect x="60" y="56" width="360" height="26" rx="6" fill="#3b82f6"/>
+    <rect x="60" y="70" width="360" height="12" fill="#3b82f6"/>
+    <text x="74" y="74" class="stage-label">A · 知识 / 记忆</text>
+    <!-- 卡片主体 -->
+    <rect x="60" y="82" width="360" height="106" rx="0" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
+    <rect x="60" y="180" width="360" height="8" rx="0" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
+    <text x="240" y="108" class="q">「中国的首都是 ___」</text>
+    <text x="240" y="135" class="ans-blue">→ 北京</text>
+    <text x="240" y="159" class="cmt">语法再完美，没听过中国的人也填不对</text>
+    <text x="240" y="178" class="need-blue">必须把事实知识「存」在参数里</text>
+  </g>
+
+  <!-- 卡片 B：推理 / 世界模型（绿色系） -->
+  <g>
+    <rect x="460" y="56" width="360" height="26" rx="6" fill="#16a34a"/>
+    <rect x="460" y="70" width="360" height="12" fill="#16a34a"/>
+    <text x="474" y="74" class="stage-label">B · 推理 / 常识</text>
+    <rect x="460" y="82" width="360" height="106" rx="0" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.5"/>
+    <rect x="460" y="180" width="360" height="8" rx="0" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.5"/>
+    <text x="640" y="108" class="q">「水倒进杯子，结果水 ___」</text>
+    <text x="640" y="135" class="ans-green">→ 满了 / 溢出来了</text>
+    <text x="640" y="159" class="cmt">字典查不到，要在脑内「模拟」世界</text>
+    <text x="640" y="178" class="need-green">需要推理 · 常识 · 世界模型</text>
+  </g>
+
+  <!-- 汇总箭头 -->
+  <path class="arrow" d="M240,196 L240,224" fill="none" stroke="#5a5a5a" stroke-width="1.5" marker-end="url(#mk)"/>
+  <path class="arrow" d="M640,196 L640,224" fill="none" stroke="#5a5a5a" stroke-width="1.5" marker-end="url(#mk)"/>
+
+  <!-- 底部汇总条 -->
+  <rect x="60" y="232" width="760" height="92" rx="8" fill="#1a2233"/>
+  <text x="440" y="258" text-anchor="middle" fill="#ffffff" font-weight="700" font-size="14px">为了在整个互联网上把下一个词都猜准，模型被迫顺带学会 →</text>
+
+  <!-- 小标签一排 -->
+  <g>
+    <rect x="90" y="276" width="92" height="30" rx="15" fill="#f8fafc"/>
+    <text x="136" y="295" class="tag">语法</text>
+    <rect x="194" y="276" width="110" height="30" rx="15" fill="#f8fafc"/>
+    <text x="249" y="295" class="tag">事实知识</text>
+    <rect x="316" y="276" width="124" height="30" rx="15" fill="#f8fafc"/>
+    <text x="378" y="295" class="tag">推理常识</text>
+    <rect x="452" y="276" width="92" height="30" rx="15" fill="#f8fafc"/>
+    <text x="498" y="295" class="tag">翻译</text>
+    <rect x="556" y="276" width="92" height="30" rx="15" fill="#f8fafc"/>
+    <text x="602" y="295" class="tag">代码</text>
+    <rect x="660" y="276" width="124" height="30" rx="15" fill="#f8fafc"/>
+    <text x="722" y="295" class="tag">写作风格</text>
+  </g>
+  <text x="440" y="320" text-anchor="middle" fill="#cbd5e1" font-size="12px">…… 一个目标，逼出一身本领</text>
+
+  <!-- 分隔线 + note -->
+  <line x1="60" y1="350" x2="820" y2="350" stroke="#e2e8f0" stroke-width="1"/>
+  <text x="440" y="372" class="note" text-anchor="middle">「预测下一个词」看似简单，却是逼模型学会知识与推理的万能任务</text>
+</svg>

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 390" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+  <title id="t">基座模型 vs 听话助手</title>
+  <desc id="d">同一个输入「请帮我写一封辞职信」，基座模型只会续写出更多类似的 prompt，而 Instruct 助手会真正写出一封辞职信。差别在于预训练之后的指令微调那道工序。</desc>
+  <style>
+    .h { font-weight: 700; fill: #1a1a1a; text-anchor: middle; font-size: 17px; }
+    .note { fill: #6b7280; font-size: 12px; }
+    .stage-label { fill: #ffffff; font-weight: 600; font-size: 13px; }
+    .colhint { font-size: 11.5px; }
+    .body { fill: #2a2a2a; font-size: 12.5px; }
+    .mut { fill: #6b7280; font-size: 12px; }
+    .tag { fill: #ffffff; font-weight: 700; font-size: 12px; text-anchor: middle; }
+    .arrow { fill: none; stroke: #5a5a5a; stroke-width: 1.6; marker-end: url(#mk); }
+  </style>
+  <defs>
+    <marker id="mk" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#5a5a5a"/>
+    </marker>
+  </defs>
+
+  <text x="440" y="30" class="h">基座模型只会“续写”，不会“回答”</text>
+
+  <!-- 顶部统一输入框 -->
+  <rect x="270" y="48" width="340" height="46" rx="8" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"/>
+  <text x="440" y="69" text-anchor="middle" fill="#1e40af" font-weight="700" font-size="12">同一个输入</text>
+  <text x="440" y="87" text-anchor="middle" fill="#1a2233" font-weight="700" font-size="15">「请帮我写一封辞职信」</text>
+
+  <!-- 两条分叉箭头 -->
+  <path class="arrow" d="M400,96 C340,118 250,118 210,134"/>
+  <path class="arrow" d="M480,96 C540,118 630,118 670,134"/>
+
+  <!-- 左栏：Base Model -->
+  <rect x="40" y="140" width="380" height="200" rx="10" fill="#fffbeb" stroke="#d97706" stroke-width="1.6"/>
+  <path d="M40,150 a10,10 0 0 1 10,-10 h360 a10,10 0 0 1 10,10 v16 h-380 z" fill="#92400e"/>
+  <rect x="40" y="156" width="380" height="10" fill="#92400e"/>
+  <text x="56" y="159" class="stage-label">Base Model · 基座模型</text>
+  <rect x="318" y="146" width="92" height="20" rx="10" fill="#b45309"/>
+  <text x="364" y="160" class="tag">只会续写</text>
+
+  <text x="56" y="186" class="colhint" fill="#b45309" font-weight="600">把它当成 prompt 列表的一条，继续往下列：</text>
+  <text x="64" y="210" class="body">· 请帮我写一封辞职信</text>
+  <text x="64" y="232" class="body">· 请帮我写一封请假条</text>
+  <text x="64" y="254" class="body">· 请帮我写一封感谢信</text>
+  <text x="64" y="276" class="body">· 请帮我写一封道歉信</text>
+  <text x="64" y="296" class="mut">· ……</text>
+  <line x1="56" y1="308" x2="404" y2="308" stroke="#fde68a" stroke-width="1"/>
+  <text x="56" y="327" class="colhint" fill="#92400e" font-weight="600">忠实续写文本分布，却没满足你的请求。</text>
+
+  <!-- 右栏：Instruct / Chat -->
+  <rect x="460" y="140" width="380" height="200" rx="10" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.6"/>
+  <path d="M460,150 a10,10 0 0 1 10,-10 h360 a10,10 0 0 1 10,10 v16 h-380 z" fill="#166534"/>
+  <rect x="460" y="156" width="380" height="10" fill="#166534"/>
+  <text x="476" y="159" class="stage-label">Instruct / Chat · 听话助手</text>
+  <rect x="734" y="146" width="92" height="20" rx="10" fill="#166534"/>
+  <text x="780" y="160" class="tag">会回答</text>
+
+  <text x="476" y="186" class="colhint" fill="#166534" font-weight="600">被调教成会回答，真的写出一封辞职信：</text>
+  <text x="484" y="210" class="body">尊敬的领导：</text>
+  <text x="484" y="232" class="body">本人因个人发展原因，</text>
+  <text x="484" y="254" class="body">经慎重考虑，特此提出辞职……</text>
+  <text x="484" y="276" class="body">望批准，并办理交接手续。</text>
+  <text x="484" y="296" class="mut">此致　敬礼</text>
+  <line x1="476" y1="308" x2="824" y2="308" stroke="#bbf7d0" stroke-width="1"/>
+  <text x="476" y="327" class="colhint" fill="#166534" font-weight="600">理解并执行了你的指令。</text>
+
+  <!-- 底部分隔线 + note -->
+  <line x1="40" y1="358" x2="840" y2="358" stroke="#e2e8f0" stroke-width="1"/>
+  <text x="440" y="378" text-anchor="middle" class="note">Hugging Face 上：Llama-3-8B（base，预训练半成品） vs Llama-3-8B-Instruct（再加工成助手）——差别就是预训练后那道工序</text>
+</svg>
