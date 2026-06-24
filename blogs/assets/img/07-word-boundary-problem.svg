@@ -34,7 +34,7 @@
     <text x="150" y="150" class="seg" fill="#92400e">unhappiness</text>
     <text x="150" y="180" class="note" fill="#b45309" text-anchor="middle">空格切：只算 1 个词</text>
 
-    <text x="165" y="207" fill="#d97706" font-size="18" font-weight="700" text-anchor="middle">↓ 但想要</text>
+    <text x="165" y="207" fill="#b45309" font-size="18" font-weight="700" text-anchor="middle">↓ 但想要</text>
 
     <!-- desired 3 pieces -->
     <rect x="52" y="220" width="56" height="32" rx="6" fill="#fff" stroke="#d97706" stroke-width="1.5"/>
@@ -64,14 +64,14 @@
     <!-- way A -->
     <rect x="320" y="150" width="240" height="40" rx="6" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
     <text x="440" y="175" class="seg" fill="#1e40af" font-size="13">我｜昨天｜买｜了｜会员</text>
-    <text x="556" y="175" class="qmark" fill="#3b82f6" text-anchor="end">?</text>
+    <text x="556" y="175" class="qmark" fill="#2563eb" text-anchor="end">?</text>
 
-    <text x="440" y="208" fill="#3b82f6" font-size="14" font-weight="700" text-anchor="middle">还是</text>
+    <text x="440" y="208" fill="#2563eb" font-size="14" font-weight="700" text-anchor="middle">还是</text>
 
     <!-- way B -->
     <rect x="320" y="218" width="240" height="40" rx="6" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
     <text x="440" y="243" class="seg" fill="#1e40af" font-size="13">我昨｜天买｜了会｜员</text>
-    <text x="556" y="243" class="qmark" fill="#3b82f6" text-anchor="end">?</text>
+    <text x="556" y="243" class="qmark" fill="#2563eb" text-anchor="end">?</text>
 
     <text x="440" y="278" class="note" text-anchor="middle">两种切法都说不准</text>
 

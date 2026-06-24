@@ -33,7 +33,7 @@
   <path d="M146,133 L182,133" class="arrow"/>
   <rect x="192" y="116" width="86" height="34" rx="6" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
   <text x="235" y="138" class="tok">apple</text>
-  <text x="296" y="138" class="cnt" fill="#d97706">1 个 token</text>
+  <text x="296" y="138" class="cnt" fill="#b45309">1 个 token</text>
 
   <!-- 中文 苹果 -->
   <text x="50" y="178" class="lbl">中文（每字约 3 字节）</text>
@@ -44,7 +44,7 @@
   <text x="213" y="210" class="tok">苹</text>
   <rect x="240" y="188" width="42" height="34" rx="6" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
   <text x="261" y="210" class="tok">果</text>
-  <text x="296" y="210" class="cnt" fill="#3b82f6">2~4 个 token</text>
+  <text x="296" y="210" class="cnt" fill="#2563eb">2~4 个 token</text>
 
   <!-- 左卡批注 -->
   <rect x="50" y="240" width="360" height="26" rx="4" fill="#eff6ff" stroke="#3b82f6" stroke-width="1"/>

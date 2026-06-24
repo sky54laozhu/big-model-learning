@@ -9,7 +9,7 @@
     .note { fill: #6b7280; font-size: 12px; }
     .lbl { fill: #6b7280; font-size: 12px; }
     .tok { fill: #1a2233; font-weight: 600; font-size: 14px; text-anchor: middle; }
-    .win { fill: #16a34a; font-weight: 700; font-size: 13px; }
+    .win { fill: #166534; font-weight: 700; font-size: 13px; }
     .freq { fill: #1a2233; font-size: 13px; }
     .step { fill: #1a2233; font-size: 12.5px; }
     .arrow { fill: none; stroke: #6b7280; stroke-width: 1.6; marker-end: url(#mk); }
@@ -69,10 +69,10 @@
   <path class="arrow" d="M214,266 L250,266"/>
   <text x="240" y="232" class="lbl">合并最高频对</text>
   <rect x="252" y="240" width="160" height="32" rx="6" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.8"/>
-  <text x="332" y="261" class="tok" fill="#16a34a">新 + 闻 → 新闻</text>
+  <text x="332" y="261" class="tok" fill="#166534">新 + 闻 → 新闻</text>
   <text x="252" y="296" class="lbl">词表新增 token</text>
   <rect x="252" y="304" width="70" height="28" rx="5" fill="#dcfce7" stroke="#16a34a"/>
-  <text x="287" y="323" class="tok" fill="#16a34a">新闻</text>
+  <text x="287" y="323" class="tok" fill="#166534">新闻</text>
 
   <!-- ===== 右侧：循环流程 ===== -->
   <rect x="460" y="52" width="390" height="26" rx="6" fill="#1a2233"/>

@@ -78,9 +78,9 @@
   <path d="M356,270 L408,300" class="arrow-r"/>
 
   <!-- 高频字结局 -->
-  <text x="430" y="222" class="h2" fill="#16a34a">高频字（的 / 是 / 我 / 鱼）</text>
+  <text x="430" y="222" class="h2" fill="#166534">高频字（的 / 是 / 我 / 鱼）</text>
   <rect x="430" y="232" width="150" height="36" rx="6" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.5"/>
-  <text x="505" y="255" class="content" fill="#16a34a" font-weight="600">3 字节被 BPE 合并</text>
+  <text x="505" y="255" class="content" fill="#166534" font-weight="600">3 字节被 BPE 合并</text>
   <path d="M584,250 L624,250" class="arrow-g"/>
   <rect x="630" y="232" width="106" height="36" rx="6" fill="#16a34a"/>
   <text x="683" y="255" class="stage-label" font-size="13">1 个 token</text>
