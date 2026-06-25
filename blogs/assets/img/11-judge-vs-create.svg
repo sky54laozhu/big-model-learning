@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 320" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+  <title id="t">评判比创作容易</title>
+  <desc id="d">左侧创作很难：让人从零写出一首好诗，几乎不可能写出唯一标准答案。右侧评判容易：给人两首诗让他挑哪首更好，做得到。这条不对称是 RLHF 的支点。</desc>
+  <style>
+    .h { font-weight: 700; fill: #1a1a1a; text-anchor: middle; font-size: 18px; }
+    .stage-label { fill: #ffffff; font-weight: 600; font-size: 14px; text-anchor: middle; }
+    .body { fill: #2a2a2a; font-size: 12.5px; text-anchor: middle; }
+    .sub { fill: #6b7280; font-size: 12px; text-anchor: middle; }
+    .red-t { fill: #b91c1c; font-weight: 700; font-size: 13px; text-anchor: middle; }
+    .green-t { fill: #166534; font-weight: 700; font-size: 13px; text-anchor: middle; }
+  </style>
+
+  <text x="440" y="32" class="h">评判，比创作容易 —— RLHF 的支点</text>
+
+  <!-- 左：创作难 -->
+  <rect x="40" y="58" width="370" height="180" rx="8" fill="#fef2f2" stroke="#dc2626" stroke-width="1.5"/>
+  <rect x="40" y="58" width="370" height="30" rx="8" fill="#991b1b"/>
+  <rect x="40" y="74" width="370" height="14" fill="#991b1b"/>
+  <text x="225" y="78" class="stage-label">创作 · 难</text>
+  <text x="225" y="118" class="body">指令：写一首关于秋天的好诗</text>
+  <text x="225" y="146" class="sub">从零写出那个“唯一理想答案”</text>
+  <rect x="120" y="162" width="210" height="34" rx="6" fill="#ffffff" stroke="#fca5a5"/>
+  <text x="225" y="184" class="red-t">好答案有无数种 → 写不出</text>
+  <text x="225" y="222" class="red-t">✗ SFT 在这里转不动</text>
+
+  <!-- 右：评判易 -->
+  <rect x="470" y="58" width="370" height="180" rx="8" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.5"/>
+  <rect x="470" y="58" width="370" height="30" rx="8" fill="#166534"/>
+  <rect x="470" y="74" width="370" height="14" fill="#166534"/>
+  <text x="655" y="78" class="stage-label">评判 · 易</text>
+  <text x="655" y="118" class="body">给你两首诗：A 和 B，挑更好的</text>
+  <text x="655" y="146" class="sub">不用自己写，只需指一下</text>
+  <rect x="565" y="162" width="180" height="34" rx="6" fill="#ffffff" stroke="#86efac"/>
+  <text x="655" y="184" class="green-t">“A 比 B 好” → 做得到</text>
+  <text x="655" y="222" class="green-t">✓ RLHF 从这里起步</text>
+
+  <!-- 底部 -->
+  <rect x="40" y="262" width="800" height="44" rx="8" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="440" y="289" text-anchor="middle" fill="#1e40af" font-weight="700" font-size="13">写不出好诗的人，也认得出哪首更好 —— 让人去做他擅长的“比较”</text>
+</svg>

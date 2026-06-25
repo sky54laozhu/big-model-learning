@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 360" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+  <title id="t">RLHF 强化学习循环</title>
+  <desc id="d">左侧奖励模型由人类偏好数据训练而来。右侧是一个循环：大模型对指令生成回答，奖励模型给回答打分，分高则强化分低则抑制，照着调大模型参数，回到生成。整个循环自动跑几百万次，人不在场。</desc>
+  <style>
+    .h { font-weight: 700; fill: #1a1a1a; text-anchor: middle; font-size: 18px; }
+    .box-t { font-weight: 700; font-size: 13.5px; text-anchor: middle; }
+    .sub { fill: #6b7280; font-size: 11.5px; text-anchor: middle; }
+    .flow { fill: none; stroke: #5a5a5a; stroke-width: 2.2; marker-end: url(#mk); }
+    .lbl { fill: #1a2233; font-size: 12px; text-anchor: middle; }
+  </style>
+  <defs>
+    <marker id="mk" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7.5" markerHeight="7.5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#5a5a5a"/>
+    </marker>
+  </defs>
+
+  <text x="440" y="32" class="h">RLHF：奖励模型当裁判，循环自己转</text>
+
+  <!-- 偏好数据 -> 奖励模型 (左侧准备) -->
+  <rect x="34" y="150" width="120" height="56" rx="8" fill="#fffbeb" stroke="#d97706" stroke-width="1.5"/>
+  <text x="94" y="174" class="box-t" fill="#92400e">人类偏好数据</text>
+  <text x="94" y="194" class="sub">几万条 A&gt;B</text>
+  <line x1="156" y1="178" x2="196" y2="178" class="flow"/>
+  <text x="176" y="168" class="sub">训练</text>
+
+  <!-- 奖励模型 -->
+  <rect x="198" y="142" width="132" height="72" rx="8" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+  <text x="264" y="170" class="box-t" fill="#166534">奖励模型 RM</text>
+  <text x="264" y="190" class="sub">学会人的品味</text>
+  <text x="264" y="206" class="sub">给回答打分</text>
+
+  <!-- 循环区 右侧 -->
+  <!-- 大模型 顶部 -->
+  <rect x="500" y="70" width="200" height="64" rx="8" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+  <text x="600" y="98" class="box-t" fill="#1e40af">① 大模型生成回答</text>
+  <text x="600" y="118" class="sub">对指令产出一个回答</text>
+
+  <!-- 打分 右 -->
+  <rect x="720" y="160" width="128" height="64" rx="8" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.5"/>
+  <text x="784" y="188" class="box-t" fill="#166534">② RM 打分</text>
+  <text x="784" y="208" class="sub">替代了人</text>
+
+  <!-- 强化 底部 -->
+  <rect x="500" y="250" width="200" height="64" rx="8" fill="#fff7ed" stroke="#d97706" stroke-width="2"/>
+  <text x="600" y="274" class="box-t" fill="#92400e">③ 分高强化 / 分低抑制</text>
+  <text x="600" y="294" class="sub">④ 照着调大模型参数</text>
+
+  <!-- 循环箭头 -->
+  <path d="M700 102 Q 784 110 784 158" class="flow"/>
+  <path d="M784 224 Q 784 282 702 282" class="flow"/>
+  <path d="M500 282 Q 430 282 430 200 Q 430 102 498 102" class="flow"/>
+  <text x="416" y="196" class="lbl">回到①</text>
+
+  <!-- RM 给打分供给箭头 -->
+  <path d="M330 178 Q 400 178 400 250 Q 400 300 470 300" fill="none" stroke="#16a34a" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#mk)"/>
+  <text x="372" y="262" class="sub" fill="#166534">RM 上岗</text>
+
+  <!-- 底部 -->
+  <rect x="34" y="330" width="814" height="24" rx="6" fill="#eff6ff" stroke="#2563eb" stroke-width="1.2"/>
+  <text x="441" y="347" text-anchor="middle" fill="#1e40af" font-weight="700" font-size="12.5">循环自动跑几百万次，人完全不在场 —— 大模型越来越答得“合人心意”</text>
+</svg>

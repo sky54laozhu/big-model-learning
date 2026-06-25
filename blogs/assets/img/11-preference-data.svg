@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 320" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+  <title id="t">偏好数据的采集流程</title>
+  <desc id="d">一个指令喂给模型，模型自己生成回答A和回答B两个候选；人只做一件事，标出哪个更好哪个更差；产出一条偏好数据，形状是指令加较好回答加较差回答。</desc>
+  <style>
+    .h { font-weight: 700; fill: #1a1a1a; text-anchor: middle; font-size: 18px; }
+    .box-t { font-weight: 600; font-size: 13px; text-anchor: middle; }
+    .sub { fill: #6b7280; font-size: 11.5px; text-anchor: middle; }
+    .step { fill: #ffffff; font-weight: 700; font-size: 12px; text-anchor: middle; }
+    .flow { fill: none; stroke: #5a5a5a; stroke-width: 2; marker-end: url(#mk); }
+  </style>
+  <defs>
+    <marker id="mk" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#5a5a5a"/>
+    </marker>
+  </defs>
+
+  <text x="440" y="32" class="h">偏好数据：模型生成，人只“比较”</text>
+
+  <!-- ① 指令 -->
+  <rect x="34" y="120" width="120" height="70" rx="8" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/>
+  <circle cx="50" cy="112" r="11" fill="#1e40af"/><text x="50" y="116" class="step">1</text>
+  <text x="94" y="150" class="box-t" fill="#1e40af">一个指令</text>
+  <text x="94" y="170" class="sub">“写秋天的诗”</text>
+
+  <!-- 箭头到模型 -->
+  <line x1="156" y1="155" x2="196" y2="155" class="flow"/>
+
+  <!-- ② 模型生成两个回答 -->
+  <rect x="198" y="86" width="150" height="138" rx="8" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.5"/>
+  <circle cx="214" cy="80" r="11" fill="#475569"/><text x="214" y="84" class="step">2</text>
+  <text x="273" y="106" class="box-t" fill="#334155">模型自己生成</text>
+  <rect x="216" y="120" width="114" height="36" rx="6" fill="#ffffff" stroke="#cbd5e1"/>
+  <text x="273" y="142" class="box-t" fill="#2a2a2a">回答 A</text>
+  <rect x="216" y="166" width="114" height="36" rx="6" fill="#ffffff" stroke="#cbd5e1"/>
+  <text x="273" y="188" class="box-t" fill="#2a2a2a">回答 B</text>
+
+  <!-- 箭头到人 -->
+  <line x1="350" y1="155" x2="390" y2="155" class="flow"/>
+
+  <!-- ③ 人标好坏 -->
+  <rect x="392" y="106" width="150" height="98" rx="8" fill="#fffbeb" stroke="#d97706" stroke-width="1.5"/>
+  <circle cx="408" cy="100" r="11" fill="#b45309"/><text x="408" y="104" class="step">3</text>
+  <text x="467" y="130" class="box-t" fill="#92400e">人只标好坏</text>
+  <text x="467" y="156" class="sub">动一根手指</text>
+  <text x="467" y="180" class="box-t" fill="#92400e">A 比 B 好</text>
+  <text x="467" y="198" class="sub">一个字都不用写</text>
+
+  <!-- 箭头到产物 -->
+  <line x1="544" y1="155" x2="584" y2="155" class="flow"/>
+
+  <!-- 产物 偏好数据 -->
+  <rect x="586" y="110" width="258" height="90" rx="8" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.5"/>
+  <text x="715" y="134" text-anchor="middle" fill="#166534" font-weight="700" font-size="13">一条偏好数据</text>
+  <text x="715" y="162" text-anchor="middle" fill="#2a2a2a" font-size="12.5">(指令, 较好回答, 较差回答)</text>
+  <text x="715" y="186" text-anchor="middle" fill="#2a2a2a" font-size="12.5">(指令,  A 胜,    B 负 )</text>
+
+  <!-- 底部 -->
+  <rect x="34" y="256" width="810" height="44" rx="8" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="439" y="283" text-anchor="middle" fill="#1e40af" font-weight="700" font-size="13">攒几万条这样的“A 比 B 好” = 一座“人类品味”的矿</text>
+</svg>
