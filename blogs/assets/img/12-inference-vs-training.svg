@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 330" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+  <title id="t">推理显存 vs 训练显存</title>
+  <desc id="d">推理时显存主要就是权重本身，70B FP16 约 140GB。训练时每个参数还要额外存梯度和两份优化器状态，再加激活值，约 16 字节每参数，70B 全量训练超过 1TB，差近一个数量级。</desc>
+  <style>
+    .h { font-weight: 700; fill: #1a1a1a; text-anchor: middle; font-size: 18px; }
+    .stage-label { fill: #ffffff; font-weight: 600; font-size: 14px; text-anchor: middle; }
+    .item { fill: #2a2a2a; font-size: 12.5px; }
+    .sub { fill: #6b7280; font-size: 11.5px; }
+    .total { font-weight: 700; font-size: 15px; text-anchor: middle; }
+  </style>
+
+  <text x="440" y="32" class="h">同一个 70B：推理 140GB，训练 1TB+</text>
+
+  <!-- 推理 -->
+  <rect x="40" y="58" width="370" height="234" rx="8" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.5"/>
+  <rect x="40" y="58" width="370" height="30" rx="8" fill="#166534"/>
+  <rect x="40" y="74" width="370" height="14" fill="#166534"/>
+  <text x="225" y="78" class="stage-label">推理 · 跑起来回答</text>
+
+  <rect x="70" y="108" width="310" height="40" rx="6" fill="#dcfce7" stroke="#16a34a"/>
+  <text x="86" y="132" class="item" font-weight="700">① 参数本身（权重）</text>
+  <text x="364" y="132" text-anchor="end" class="item" font-weight="700">2 字节</text>
+
+  <text x="225" y="186" class="sub" text-anchor="middle">＋ 一点运行时零碎开销</text>
+
+  <line x1="70" y1="214" x2="380" y2="214" stroke="#bbf7d0" stroke-width="1"/>
+  <text x="225" y="244" class="total" fill="#166534">≈ 2 字节 / 参数</text>
+  <text x="225" y="274" class="total" fill="#166534" font-size="17">70B ≈ 140GB</text>
+
+  <!-- 训练 -->
+  <rect x="470" y="58" width="370" height="234" rx="8" fill="#fef2f2" stroke="#dc2626" stroke-width="1.5"/>
+  <rect x="470" y="58" width="370" height="30" rx="8" fill="#991b1b"/>
+  <rect x="470" y="74" width="370" height="14" fill="#991b1b"/>
+  <text x="655" y="78" class="stage-label">训练 · 每参数拖一条尾巴</text>
+
+  <rect x="500" y="100" width="310" height="26" rx="5" fill="#fee2e2" stroke="#dc2626"/>
+  <text x="514" y="118" class="item">① 参数本身</text>
+  <text x="794" y="118" text-anchor="end" class="item">1 份</text>
+  <rect x="500" y="130" width="310" height="26" rx="5" fill="#fee2e2" stroke="#dc2626"/>
+  <text x="514" y="148" class="item">② 梯度（反向传播要存）</text>
+  <text x="794" y="148" text-anchor="end" class="item">1 份</text>
+  <rect x="500" y="160" width="310" height="26" rx="5" fill="#fee2e2" stroke="#dc2626"/>
+  <text x="514" y="178" class="item">③ 优化器状态（Adam）</text>
+  <text x="794" y="178" text-anchor="end" class="item">2 份</text>
+  <text x="655" y="204" class="sub" text-anchor="middle">＋ 激活值（每层输出要暂存）</text>
+
+  <line x1="500" y1="214" x2="810" y2="214" stroke="#fecaca" stroke-width="1"/>
+  <text x="655" y="244" class="total" fill="#991b1b">≈ 16 字节 / 参数</text>
+  <text x="655" y="274" class="total" fill="#991b1b" font-size="17">70B ≈ 1120GB（&gt;1TB）</text>
+
+  <!-- 底部 -->
+  <rect x="40" y="300" width="800" height="24" rx="6" fill="#fef3c7" stroke="#d97706" stroke-width="1.2"/>
+  <text x="440" y="317" text-anchor="middle" fill="#92400e" font-weight="700" font-size="12.5">暴涨的根源：训练每个参数都拖着“梯度 + 优化器状态”尾巴 —— LoRA 砍的正是它</text>
+</svg>

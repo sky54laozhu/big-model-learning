@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 280" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+  <title id="t">模型大小的换算公式</title>
+  <desc id="d">模型大小等于参数个数乘以每个参数占的字节数。70B 参数乘以 2 字节等于 140GB。这是 70B 等于 140GB 的全部来历。</desc>
+  <style>
+    .h { font-weight: 700; fill: #1a1a1a; text-anchor: middle; font-size: 18px; }
+    .big { font-weight: 700; text-anchor: middle; }
+    .lbl { fill: #6b7280; font-size: 12.5px; text-anchor: middle; }
+    .op { fill: #1a1a1a; font-size: 28px; font-weight: 700; text-anchor: middle; }
+  </style>
+
+  <text x="440" y="36" class="h">模型大小 = 参数个数 × 每个参数的字节数</text>
+
+  <!-- 参数个数 -->
+  <rect x="70" y="78" width="200" height="96" rx="10" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+  <text x="170" y="120" class="big" fill="#1e40af" font-size="30">70B</text>
+  <text x="170" y="148" class="lbl">参数个数</text>
+  <text x="170" y="166" class="lbl">（700 亿个）</text>
+
+  <text x="305" y="136" class="op">×</text>
+
+  <!-- 每参数字节 -->
+  <rect x="340" y="78" width="200" height="96" rx="10" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+  <text x="440" y="120" class="big" fill="#166534" font-size="30">2 字节</text>
+  <text x="440" y="148" class="lbl">每个参数（FP16）</text>
+  <text x="440" y="166" class="lbl">= 16 位半精度</text>
+
+  <text x="575" y="136" class="op">=</text>
+
+  <!-- 总大小 -->
+  <rect x="610" y="78" width="200" height="96" rx="10" fill="#fff7ed" stroke="#d97706" stroke-width="2"/>
+  <text x="710" y="120" class="big" fill="#92400e" font-size="30">140GB</text>
+  <text x="710" y="148" class="lbl">模型文件大小</text>
+  <text x="710" y="166" class="lbl">/ 装权重的底量</text>
+
+  <!-- 底部 -->
+  <rect x="70" y="210" width="740" height="48" rx="8" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="440" y="231" text-anchor="middle" fill="#1e40af" font-weight="700" font-size="13">整篇就在抠右边两个因子：参数个数（架构定）× 每参数字节（精度定）</text>
+  <text x="440" y="250" text-anchor="middle" fill="#1e40af" font-size="12.5">改不了参数个数，就改“每个参数几字节” → 这就是精度与量化</text>
+</svg>

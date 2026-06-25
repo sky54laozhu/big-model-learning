@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 300" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+  <title id="t">量化：整数乘以缩放系数</title>
+  <desc id="d">量化把训练好的浮点权重近似编码成整数加一个浮点缩放系数 scale。真实权重约等于整数乘以 scale，例如 0.7 约等于 7 乘 0.1。整数只是紧凑的编码，用时乘回 scale 还原成近似小数。训练用浮点，部署才量化。</desc>
+  <style>
+    .h { font-weight: 700; fill: #1a1a1a; text-anchor: middle; font-size: 18px; }
+    .lbl { fill: #6b7280; font-size: 12px; text-anchor: middle; }
+    .val { font-weight: 700; text-anchor: middle; }
+    .op { fill: #1a1a1a; font-size: 22px; font-weight: 700; text-anchor: middle; }
+  </style>
+
+  <text x="440" y="32" class="h">量化：浮点权重 ≈ 整数 × 缩放系数</text>
+
+  <!-- 原始浮点 -->
+  <rect x="50" y="70" width="180" height="80" rx="8" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+  <text x="140" y="104" class="val" fill="#1e40af" font-size="20">0.7</text>
+  <text x="140" y="128" class="lbl">训练好的浮点权重</text>
+  <text x="140" y="144" class="lbl">2~4 字节</text>
+
+  <text x="258" y="116" class="op">≈</text>
+
+  <!-- 整数 -->
+  <rect x="290" y="70" width="150" height="80" rx="8" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+  <text x="365" y="104" class="val" fill="#166534" font-size="20">7</text>
+  <text x="365" y="128" class="lbl">整数（紧凑存储）</text>
+  <text x="365" y="144" class="lbl">0.5~1 字节</text>
+
+  <text x="462" y="116" class="op">×</text>
+
+  <!-- scale -->
+  <rect x="494" y="70" width="160" height="80" rx="8" fill="#fff7ed" stroke="#d97706" stroke-width="2"/>
+  <text x="574" y="104" class="val" fill="#92400e" font-size="20">0.1</text>
+  <text x="574" y="128" class="lbl">缩放系数 scale</text>
+  <text x="574" y="144" class="lbl">浮点，一组共享一个</text>
+
+  <text x="676" y="116" class="op">=</text>
+
+  <!-- 还原 -->
+  <rect x="708" y="70" width="150" height="80" rx="8" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
+  <text x="783" y="104" class="val" fill="#334155" font-size="20">≈ 0.7</text>
+  <text x="783" y="128" class="lbl">用时还原</text>
+  <text x="783" y="144" class="lbl">近似小数（略糙）</text>
+
+  <!-- 时机条 -->
+  <rect x="50" y="178" width="390" height="96" rx="8" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.5"/>
+  <text x="245" y="202" text-anchor="middle" fill="#166534" font-weight="700" font-size="13">训练阶段 · 必须浮点</text>
+  <text x="245" y="228" class="lbl">梯度更新要“挪一点点”</text>
+  <text x="245" y="248" class="lbl">整数最小只能跳 1，太粗</text>
+  <text x="245" y="266" text-anchor="middle" fill="#166534" font-size="12.5">先用浮点把模型练好</text>
+
+  <rect x="468" y="178" width="390" height="96" rx="8" fill="#fff7ed" stroke="#d97706" stroke-width="1.5"/>
+  <text x="663" y="202" text-anchor="middle" fill="#92400e" font-weight="700" font-size="13">部署阶段 · 才量化</text>
+  <text x="663" y="228" class="lbl">把练好的浮点权重压成整数+scale</text>
+  <text x="663" y="248" class="lbl">省空间，代价是精度变粗一点</text>
+  <text x="663" y="266" text-anchor="middle" fill="#92400e" font-size="12.5">两件事不同时间，不冲突</text>
+</svg>
