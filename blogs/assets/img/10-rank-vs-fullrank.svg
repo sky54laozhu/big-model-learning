@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 360" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+  <title id="t">秩 1 能压 vs 满秩压不动</title>
+  <desc id="d">左侧乘法表所有行都是第一行的倍数，独立方向只有一个，秩等于一，可压缩；右侧单位矩阵每一行各指一个新方向，谁也推不出谁，秩等于三，满秩压不动。强调有规律不等于低秩。</desc>
+  <style>
+    .h { font-weight: 700; fill: #1a1a1a; text-anchor: middle; font-size: 18px; }
+    .cell { fill: #2a2a2a; font-size: 13px; text-anchor: middle; }
+    .cap { fill: #6b7280; font-size: 12px; text-anchor: middle; }
+    .stage-label { fill: #ffffff; font-weight: 600; font-size: 14px; text-anchor: middle; }
+    .green-t { fill: #166534; font-weight: 600; font-size: 13px; text-anchor: middle; }
+    .red-t { fill: #b91c1c; font-weight: 600; font-size: 13px; text-anchor: middle; }
+  </style>
+
+  <text x="440" y="32" class="h">秩 = 真正独立的方向有几个</text>
+
+  <!-- 左栏 秩1 -->
+  <rect x="40" y="58" width="370" height="232" rx="8" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.5"/>
+  <rect x="40" y="58" width="370" height="30" rx="8" fill="#166534"/>
+  <rect x="40" y="74" width="370" height="14" fill="#166534"/>
+  <text x="225" y="78" class="stage-label">乘法表 · 秩 = 1 · 能压</text>
+
+  <g transform="translate(95,118)">
+    <text x="0" y="0" class="cell" text-anchor="start">行1: (1, 2, 3)</text>
+    <text x="0" y="30" class="cell" text-anchor="start">行2: (2, 4, 6)　= 2 × 行1</text>
+    <text x="0" y="60" class="cell" text-anchor="start">行3: (3, 6, 9)　= 3 × 行1</text>
+  </g>
+  <line x1="70" y1="200" x2="380" y2="200" stroke="#bbf7d0" stroke-width="1"/>
+  <text x="225" y="224" class="green-t">每行都是行1的倍数</text>
+  <text x="225" y="248" class="cap">→ 全挤在同一个方向</text>
+  <text x="225" y="274" class="green-t">独立方向 1 个 → 秩 1</text>
+
+  <!-- 右栏 满秩 -->
+  <rect x="470" y="58" width="370" height="232" rx="8" fill="#fef2f2" stroke="#dc2626" stroke-width="1.5"/>
+  <rect x="470" y="58" width="370" height="30" rx="8" fill="#991b1b"/>
+  <rect x="470" y="74" width="370" height="14" fill="#991b1b"/>
+  <text x="655" y="78" class="stage-label">单位矩阵 · 秩 = 3 · 压不动</text>
+
+  <g transform="translate(525,118)">
+    <text x="0" y="0" class="cell" text-anchor="start">行1: (1, 0, 0)</text>
+    <text x="0" y="30" class="cell" text-anchor="start">行2: (0, 1, 0)　≠ k × 行1</text>
+    <text x="0" y="60" class="cell" text-anchor="start">行3: (0, 0, 1)　≠ k × 行1</text>
+  </g>
+  <line x1="500" y1="200" x2="810" y2="200" stroke="#fecaca" stroke-width="1"/>
+  <text x="655" y="224" class="red-t">谁也推不出谁</text>
+  <text x="655" y="248" class="cap">→ 各指一个新方向</text>
+  <text x="655" y="274" class="red-t">独立方向 3 个 → 满秩</text>
+
+  <!-- 底部强调 -->
+  <rect x="40" y="306" width="800" height="42" rx="8" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="440" y="332" text-anchor="middle" fill="#1e40af" font-weight="700" font-size="13">坑：两张表都“有规律”，但有规律 ≠ 低秩 —— 秩只看“行能否互相缩放推出”</text>
+</svg>

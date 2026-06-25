@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 380" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+  <title id="t">LoRA 架构：冻结主干，旁挂瘦矩阵</title>
+  <desc id="d">输入 x 同时走两条路：主干是冻结不训练的预训练权重 W，旁路是只训练的两块瘦矩阵 A 和 B。两条路的结果相加得到输出。前向公式是 W·x 加 B·A·x。训练时只更新 A、B，存储时只存这 0.4%。</desc>
+  <style>
+    .h { font-weight: 700; fill: #1a1a1a; text-anchor: middle; font-size: 18px; }
+    .box-t { font-weight: 700; font-size: 14px; text-anchor: middle; }
+    .sub { fill: #6b7280; font-size: 11.5px; text-anchor: middle; }
+    .io { fill: #1a1a1a; font-weight: 700; font-size: 16px; text-anchor: middle; }
+    .flow { fill: none; stroke: #5a5a5a; stroke-width: 2; marker-end: url(#mk); }
+  </style>
+  <defs>
+    <marker id="mk" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#5a5a5a"/>
+    </marker>
+  </defs>
+
+  <text x="440" y="32" class="h">LoRA：主干冻结，只训旁路那对瘦矩阵</text>
+
+  <!-- 输入 x -->
+  <circle cx="80" cy="190" r="26" fill="#e2e8f0" stroke="#64748b" stroke-width="1.5"/>
+  <text x="80" y="196" class="io">x</text>
+
+  <!-- 分叉点 -->
+  <line x1="106" y1="190" x2="150" y2="190" class="flow"/>
+  <circle cx="150" cy="190" r="4" fill="#5a5a5a"/>
+
+  <!-- 上路：冻结 W -->
+  <path d="M150,190 L150,118 L246,118" class="flow"/>
+  <rect x="248" y="92" width="200" height="54" rx="8" fill="#eef2f7" stroke="#94a3b8" stroke-width="2" stroke-dasharray="6 4"/>
+  <text x="348" y="114" class="box-t" fill="#475569">主干 W　❄ 冻结</text>
+  <text x="348" y="134" class="sub">4096×4096 · 1677 万 · 不训练</text>
+
+  <!-- 下路：A → B -->
+  <path d="M150,190 L150,262 L196,262" class="flow"/>
+  <rect x="198" y="236" width="104" height="54" rx="8" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="250" y="258" class="box-t" fill="#1e40af">A</text>
+  <text x="250" y="277" class="sub">4096×8</text>
+  <line x1="304" y1="263" x2="344" y2="263" class="flow"/>
+  <rect x="346" y="236" width="104" height="54" rx="8" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+  <text x="398" y="258" class="box-t" fill="#166534">B</text>
+  <text x="398" y="277" class="sub">8×4096</text>
+  <text x="324" y="318" text-anchor="middle" fill="#166534" font-weight="700" font-size="12.5">只训这两块 · 6.5 万 · 占 0.4%</text>
+
+  <!-- 汇合到加号 -->
+  <path d="M448,118 L560,118 L560,176" class="flow"/>
+  <path d="M450,263 L560,263 L560,204" class="flow"/>
+  <circle cx="560" cy="190" r="22" fill="#fff7ed" stroke="#d97706" stroke-width="2"/>
+  <text x="560" y="198" class="io" fill="#92400e">+</text>
+
+  <!-- 输出 -->
+  <line x1="582" y1="190" x2="636" y2="190" class="flow"/>
+  <circle cx="666" cy="190" r="30" fill="#e2e8f0" stroke="#64748b" stroke-width="1.5"/>
+  <text x="666" y="187" class="io" font-size="13">输出</text>
+  <text x="666" y="204" class="sub">y</text>
+
+  <!-- 前向公式 -->
+  <rect x="720" y="150" width="130" height="80" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+  <text x="785" y="174" text-anchor="middle" fill="#1a1a1a" font-weight="700" font-size="12.5">前向公式</text>
+  <text x="785" y="200" text-anchor="middle" fill="#475569" font-weight="700" font-size="14">W·x</text>
+  <text x="785" y="220" text-anchor="middle" fill="#166534" font-weight="700" font-size="14">+ B·A·x</text>
+
+  <!-- 底部强调 -->
+  <rect x="40" y="338" width="800" height="32" rx="8" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
+  <text x="440" y="359" text-anchor="middle" fill="#92400e" font-weight="700" font-size="12.5">换任务只换 A/B 这个几十 MB 的补丁，主干 W 永远复用 —— 训练省显存，部署省存储</text>
+</svg>

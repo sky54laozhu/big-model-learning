@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 380" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+  <title id="t">乘法表的低秩压缩</title>
+  <desc id="d">左侧 100×100 的乘法表共一万个格子，因为每一行都是第一行的整数倍，所以只需存第一行这个方向加上每行的倍数共两百个数字，右乘还原整张表。</desc>
+  <style>
+    .h { font-weight: 700; fill: #1a1a1a; text-anchor: middle; font-size: 18px; }
+    .cell { fill: #2a2a2a; font-size: 12px; text-anchor: middle; }
+    .cap { fill: #6b7280; font-size: 12px; text-anchor: middle; }
+    .blue-t { fill: #1e40af; font-weight: 600; font-size: 12.5px; }
+    .green-t { fill: #166534; font-weight: 600; font-size: 12.5px; }
+    .stage-label { fill: #ffffff; font-weight: 600; font-size: 13px; text-anchor: middle; }
+  </style>
+  <defs>
+    <marker id="mk" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#5a5a5a"/>
+    </marker>
+  </defs>
+
+  <text x="440" y="32" class="h">一万个格子，其实只要两百个数字</text>
+
+  <!-- 左：完整乘法表 -->
+  <rect x="40" y="58" width="300" height="220" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+  <rect x="40" y="58" width="300" height="28" rx="8" fill="#475569"/>
+  <rect x="40" y="72" width="300" height="14" fill="#475569"/>
+  <text x="190" y="77" class="stage-label">100×100 乘法表 · 10000 格</text>
+
+  <!-- mini grid -->
+  <g transform="translate(70,104)">
+    <text x="22" y="0" class="cell">1</text><text x="72" y="0" class="cell">2</text><text x="122" y="0" class="cell">3</text><text x="180" y="0" class="cell">…</text><text x="232" y="0" class="cell">100</text>
+    <text x="22" y="30" class="cell">2</text><text x="72" y="30" class="cell">4</text><text x="122" y="30" class="cell">6</text><text x="180" y="30" class="cell">…</text><text x="232" y="30" class="cell">200</text>
+    <text x="22" y="60" class="cell">3</text><text x="72" y="60" class="cell">6</text><text x="122" y="60" class="cell">9</text><text x="180" y="60" class="cell">…</text><text x="232" y="60" class="cell">300</text>
+    <text x="22" y="90" class="cell">⋮</text><text x="72" y="90" class="cell">⋮</text><text x="122" y="90" class="cell">⋮</text><text x="180" y="90" class="cell">⋱</text><text x="232" y="90" class="cell">⋮</text>
+    <text x="22" y="120" class="cell">100</text><text x="72" y="120" class="cell">200</text><text x="122" y="120" class="cell">300</text><text x="180" y="120" class="cell">…</text><text x="232" y="120" class="cell">10000</text>
+  </g>
+  <text x="190" y="262" class="cap">第 i 行第 j 列 = i × j</text>
+
+  <!-- 箭头 -->
+  <line x1="350" y1="168" x2="398" y2="168" stroke="#5a5a5a" stroke-width="2" marker-end="url(#mk)"/>
+  <text x="374" y="158" class="cap">拆开</text>
+
+  <!-- 右：方向 + 倍数 -->
+  <rect x="410" y="58" width="430" height="220" rx="8" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.5"/>
+  <rect x="410" y="58" width="430" height="28" rx="8" fill="#166534"/>
+  <rect x="410" y="72" width="430" height="14" fill="#166534"/>
+  <text x="625" y="77" class="stage-label">只存两样东西 · 共 200 数</text>
+
+  <text x="432" y="116" class="green-t">① 方向（第 1 行）</text>
+  <rect x="432" y="126" width="386" height="26" rx="4" fill="#ffffff" stroke="#86efac"/>
+  <text x="625" y="143" class="cell">( 1, 2, 3, … , 100 )　100 个数</text>
+
+  <text x="432" y="180" class="green-t">② 每行的倍数</text>
+  <rect x="432" y="190" width="386" height="26" rx="4" fill="#ffffff" stroke="#86efac"/>
+  <text x="625" y="207" class="cell">( 1, 2, 3, … , 100 )　100 个数</text>
+
+  <text x="432" y="246" class="blue-t">倍数 × 方向　→　1 万个格子全部还原</text>
+
+  <!-- 底部强调 -->
+  <rect x="40" y="298" width="800" height="50" rx="8" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
+  <text x="440" y="320" text-anchor="middle" fill="#92400e" font-weight="700" font-size="13">关键：每一行都是第 1 行的倍数 —— 全挤在同一个方向上</text>
+  <text x="440" y="339" text-anchor="middle" fill="#92400e" font-size="12.5">看着庞大，骨子里很“扁”，能用极少的信息描述清楚。</text>
+</svg>
