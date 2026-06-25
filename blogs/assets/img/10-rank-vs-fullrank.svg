@@ -5,7 +5,7 @@
   <desc id="d">左侧乘法表所有行都是第一行的倍数，独立方向只有一个，秩等于一，可压缩；右侧单位矩阵每一行各指一个新方向，谁也推不出谁，秩等于三，满秩压不动。强调有规律不等于低秩。</desc>
   <style>
     .h { font-weight: 700; fill: #1a1a1a; text-anchor: middle; font-size: 18px; }
-    .cell { fill: #2a2a2a; font-size: 13px; text-anchor: middle; }
+    .cell { fill: #2a2a2a; font-size: 13px; text-anchor: start; }
     .cap { fill: #6b7280; font-size: 12px; text-anchor: middle; }
     .stage-label { fill: #ffffff; font-weight: 600; font-size: 14px; text-anchor: middle; }
     .green-t { fill: #166534; font-weight: 600; font-size: 13px; text-anchor: middle; }
