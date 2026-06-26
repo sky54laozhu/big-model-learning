@@ -53,7 +53,7 @@
 
 > **KV Cache（KV 缓存）**：把已经算过的每个 token 的 **K 和 V 存起来**。生成新 token 时，**只算新 token 这一个的 K/V**，追加进缓存；前面所有 token 的 K/V 直接从缓存取，绝不重算。
 
-![朴素重算 vs KV Cache](assets/img/13-recompute-vs-cache.svg)
+![朴素重算 vs KV Cache（动图）](assets/img/13-recompute-vs-cache.gif)
 
 机制简单，效果是质变。看每一步的工作量：
 
