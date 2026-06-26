@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 320" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+  <title id="t">KV Cache 吃显存</title>
+  <desc id="d">GPU 显存里权重占固定一块，剩下的空间被 KV Cache 占用。KV Cache 大小正比于并发用户数乘以序列长度，并发越多、对话越长，缓存越大，能涨到比权重还大，抢光显存后新用户挤不进、对话被掐断。上下文窗口是 KV Cache 的天花板。</desc>
+  <style>
+    .h { font-weight: 700; fill: #1a1a1a; text-anchor: middle; font-size: 18px; }
+    .lbl { fill: #2a2a2a; font-size: 12.5px; text-anchor: middle; }
+    .sub { fill: #6b7280; font-size: 11.5px; text-anchor: middle; }
+    .formula { fill: #1a1a1a; font-size: 13px; text-anchor: middle; }
+  </style>
+
+  <text x="440" y="30" class="h">KV Cache 在偷偷吃显存（并发 × 长度）</text>
+
+  <!-- 显存条 GPU VRAM -->
+  <text x="90" y="78" class="lbl" font-weight="700" text-anchor="start">GPU 显存（就这么大）</text>
+  <rect x="90" y="86" width="700" height="56" rx="8" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.5"/>
+  <!-- 权重 -->
+  <rect x="90" y="86" width="220" height="56" rx="8" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+  <rect x="300" y="86" width="10" height="56" fill="#dbeafe"/>
+  <text x="200" y="110" class="lbl" fill="#1e40af" font-weight="700">模型权重</text>
+  <text x="200" y="128" class="sub" fill="#1e40af">固定，如 140GB</text>
+  <!-- KV cache 占用 -->
+  <rect x="310" y="86" width="360" height="56" fill="#fee2e2" stroke="#dc2626" stroke-width="1.5"/>
+  <text x="490" y="110" class="lbl" fill="#991b1b" font-weight="700">KV Cache（会涨）</text>
+  <text x="490" y="128" class="sub" fill="#991b1b">并发 × 序列长度，各用户各占一份</text>
+  <!-- 余量 -->
+  <rect x="670" y="86" width="120" height="56" rx="8" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.2" stroke-dasharray="5 4"/>
+  <text x="730" y="118" class="sub">余量</text>
+
+  <!-- 公式 -->
+  <rect x="90" y="166" width="700" height="40" rx="8" fill="#fffbeb" stroke="#d97706" stroke-width="1.5"/>
+  <text x="440" y="191" class="formula" fill="#92400e">KV缓存 ≈ 2 × 层数 × 每层维度 × <tspan font-weight="700">序列长度</tspan> × <tspan font-weight="700">并发数</tspan> × 字节</text>
+
+  <!-- 两个增长因子 -->
+  <rect x="90" y="222" width="340" height="56" rx="8" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.2"/>
+  <text x="260" y="245" class="lbl" fill="#166534" font-weight="700">一个用户、聊到 4000 token</text>
+  <text x="260" y="266" class="sub">单会话就吃掉好几 GB</text>
+
+  <rect x="450" y="222" width="340" height="56" rx="8" fill="#fef2f2" stroke="#dc2626" stroke-width="1.2"/>
+  <text x="620" y="245" class="lbl" fill="#991b1b" font-weight="700">100 用户同时、各自长对话</text>
+  <text x="620" y="266" class="sub">KV Cache 涨到几百 GB，比权重还大</text>
+
+  <!-- 底部 -->
+  <rect x="90" y="290" width="700" height="22" rx="6" fill="#eff6ff" stroke="#2563eb" stroke-width="1.2"/>
+  <text x="440" y="306" text-anchor="middle" fill="#1e40af" font-weight="700" font-size="12.5">抢光显存 → 新用户挤不进 / 对话被掐断；上下文窗口就是 KV Cache 的天花板</text>
+</svg>
