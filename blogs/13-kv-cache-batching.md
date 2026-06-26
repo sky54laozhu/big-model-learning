@@ -149,7 +149,7 @@ KV缓存 ≈ 2(K和V) × 层数 × 每层维度 × 序列长度 × 并发数 × 
 
 把这一篇和前面几篇串起来，一个请求从到达到结束，正好是一条流水线：
 
-![一个请求的全链路](assets/img/13-request-lifecycle.svg)
+![一个请求的全链路（动图）](assets/img/13-request-lifecycle.gif)
 
 ```
 ①  请求到达        用户发来 prompt 文本
