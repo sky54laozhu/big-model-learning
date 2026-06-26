@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 340" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+  <title id="t">量化映射：撑满整数刻度</title>
+  <desc id="d">量化三步：第一步找这组权重里绝对值最大的0.8；第二步让0.8对应整数上限127，反推scale等于0.8除以127约0.0063；第三步每个浮点数除以scale四舍五入成整数。存整数加一个scale，用时整数乘scale还原近似浮点。等比例映射保住大小关系。</desc>
+  <style>
+    .h { font-weight: 700; fill: #1a1a1a; text-anchor: middle; font-size: 18px; }
+    .step { font-weight: 700; fill: #1a2233; font-size: 13px; }
+    .mono { fill: #2a2a2a; font-size: 13px; }
+    .sub { fill: #6b7280; font-size: 11.5px; }
+  </style>
+
+  <text x="440" y="30" class="h">量化三步：拿最大值撑满整数刻度</text>
+
+  <!-- step 1 -->
+  <circle cx="44" cy="68" r="11" fill="#2563eb"/><text x="44" y="72" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">1</text>
+  <text x="64" y="72" class="step">找这组里绝对值最大的数</text>
+  <g font-family="monospace">
+    <text x="64" y="98" class="mono">权重组： 0.2,  -0.5,  </text>
+    <text x="232" y="98" class="mono" fill="#dc2626" font-weight="700">0.8</text>
+    <text x="262" y="98" class="mono">,  -0.3,  0.1</text>
+  </g>
+  <text x="64" y="116" class="sub">最大绝对值 = 0.8</text>
+
+  <!-- step 2 -->
+  <circle cx="44" cy="146" r="11" fill="#2563eb"/><text x="44" y="150" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">2</text>
+  <text x="64" y="150" class="step">让最大值顶满 127，反推 scale</text>
+  <rect x="64" y="162" width="360" height="30" rx="6" fill="#eff6ff" stroke="#2563eb"/>
+  <text x="244" y="182" text-anchor="middle" class="mono" font-weight="700" fill="#1e40af">scale = 0.8 / 127 ≈ 0.0063</text>
+  <text x="440" y="182" class="sub">= 一个整数单位代表多大的浮点</text>
+
+  <!-- step 3 -->
+  <circle cx="44" cy="222" r="11" fill="#2563eb"/><text x="44" y="226" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">3</text>
+  <text x="64" y="226" class="step">每个数 ÷ scale，四舍五入成整数</text>
+  <g font-family="monospace" font-size="12.5">
+    <text x="64" y="252" class="mono"> 0.8 / 0.0063 ≈  127</text>
+    <text x="280" y="252" class="mono">-0.5 / 0.0063 ≈  -79</text>
+    <text x="64" y="272" class="mono"> 0.2 / 0.0063 ≈   32</text>
+    <text x="280" y="272" class="mono">-0.3 / 0.0063 ≈  -48</text>
+    <text x="64" y="292" class="mono"> 0.1 / 0.0063 ≈   16</text>
+  </g>
+
+  <!-- 结果 + 还原 -->
+  <rect x="540" y="210" width="300" height="92" rx="8" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.5"/>
+  <text x="690" y="232" text-anchor="middle" fill="#166534" font-weight="700" font-size="12.5">存：[127,-79,32,-48,16] + scale</text>
+  <text x="690" y="258" text-anchor="middle" class="mono">用时：整数 × scale 还原</text>
+  <text x="690" y="280" text-anchor="middle" class="mono" fill="#166534" font-weight="700">127 × 0.0063 ≈ 0.8 ✓</text>
+  <text x="690" y="296" text-anchor="middle" class="sub">大小关系全保住，只有圆整误差</text>
+
+  <!-- 底部 -->
+  <rect x="40" y="312" width="800" height="22" rx="6" fill="#fef3c7" stroke="#d97706" stroke-width="1.2"/>
+  <text x="440" y="328" text-anchor="middle" fill="#92400e" font-weight="700" font-size="12">“缩水还能用”靠的就是等比例映射：每个数落到最近的整数刻度上</text>
+</svg>

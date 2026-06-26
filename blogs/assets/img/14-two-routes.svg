@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 330" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+  <title id="t">两条瘦身路：量化 vs 蒸馏</title>
+  <desc id="d">让模型变小有两条根本不同的路。路子A量化：模型本体不变，参数个数不变，只把每个数字从浮点换成整数的更省存法。路子B蒸馏：另造一个参数更少、架构更小的新模型，去模仿大模型的本事。</desc>
+  <style>
+    .h { font-weight: 700; fill: #1a1a1a; text-anchor: middle; font-size: 18px; }
+    .stage-label { fill: #ffffff; font-weight: 600; font-size: 14px; text-anchor: middle; }
+    .body { fill: #2a2a2a; font-size: 12.5px; text-anchor: middle; }
+    .sub { fill: #6b7280; font-size: 12px; text-anchor: middle; }
+    .key { font-weight: 700; font-size: 12.5px; text-anchor: middle; }
+  </style>
+
+  <text x="440" y="32" class="h">让模型变小的两条根本不同的路</text>
+
+  <!-- 路子A 量化 -->
+  <rect x="40" y="58" width="370" height="210" rx="8" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/>
+  <rect x="40" y="58" width="370" height="30" rx="8" fill="#1e40af"/>
+  <rect x="40" y="74" width="370" height="14" fill="#1e40af"/>
+  <text x="225" y="78" class="stage-label">路子 A · 量化（Quantization）</text>
+
+  <text x="225" y="112" class="body">书还是那本书，换个更省的存法</text>
+  <text x="225" y="134" class="sub">字印小、纸用薄</text>
+  <line x1="70" y1="150" x2="380" y2="150" stroke="#bfdbfe" stroke-width="1"/>
+  <text x="225" y="174" class="body">每个参数 FP16(2字节) → INT4(0.5字节)</text>
+  <text x="225" y="200" class="key" fill="#1e40af">参数个数不变（还是 70B）</text>
+  <text x="225" y="222" class="key" fill="#1e40af">架构不变 · 只改“数字怎么存”</text>
+  <text x="225" y="250" class="sub">省的是：每个参数的字节数</text>
+
+  <!-- 路子B 蒸馏 -->
+  <rect x="470" y="58" width="370" height="210" rx="8" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.5"/>
+  <rect x="470" y="58" width="370" height="30" rx="8" fill="#166534"/>
+  <rect x="470" y="74" width="370" height="14" fill="#166534"/>
+  <text x="655" y="78" class="stage-label">路子 B · 蒸馏（Distillation）</text>
+
+  <text x="655" y="112" class="body">请高手浓缩重写成精华小册子</text>
+  <text x="655" y="134" class="sub">一本全新的、更小的书</text>
+  <line x1="500" y1="150" x2="810" y2="150" stroke="#bbf7d0" stroke-width="1"/>
+  <text x="655" y="174" class="body">大老师模型 → 教出 小学生模型</text>
+  <text x="655" y="200" class="key" fill="#166534">参数变少（如 70B → 7B）</text>
+  <text x="655" y="222" class="key" fill="#166534">换一个更小的新模型</text>
+  <text x="655" y="250" class="sub">省的是：参数的数量</text>
+
+  <!-- 底部 -->
+  <rect x="40" y="286" width="800" height="34" rx="8" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
+  <text x="440" y="308" text-anchor="middle" fill="#92400e" font-weight="700" font-size="12.5">分野：量化不改参数个数、只改存法 ｜ 蒸馏直接换一个更小的模型</text>
+</svg>

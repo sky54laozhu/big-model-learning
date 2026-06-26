@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 350" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+  <title id="t">硬标签 vs 软标签：暗知识</title>
+  <desc id="d">硬标签只告诉学生最终答案猫等于100%其余为0，信息少。软标签把老师整张概率分布交给学生：猫70%老虎20%狗8%卡车接近0。那些没被选中却给了分的选项编码了老师的相似性认知——猫和老虎像、和卡车不像，这叫暗知识。学生连暗知识一起继承，所以又快又好。</desc>
+  <style>
+    .h { font-weight: 700; fill: #1a1a1a; text-anchor: middle; font-size: 18px; }
+    .stage-label { fill: #ffffff; font-weight: 600; font-size: 13.5px; text-anchor: middle; }
+    .lab { fill: #2a2a2a; font-size: 12.5px; }
+    .sub { fill: #6b7280; font-size: 11.5px; text-anchor: middle; }
+  </style>
+
+  <text x="440" y="30" class="h">蒸馏的灵魂：软标签里藏着“暗知识”</text>
+  <text x="440" y="52" text-anchor="middle" class="sub">老师被问“图里是什么动物？”，两种给法教学生</text>
+
+  <!-- 硬标签 -->
+  <rect x="40" y="68" width="370" height="216" rx="8" fill="#fef2f2" stroke="#dc2626" stroke-width="1.5"/>
+  <rect x="40" y="68" width="370" height="30" rx="8" fill="#991b1b"/>
+  <rect x="40" y="84" width="370" height="14" fill="#991b1b"/>
+  <text x="225" y="88" class="stage-label">硬标签：只给最终答案</text>
+
+  <g>
+    <text x="64" y="128" class="lab">猫</text>
+    <rect x="100" y="118" width="270" height="14" rx="3" fill="#fecaca"/>
+    <rect x="100" y="118" width="270" height="14" rx="3" fill="#dc2626"/>
+    <text x="378" y="129" class="lab" text-anchor="end" font-weight="700" fill="#991b1b">100%</text>
+    <text x="64" y="156" class="lab">老虎</text><rect x="100" y="146" width="0" height="14" rx="3" fill="#dc2626"/><text x="378" y="157" class="lab" text-anchor="end">0</text>
+    <text x="64" y="184" class="lab">狗</text><rect x="100" y="174" width="0" height="14" rx="3" fill="#dc2626"/><text x="378" y="185" class="lab" text-anchor="end">0</text>
+    <text x="64" y="212" class="lab">卡车</text><text x="378" y="213" class="lab" text-anchor="end">0</text>
+  </g>
+  <line x1="64" y1="232" x2="386" y2="232" stroke="#fecaca" stroke-width="1"/>
+  <text x="225" y="256" text-anchor="middle" fill="#991b1b" font-weight="700" font-size="12.5">只剩“是猫”，相似性全抹平</text>
+  <text x="225" y="276" class="sub">和普通训练没区别，信息量小</text>
+
+  <!-- 软标签 -->
+  <rect x="470" y="68" width="370" height="216" rx="8" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.5"/>
+  <rect x="470" y="68" width="370" height="30" rx="8" fill="#166534"/>
+  <rect x="470" y="84" width="370" height="14" fill="#166534"/>
+  <text x="655" y="88" class="stage-label">软标签：整张概率分布</text>
+
+  <g>
+    <text x="494" y="128" class="lab">猫</text>
+    <rect x="540" y="118" width="270" height="14" rx="3" fill="#bbf7d0"/><rect x="540" y="118" width="189" height="14" rx="3" fill="#16a34a"/>
+    <text x="816" y="129" class="lab" text-anchor="end" font-weight="700" fill="#166534">70%</text>
+    <text x="494" y="156" class="lab">老虎</text>
+    <rect x="540" y="146" width="270" height="14" rx="3" fill="#bbf7d0"/><rect x="540" y="146" width="54" height="14" rx="3" fill="#16a34a"/>
+    <text x="816" y="157" class="lab" text-anchor="end" font-weight="700" fill="#166534">20%</text>
+    <text x="494" y="184" class="lab">狗</text>
+    <rect x="540" y="174" width="270" height="14" rx="3" fill="#bbf7d0"/><rect x="540" y="174" width="22" height="14" rx="3" fill="#16a34a"/>
+    <text x="816" y="185" class="lab" text-anchor="end" font-weight="700" fill="#166534">8%</text>
+    <text x="494" y="212" class="lab">卡车</text>
+    <rect x="540" y="202" width="270" height="14" rx="3" fill="#bbf7d0"/>
+    <text x="816" y="213" class="lab" text-anchor="end" fill="#166534">≈0</text>
+  </g>
+  <line x1="494" y1="232" x2="816" y2="232" stroke="#bbf7d0" stroke-width="1"/>
+  <text x="655" y="256" text-anchor="middle" fill="#166534" font-weight="700" font-size="12.5">老虎20%、卡车≈0 = 暗知识</text>
+  <text x="655" y="276" class="sub">“猫和老虎像、和卡车不像”，信息量大</text>
+
+  <!-- 底部 -->
+  <rect x="40" y="302" width="800" height="40" rx="8" fill="#fffbeb" stroke="#d97706" stroke-width="1.5"/>
+  <text x="440" y="320" text-anchor="middle" fill="#92400e" font-weight="700" font-size="12.5">学生学软标签 = 不只学“答案”，还继承老师整张“什么和什么像”的认知地图</text>
+  <text x="440" y="337" text-anchor="middle" fill="#92400e" font-size="11.5">信息密度高，所以小学生学得又快又好（temperature 还能把分布调更软）</text>
+</svg>

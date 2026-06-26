@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 320" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+  <title id="t">量化 vs 蒸馏，并可叠加</title>
+  <desc id="d">量化省每个参数的字节数，参数个数不变，不用重训。蒸馏省参数数量，换更小模型，要重训。两者砍的是账单不同栏目，可叠加：先蒸馏70B到7B，再量化到INT4，模型从140GB一路砍到几GB，还能配LoRA成为QLoRA。</desc>
+  <style>
+    .h { font-weight: 700; fill: #1a1a1a; text-anchor: middle; font-size: 18px; }
+    .k { fill: #6b7280; font-size: 12px; }
+    .blue { fill: #1e40af; font-size: 12.5px; }
+    .green { fill: #166534; font-size: 12.5px; }
+    .hd { fill: #ffffff; font-weight: 700; font-size: 13px; text-anchor: middle; }
+  </style>
+
+  <text x="440" y="30" class="h">量化省“字节数”，蒸馏省“参数量”，可叠加</text>
+
+  <!-- table header -->
+  <rect x="40" y="50" width="200" height="30" rx="6" fill="#475569"/><text x="140" y="70" class="hd">对比</text>
+  <rect x="248" y="50" width="290" height="30" rx="6" fill="#1e40af"/><text x="393" y="70" class="hd">量化（A）</text>
+  <rect x="546" y="50" width="294" height="30" rx="6" fill="#166534"/><text x="693" y="70" class="hd">蒸馏（B）</text>
+
+  <!-- rows -->
+  <g>
+    <text x="56" y="104" class="k">省的是什么</text>
+    <text x="264" y="104" class="blue" font-weight="600">每个参数的字节数</text>
+    <text x="562" y="104" class="green" font-weight="600">参数的数量</text>
+
+    <text x="56" y="134" class="k">参数个数</text>
+    <text x="264" y="134" class="blue">不变（还是 70B）</text>
+    <text x="562" y="134" class="green">变少（70B → 7B）</text>
+
+    <text x="56" y="164" class="k">要不要重训</text>
+    <text x="264" y="164" class="blue">PTQ 不用，拿来就压</text>
+    <text x="562" y="164" class="green">要，得训练学生</text>
+
+    <text x="56" y="194" class="k">主要代价</text>
+    <text x="264" y="194" class="blue">圆整误差（离群值难）</text>
+    <text x="562" y="194" class="green">学生容量有限</text>
+
+    <text x="56" y="224" class="k">典型标记</text>
+    <text x="264" y="224" class="blue">GPTQ / AWQ / Q4_K_M</text>
+    <text x="562" y="224" class="green">DistilBERT / -distill</text>
+  </g>
+  <line x1="40" y1="114" x2="840" y2="114" stroke="#e2e8f0"/>
+  <line x1="40" y1="144" x2="840" y2="144" stroke="#e2e8f0"/>
+  <line x1="40" y1="174" x2="840" y2="174" stroke="#e2e8f0"/>
+  <line x1="40" y1="204" x2="840" y2="204" stroke="#e2e8f0"/>
+  <line x1="244" y1="50" x2="244" y2="238" stroke="#e2e8f0"/>
+  <line x1="542" y1="50" x2="542" y2="238" stroke="#e2e8f0"/>
+
+  <!-- 叠加条 -->
+  <rect x="40" y="252" width="800" height="56" rx="8" fill="#fffbeb" stroke="#d97706" stroke-width="1.5"/>
+  <text x="440" y="274" text-anchor="middle" fill="#92400e" font-weight="700" font-size="13">可叠加：先蒸馏 70B→7B，再量化到 INT4，140GB → 几 GB，塞进普通显卡</text>
+  <text x="440" y="296" text-anchor="middle" fill="#92400e" font-size="12">再配 LoRA 就是 QLoRA —— 量化、蒸馏、LoRA 层层叠加，是大模型飞入寻常显卡的底气</text>
+</svg>
