@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 360" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+  <title id="t">位置插值：把尺子刻度捏密</title>
+  <desc id="d">模型训练时只见过0到4096号位置。直接喂第10万号会因角度陌生而外推失败。位置插值把长序列按比例压回训练范围，让第10万号落到第4096的位置，于是读得动，但相邻位置被挤近，分辨率下降。</desc>
+  <style>
+    .h { font-weight: 700; fill: #1a1a1a; text-anchor: middle; font-size: 18px; }
+    .lab { fill: #ffffff; font-weight: 600; font-size: 13px; text-anchor: middle; }
+    .body { fill: #2a2a2a; font-size: 12.5px; text-anchor: middle; }
+    .sub { fill: #6b7280; font-size: 12px; text-anchor: middle; }
+    .key { font-weight: 700; font-size: 12.5px; text-anchor: middle; }
+  </style>
+
+  <text x="440" y="32" class="h">位置插值：与其外推，不如把刻度捏密</text>
+
+  <!-- 上：外推失败 -->
+  <rect x="40" y="56" width="800" height="92" rx="8" fill="#fef2f2" stroke="#dc2626" stroke-width="1.5"/>
+  <text x="60" y="80" fill="#b91c1c" font-weight="700" font-size="13" text-anchor="start">✗ 外推：硬喂第 10 万号 → 陌生大角度，模型没学过 → 输出乱套</text>
+  <!-- ruler trained 0-4096 -->
+  <line x1="70" y1="116" x2="430" y2="116" stroke="#9ca3af" stroke-width="2"/>
+  <line x1="70" y1="110" x2="70" y2="122" stroke="#166534" stroke-width="2"/>
+  <line x1="150" y1="110" x2="150" y2="122" stroke="#9ca3af" stroke-width="1.5"/>
+  <line x1="230" y1="110" x2="230" y2="122" stroke="#9ca3af" stroke-width="1.5"/>
+  <line x1="310" y1="110" x2="310" y2="122" stroke="#9ca3af" stroke-width="1.5"/>
+  <line x1="430" y1="110" x2="430" y2="122" stroke="#166534" stroke-width="2"/>
+  <text x="70" y="140" class="sub" text-anchor="middle">0</text>
+  <text x="430" y="140" class="sub" text-anchor="middle">4096（训练见过的上限）</text>
+  <text x="560" y="116" class="sub" text-anchor="start" fill="#b91c1c">第 10 万号 →→→ 落在尺子外，不认得</text>
+  <text x="800" y="116" class="body" text-anchor="end" fill="#b91c1c" font-weight="700">？</text>
+
+  <!-- 下：位置插值 -->
+  <rect x="40" y="164" width="800" height="120" rx="8" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="60" y="188" fill="#1e40af" font-weight="700" font-size="13" text-anchor="start">✓ 位置插值：把 0~10 万 按比例压回 0~4096 这把旧尺子</text>
+  <line x1="70" y1="224" x2="810" y2="224" stroke="#9ca3af" stroke-width="2"/>
+  <line x1="70" y1="218" x2="70" y2="230" stroke="#1e40af" stroke-width="2"/>
+  <line x1="810" y1="218" x2="810" y2="230" stroke="#1e40af" stroke-width="2"/>
+  <!-- dense ticks -->
+  <line x1="115" y1="219" x2="115" y2="229" stroke="#93c5fd" stroke-width="1"/>
+  <line x1="160" y1="219" x2="160" y2="229" stroke="#93c5fd" stroke-width="1"/>
+  <line x1="205" y1="219" x2="205" y2="229" stroke="#93c5fd" stroke-width="1"/>
+  <line x1="250" y1="219" x2="250" y2="229" stroke="#93c5fd" stroke-width="1"/>
+  <line x1="295" y1="219" x2="295" y2="229" stroke="#93c5fd" stroke-width="1"/>
+  <line x1="340" y1="219" x2="340" y2="229" stroke="#93c5fd" stroke-width="1"/>
+  <line x1="385" y1="219" x2="385" y2="229" stroke="#93c5fd" stroke-width="1"/>
+  <line x1="430" y1="219" x2="430" y2="229" stroke="#93c5fd" stroke-width="1"/>
+  <line x1="475" y1="219" x2="475" y2="229" stroke="#93c5fd" stroke-width="1"/>
+  <line x1="520" y1="219" x2="520" y2="229" stroke="#93c5fd" stroke-width="1"/>
+  <text x="70" y="248" class="sub" text-anchor="middle">0</text>
+  <text x="810" y="248" class="sub" text-anchor="middle">4096</text>
+  <text x="440" y="268" class="body" fill="#1e40af">映射后位置 = 真实位置 × (4096 / 100000) ——角度全落回训练范围，读得动了</text>
+
+  <!-- 底部代价 -->
+  <rect x="40" y="300" width="800" height="42" rx="8" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
+  <text x="440" y="320" text-anchor="middle" fill="#92400e" font-weight="700" font-size="12.5">代价：刻度捏密 → 相邻 token 位置差变小 → 模型分辨“谁前谁后、谁离谁近”的能力下降</text>
+  <text x="440" y="336" text-anchor="middle" fill="#92400e" font-size="11.5">大窗口在内容还没塞进去前，已先付了一笔“分辨率税”（RoPE scaling / NTK / YaRN 都是它的精装版）</text>
+</svg>

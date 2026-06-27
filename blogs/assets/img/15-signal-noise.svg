@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 330" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+  <title id="t">信噪比：越多 token 抢注意力，信号越难尖出来</title>
+  <desc id="d">注意力分数过softmax后加起来等于1，是一份固定预算。候选少时正确token容易尖峰抢到高权重。候选变成10万个时，每个不相关token权重虽小，但数量多积成背景噪声，把正确信号压下去，模型答不出就编造产生幻觉。</desc>
+  <style>
+    .h { font-weight: 700; fill: #1a1a1a; text-anchor: middle; font-size: 18px; }
+    .lab { fill: #ffffff; font-weight: 600; font-size: 13px; text-anchor: middle; }
+    .body { fill: #2a2a2a; font-size: 12.5px; text-anchor: middle; }
+    .sub { fill: #6b7280; font-size: 12px; text-anchor: middle; }
+  </style>
+
+  <text x="440" y="32" class="h">同一份注意力预算（加起来 = 1），候选越多越抢不出信号</text>
+
+  <!-- 左：候选少 -->
+  <rect x="40" y="56" width="370" height="232" rx="8" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.5"/>
+  <rect x="40" y="56" width="370" height="30" rx="8" fill="#166534"/>
+  <rect x="40" y="72" width="370" height="14" fill="#166534"/>
+  <text x="225" y="76" class="lab">候选少（几十个 token）</text>
+  <!-- baseline -->
+  <line x1="70" y1="240" x2="380" y2="240" stroke="#9ca3af" stroke-width="1.5"/>
+  <!-- signal bar tall -->
+  <rect x="120" y="120" width="40" height="120" fill="#166534"/>
+  <text x="140" y="112" class="sub" fill="#166534" font-weight="700">正确 token</text>
+  <!-- noise small bars -->
+  <rect x="190" y="222" width="16" height="18" fill="#bbf7d0"/>
+  <rect x="215" y="226" width="16" height="14" fill="#bbf7d0"/>
+  <rect x="240" y="220" width="16" height="20" fill="#bbf7d0"/>
+  <rect x="265" y="228" width="16" height="12" fill="#bbf7d0"/>
+  <rect x="290" y="224" width="16" height="16" fill="#bbf7d0"/>
+  <rect x="315" y="227" width="16" height="13" fill="#bbf7d0"/>
+  <text x="225" y="266" class="body" fill="#166534" font-weight="700">信号清晰尖出来 → 答得准</text>
+
+  <!-- 右：候选多 -->
+  <rect x="470" y="56" width="370" height="232" rx="8" fill="#fef2f2" stroke="#dc2626" stroke-width="1.5"/>
+  <rect x="470" y="56" width="370" height="30" rx="8" fill="#b91c1c"/>
+  <rect x="470" y="72" width="370" height="14" fill="#b91c1c"/>
+  <text x="655" y="76" class="lab">候选多（10 万个 token 抢同一碗饭）</text>
+  <line x1="500" y1="240" x2="810" y2="240" stroke="#9ca3af" stroke-width="1.5"/>
+  <!-- signal bar short -->
+  <rect x="520" y="206" width="14" height="34" fill="#b91c1c"/>
+  <text x="527" y="198" class="sub" fill="#b91c1c" font-weight="700">正确 token</text>
+  <!-- many noise bars -->
+  <g fill="#fecaca">
+    <rect x="545" y="224" width="9" height="16"/>
+    <rect x="558" y="220" width="9" height="20"/>
+    <rect x="571" y="226" width="9" height="14"/>
+    <rect x="584" y="222" width="9" height="18"/>
+    <rect x="597" y="225" width="9" height="15"/>
+    <rect x="610" y="219" width="9" height="21"/>
+    <rect x="623" y="227" width="9" height="13"/>
+    <rect x="636" y="223" width="9" height="17"/>
+    <rect x="649" y="221" width="9" height="19"/>
+    <rect x="662" y="226" width="9" height="14"/>
+    <rect x="675" y="222" width="9" height="18"/>
+    <rect x="688" y="224" width="9" height="16"/>
+    <rect x="701" y="220" width="9" height="20"/>
+    <rect x="714" y="227" width="9" height="13"/>
+    <rect x="727" y="223" width="9" height="17"/>
+    <rect x="740" y="225" width="9" height="15"/>
+    <rect x="753" y="221" width="9" height="19"/>
+    <rect x="766" y="226" width="9" height="14"/>
+    <rect x="779" y="222" width="9" height="18"/>
+    <rect x="792" y="224" width="9" height="16"/>
+  </g>
+  <text x="655" y="266" class="body" fill="#b91c1c" font-weight="700">信号被背景噪声淹没 → 答不出就编造（幻觉）</text>
+
+  <!-- 底部 -->
+  <rect x="40" y="296" width="800" height="0" fill="none"/>
+  <text x="440" y="312" text-anchor="middle" fill="#6b7280" font-size="12">“装得下”靠显存　|　“找得到”靠信噪比——这是两回事</text>
+</svg>

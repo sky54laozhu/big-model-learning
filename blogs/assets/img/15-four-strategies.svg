@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 380" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+  <title id="t">长文本四策略全景</title>
+  <desc id="d">驯服又贵又微妙的长文本有四类策略。摆放顺序：重要的放头尾治标。检索RAG：先找相关一小段只塞那段，根本解。压缩摘要：先缩成摘要再塞，省token但丢细节。分段mapreduce：超出窗口时切块各处理再汇总，慢且跨块关联断。决策直觉：能用RAG就别硬塞。</desc>
+  <style>
+    .h { font-weight: 700; fill: #1a1a1a; text-anchor: middle; font-size: 18px; }
+    .lab { fill: #ffffff; font-weight: 600; font-size: 13.5px; text-anchor: middle; }
+    .body { fill: #2a2a2a; font-size: 12px; text-anchor: middle; }
+    .sub { fill: #6b7280; font-size: 11.5px; text-anchor: middle; }
+    .tag { font-size: 11px; text-anchor: middle; font-weight: 700; }
+  </style>
+
+  <text x="440" y="32" class="h">长文本四策略：每招对症一个痛点</text>
+
+  <!-- 1 摆放顺序 -->
+  <rect x="36" y="56" width="200" height="200" rx="8" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/>
+  <rect x="36" y="56" width="200" height="30" rx="8" fill="#1e40af"/>
+  <rect x="36" y="72" width="200" height="14" fill="#1e40af"/>
+  <text x="136" y="76" class="lab">① 摆放顺序</text>
+  <text x="136" y="108" class="tag" fill="#1e40af">治 Lost in the Middle</text>
+  <text x="136" y="134" class="body">重要的放头尾</text>
+  <text x="136" y="152" class="body">次要塞中间迟钝区</text>
+  <text x="136" y="178" class="sub">问题放两遍 · 检索重排</text>
+  <text x="136" y="196" class="sub">指令别埋中间</text>
+  <line x1="56" y1="212" x2="216" y2="212" stroke="#bfdbfe" stroke-width="1"/>
+  <text x="136" y="234" class="sub" fill="#b45309">代价：治标，总量没变</text>
+
+  <!-- 2 RAG -->
+  <rect x="248" y="56" width="200" height="200" rx="8" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.5"/>
+  <rect x="248" y="56" width="200" height="30" rx="8" fill="#166534"/>
+  <rect x="248" y="72" width="200" height="14" fill="#166534"/>
+  <text x="348" y="76" class="lab">② 检索 RAG</text>
+  <text x="348" y="108" class="tag" fill="#166534">首选解（信噪比+中间）</text>
+  <text x="348" y="134" class="body">先找相关一小段</text>
+  <text x="348" y="152" class="body">只塞那一段</text>
+  <text x="348" y="178" class="sub">grep → 语义检索(向量)</text>
+  <text x="348" y="196" class="sub">塞进去本就短且全相关</text>
+  <line x1="268" y1="212" x2="428" y2="212" stroke="#bbf7d0" stroke-width="1"/>
+  <text x="348" y="234" class="sub" fill="#b45309">代价：要建向量库(19-21篇)</text>
+
+  <!-- 3 压缩 -->
+  <rect x="460" y="56" width="200" height="200" rx="8" fill="#fffbeb" stroke="#d97706" stroke-width="1.5"/>
+  <rect x="460" y="56" width="200" height="30" rx="8" fill="#92400e"/>
+  <rect x="460" y="72" width="200" height="14" fill="#92400e"/>
+  <text x="560" y="76" class="lab">③ 压缩 / 摘要</text>
+  <text x="560" y="108" class="tag" fill="#92400e">治 token 太多太贵</text>
+  <text x="560" y="134" class="body">先缩成摘要</text>
+  <text x="560" y="152" class="body">再把摘要塞进去</text>
+  <text x="560" y="178" class="sub">省 token · 省钱 · 省延迟</text>
+  <text x="560" y="196" class="sub">适合要全局、不抠细节</text>
+  <line x1="480" y1="212" x2="640" y2="212" stroke="#fde68a" stroke-width="1"/>
+  <text x="560" y="234" class="sub" fill="#b45309">代价：丢细节</text>
+
+  <!-- 4 分段 -->
+  <rect x="672" y="56" width="200" height="200" rx="8" fill="#faf5ff" stroke="#7c3aed" stroke-width="1.5"/>
+  <rect x="672" y="56" width="200" height="30" rx="8" fill="#6d28d9"/>
+  <rect x="672" y="72" width="200" height="14" fill="#6d28d9"/>
+  <text x="772" y="76" class="lab">④ 分段处理</text>
+  <text x="772" y="108" class="tag" fill="#6d28d9">治 超出窗口上限</text>
+  <text x="772" y="134" class="body">切块各自处理</text>
+  <text x="772" y="152" class="body">再把结果汇总</text>
+  <text x="772" y="178" class="sub">map-reduce</text>
+  <text x="772" y="196" class="sub">长到窗口都装不下才用</text>
+  <line x1="692" y1="212" x2="852" y2="212" stroke="#e9d5ff" stroke-width="1"/>
+  <text x="772" y="234" class="sub" fill="#b45309">代价：慢，跨块关联断</text>
+
+  <!-- bottom decision -->
+  <rect x="36" y="280" width="836" height="80" rx="8" fill="#f9fafb" stroke="#9ca3af" stroke-width="1.5"/>
+  <text x="454" y="306" text-anchor="middle" fill="#1a1a1a" font-weight="700" font-size="13.5">决策直觉：能用 RAG 就别硬塞</text>
+  <text x="454" y="330" text-anchor="middle" fill="#2a2a2a" font-size="12">必须塞全文时 → 用「摆放顺序」保护关键信息、用「压缩」砍冗余</text>
+  <text x="454" y="350" text-anchor="middle" fill="#2a2a2a" font-size="12">只有文档超出窗口上限，才退到「分段」</text>
+</svg>

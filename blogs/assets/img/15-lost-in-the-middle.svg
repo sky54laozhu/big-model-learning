@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 360" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+  <title id="t">Lost in the Middle：U 形曲线</title>
+  <desc id="d">把关键信息放在长文档不同位置，答对率呈U形：放开头记得住（首因效应，训练偏好加注意力锚点），放结尾记得住（近因效应，离生成点最近），唯独放中间掉得最狠，因为没锚不新鲜还要和最多token抢注意力。</desc>
+  <style>
+    .h { font-weight: 700; fill: #1a1a1a; text-anchor: middle; font-size: 18px; }
+    .body { fill: #2a2a2a; font-size: 12.5px; text-anchor: middle; }
+    .sub { fill: #6b7280; font-size: 12px; text-anchor: middle; }
+    .axis { stroke: #9ca3af; stroke-width: 1.5; }
+  </style>
+
+  <text x="440" y="32" class="h">Lost in the Middle：关键信息放中间，最容易被忽略</text>
+
+  <!-- axes -->
+  <line x1="120" y1="80" x2="120" y2="250" class="axis"/>
+  <line x1="120" y1="250" x2="800" y2="250" class="axis"/>
+  <text x="92" y="100" class="sub" text-anchor="end">高</text>
+  <text x="92" y="246" class="sub" text-anchor="end">低</text>
+  <text x="70" y="170" class="sub" text-anchor="middle" transform="rotate(-90 70 170)">答对率</text>
+
+  <!-- U curve -->
+  <path d="M 150 100 Q 230 110 310 200 T 460 235 Q 540 235 620 200 T 770 100"
+        fill="none" stroke="#2563eb" stroke-width="3"/>
+
+  <!-- points -->
+  <circle cx="160" cy="102" r="6" fill="#166534"/>
+  <circle cx="460" cy="236" r="6" fill="#b91c1c"/>
+  <circle cx="760" cy="104" r="6" fill="#166534"/>
+
+  <!-- x labels -->
+  <text x="160" y="274" class="body" fill="#166534" font-weight="700">开头</text>
+  <text x="460" y="274" class="body" fill="#b91c1c" font-weight="700">中间（第 4 万字）</text>
+  <text x="760" y="274" class="body" fill="#166534" font-weight="700">结尾</text>
+
+  <!-- annotations -->
+  <text x="160" y="92" class="sub" fill="#166534" text-anchor="middle">记得住</text>
+  <text x="760" y="94" class="sub" fill="#166534" text-anchor="middle">记得住</text>
+  <text x="460" y="226" class="sub" fill="#b91c1c" text-anchor="middle">掉得最狠</text>
+
+  <!-- bottom: two forces -->
+  <rect x="120" y="298" width="330" height="48" rx="8" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.5"/>
+  <text x="285" y="318" text-anchor="middle" fill="#166534" font-weight="700" font-size="12.5">首因效应：开头有注意力锚点</text>
+  <text x="285" y="336" text-anchor="middle" fill="#166534" font-size="11.5">+ 训练偏好“开头通常重要”</text>
+
+  <rect x="470" y="298" width="330" height="48" rx="8" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.5"/>
+  <text x="635" y="318" text-anchor="middle" fill="#166534" font-weight="700" font-size="12.5">近因效应：结尾紧贴生成点</text>
+  <text x="635" y="336" text-anchor="middle" fill="#166534" font-size="11.5">又新鲜又强相关，易抢高权重</text>
+
+  <text x="460" y="294" text-anchor="middle" fill="#b91c1c" font-size="11.5">中间：没锚、不新鲜、还要和最多 token 抢注意力 → 三面受敌</text>
+</svg>
