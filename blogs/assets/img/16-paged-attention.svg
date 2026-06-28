@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 340" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+  <title id="t">PagedAttention：连续分配的碎片 vs 分页回收</title>
+  <desc id="d">KV Cache每个用户长度不同还动态变长。若要求每个请求占一整段连续显存，用户下车后回收会留下大小不一的碎片，新用户哪都塞不下。PagedAttention把显存切成固定大小小块，KV Cache用到哪分哪几块不要求连续，下车直接回收进池子，几乎消灭碎片。</desc>
+  <style>
+    .h { font-weight: 700; fill: #1a1a1a; text-anchor: middle; font-size: 18px; }
+    .lab { fill: #ffffff; font-weight: 600; font-size: 13px; text-anchor: middle; }
+    .body { fill: #2a2a2a; font-size: 12px; text-anchor: middle; }
+    .sub { fill: #6b7280; font-size: 11.5px; text-anchor: middle; }
+  </style>
+
+  <text x="440" y="30" class="h">显存怎么放 KV Cache：连续分配 vs 分页</text>
+
+  <!-- 左：连续分配碎片 -->
+  <rect x="32" y="50" width="396" height="262" rx="8" fill="#fef2f2" stroke="#dc2626" stroke-width="1.5"/>
+  <rect x="32" y="50" width="396" height="28" rx="8" fill="#b91c1c"/>
+  <rect x="32" y="64" width="396" height="14" fill="#b91c1c"/>
+  <text x="230" y="69" class="lab">连续分配：要求每请求占一整段</text>
+
+  <text x="230" y="98" class="sub">显存条（一长条连续空间）</text>
+  <!-- memory bar with fragments -->
+  <rect x="56" y="110" width="348" height="40" rx="4" fill="#ffffff" stroke="#9ca3af"/>
+  <rect x="58" y="112" width="70" height="36" fill="#93c5fd"/>
+  <rect x="130" y="112" width="40" height="36" fill="#f3f4f6"/>
+  <rect x="172" y="112" width="90" height="36" fill="#fcd34d"/>
+  <rect x="264" y="112" width="36" height="36" fill="#f3f4f6"/>
+  <rect x="302" y="112" width="60" height="36" fill="#86efac"/>
+  <rect x="364" y="112" width="38" height="36" fill="#f3f4f6"/>
+  <text x="93" y="135" class="sub" fill="#1e40af">A</text>
+  <text x="217" y="135" class="sub" fill="#92400e">C</text>
+  <text x="332" y="135" class="sub" fill="#166534">D</text>
+  <text x="150" y="170" class="sub" fill="#b91c1c">空40</text>
+  <text x="282" y="170" class="sub" fill="#b91c1c">空36</text>
+  <text x="383" y="170" class="sub" fill="#b91c1c">空38</text>
+
+  <rect x="56" y="196" width="348" height="44" rx="6" fill="#fee2e2" stroke="#dc2626" stroke-width="1.2"/>
+  <text x="230" y="214" class="body" fill="#b91c1c" font-weight="700">新用户要连续 114 格</text>
+  <text x="230" y="231" class="sub" fill="#b91c1c">空位加起来够，但碎成 40/36/38，连不起来 → 塞不下</text>
+
+  <text x="230" y="266" class="body" fill="#7f1d1d">KV Cache 长度不一、动态变长</text>
+  <text x="230" y="286" class="sub" fill="#b91c1c">回收后留一堆用不上的碎片，显存白白浪费</text>
+
+  <!-- 右：分页 -->
+  <rect x="452" y="50" width="396" height="262" rx="8" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.5"/>
+  <rect x="452" y="50" width="396" height="28" rx="8" fill="#166534"/>
+  <rect x="452" y="64" width="396" height="14" fill="#166534"/>
+  <text x="650" y="69" class="lab">PagedAttention：切成固定小块（page）</text>
+
+  <text x="650" y="98" class="sub">用到哪分哪几块，不要求连续</text>
+  <!-- grid of pages -->
+  <g>
+    <rect x="500" y="110" width="34" height="26" rx="3" fill="#93c5fd"/>
+    <rect x="540" y="110" width="34" height="26" rx="3" fill="#fcd34d"/>
+    <rect x="580" y="110" width="34" height="26" rx="3" fill="#93c5fd"/>
+    <rect x="620" y="110" width="34" height="26" rx="3" fill="#86efac"/>
+    <rect x="660" y="110" width="34" height="26" rx="3" fill="#fcd34d"/>
+    <rect x="700" y="110" width="34" height="26" rx="3" fill="#c4b5fd"/>
+    <rect x="740" y="110" width="34" height="26" rx="3" fill="#93c5fd"/>
+    <rect x="500" y="142" width="34" height="26" rx="3" fill="#86efac"/>
+    <rect x="540" y="142" width="34" height="26" rx="3" fill="#c4b5fd"/>
+    <rect x="580" y="142" width="34" height="26" rx="3" fill="#fcd34d"/>
+    <rect x="620" y="142" width="34" height="26" rx="3" fill="#c4b5fd"/>
+    <rect x="660" y="142" width="34" height="26" rx="3" fill="#86efac"/>
+    <rect x="700" y="142" width="34" height="26" rx="3" fill="#93c5fd"/>
+    <rect x="740" y="142" width="34" height="26" rx="3" fill="#c4b5fd"/>
+  </g>
+  <text x="650" y="188" class="sub" fill="#166534">蓝=A　黄=C　绿=D　紫=新用户E（捡空块即可）</text>
+
+  <rect x="500" y="200" width="296" height="44" rx="6" fill="#dcfce7" stroke="#16a34a" stroke-width="1.2"/>
+  <text x="648" y="218" class="body" fill="#166534" font-weight="700">新用户捡任意空块，无需连续</text>
+  <text x="648" y="235" class="sub" fill="#166534">下车的块直接回收进池子 → 几乎零碎片</text>
+
+  <text x="650" y="270" class="body" fill="#14532d">本质 = 操作系统的“虚拟内存分页”</text>
+  <text x="650" y="290" class="sub" fill="#166534">显存利用率拉满，能塞的并发量上台阶</text>
+</svg>

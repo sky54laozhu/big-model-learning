@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 350" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+  <title id="t">朴素批处理 vs 连续批处理</title>
+  <desc id="d">朴素批处理像班车：打包发车跑完整批再收下一批，短请求B答完仍占着槽位空等最慢的A，晚到的E要等整批跑完。连续批处理像自动扶梯：每生成一步重新组队，B答完立刻下车，新来的E马上补上空槽，每步动态上人下人。</desc>
+  <style>
+    .h { font-weight: 700; fill: #1a1a1a; text-anchor: middle; font-size: 18px; }
+    .lab { fill: #ffffff; font-weight: 600; font-size: 13px; text-anchor: middle; }
+    .body { fill: #2a2a2a; font-size: 12px; text-anchor: middle; }
+    .sub { fill: #6b7280; font-size: 11.5px; text-anchor: middle; }
+    .slot { font-size: 12px; font-weight: 700; text-anchor: middle; }
+    .step { fill: #6b7280; font-size: 11px; text-anchor: middle; }
+  </style>
+
+  <text x="440" y="30" class="h">班车（焊死）　vs　自动扶梯（随时上下人）</text>
+
+  <!-- 左：朴素批 -->
+  <rect x="32" y="50" width="396" height="282" rx="8" fill="#fef2f2" stroke="#dc2626" stroke-width="1.5"/>
+  <rect x="32" y="50" width="396" height="28" rx="8" fill="#b91c1c"/>
+  <rect x="32" y="64" width="396" height="14" fill="#b91c1c"/>
+  <text x="230" y="69" class="lab">朴素批处理：打包发车，跑完整批再收</text>
+
+  <text x="84" y="100" class="step">第1步</text>
+  <text x="180" y="100" class="step">第5步</text>
+  <text x="300" y="100" class="step">第800步（A 才完）</text>
+
+  <!-- rows -->
+  <g>
+    <rect x="60" y="110" width="320" height="24" rx="3" fill="#fca5a5"/>
+    <text x="48" y="127" class="slot" fill="#b91c1c" text-anchor="end">A</text>
+    <text x="220" y="127" class="body" fill="#7f1d1d">写 800 字（最慢）</text>
+
+    <rect x="60" y="140" width="40" height="24" rx="3" fill="#fca5a5"/>
+    <rect x="100" y="140" width="280" height="24" rx="3" fill="#fee2e2" stroke="#fca5a5" stroke-dasharray="3 3"/>
+    <text x="48" y="157" class="slot" fill="#b91c1c" text-anchor="end">B</text>
+    <text x="240" y="157" class="sub" fill="#b91c1c">答完仍占槽，空等 A</text>
+
+    <rect x="60" y="170" width="180" height="24" rx="3" fill="#fca5a5"/>
+    <rect x="240" y="170" width="140" height="24" rx="3" fill="#fee2e2" stroke="#fca5a5" stroke-dasharray="3 3"/>
+    <text x="48" y="187" class="slot" fill="#b91c1c" text-anchor="end">C</text>
+
+    <rect x="60" y="200" width="320" height="24" rx="3" fill="#f3f4f6" stroke="#9ca3af" stroke-dasharray="3 3"/>
+    <text x="48" y="217" class="slot" fill="#6b7280" text-anchor="end">E</text>
+    <text x="220" y="217" class="sub" fill="#6b7280">晚到 1ms，干等整批跑完才能上车</text>
+  </g>
+  <rect x="60" y="244" width="320" height="40" rx="6" fill="#fee2e2" stroke="#dc2626" stroke-width="1.2"/>
+  <text x="220" y="260" class="body" fill="#b91c1c" font-weight="700">批被焊死，中途不能上下人</text>
+  <text x="220" y="276" class="sub" fill="#b91c1c">短请求空占槽 + 新请求干等 → GPU 又空转</text>
+
+  <!-- 右：连续批 -->
+  <rect x="452" y="50" width="396" height="282" rx="8" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.5"/>
+  <rect x="452" y="50" width="396" height="28" rx="8" fill="#166534"/>
+  <rect x="452" y="64" width="396" height="14" fill="#166534"/>
+  <text x="650" y="69" class="lab">连续批处理：每步重新组队</text>
+
+  <text x="520" y="100" class="step">第5步：B 答完</text>
+  <text x="700" y="100" class="step">第6步：E 补位</text>
+
+  <g>
+    <rect x="490" y="110" width="320" height="24" rx="3" fill="#86efac"/>
+    <text x="478" y="127" class="slot" fill="#166534" text-anchor="end">A</text>
+    <text x="650" y="127" class="body" fill="#14532d">继续写（仍在扶梯上）</text>
+
+    <rect x="490" y="140" width="320" height="24" rx="3" fill="#bbf7d0"/>
+    <text x="478" y="157" class="slot" fill="#166534" text-anchor="end">B↓</text>
+    <text x="650" y="157" class="sub" fill="#166534">答完立刻下车，槽位释放</text>
+
+    <rect x="490" y="170" width="320" height="24" rx="3" fill="#86efac"/>
+    <text x="478" y="187" class="slot" fill="#166534" text-anchor="end">C</text>
+
+    <rect x="490" y="200" width="320" height="24" rx="3" fill="#4ade80"/>
+    <text x="478" y="217" class="slot" fill="#166534" text-anchor="end">E↑</text>
+    <text x="650" y="217" class="body" fill="#14532d">新来的马上补上 B 的空槽</text>
+  </g>
+  <rect x="490" y="244" width="320" height="40" rx="6" fill="#dcfce7" stroke="#16a34a" stroke-width="1.2"/>
+  <text x="650" y="260" class="body" fill="#166534" font-weight="700">完事的踢走 · 新来的补位</text>
+  <text x="650" y="276" class="sub" fill="#166534">两个尴尬一起治，槽位永远满载</text>
+
+  <text x="440" y="320" class="sub">vLLM 招牌之一 · continuous batching</text>
+</svg>

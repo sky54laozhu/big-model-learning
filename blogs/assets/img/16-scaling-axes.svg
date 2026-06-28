@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 380" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+  <title id="t">两条扩展轴：模型并行 × 多副本</title>
+  <desc id="d">扛规模有两条意味不同的加卡轴。轴一模型并行：单卡装不下时把同一模型摊到多卡，张量并行切一层的宽、流水线并行切层的深。轴二多副本加负载均衡：模型装得下但用户太多，复制完整副本分流。两条叠加：8卡张量并行托起一个实例，再复制4份挂负载均衡。</desc>
+  <style>
+    .h { font-weight: 700; fill: #1a1a1a; text-anchor: middle; font-size: 18px; }
+    .lab { fill: #ffffff; font-weight: 600; font-size: 13px; text-anchor: middle; }
+    .body { fill: #2a2a2a; font-size: 12px; text-anchor: middle; }
+    .sub { fill: #6b7280; font-size: 11.5px; text-anchor: middle; }
+    .card { font-size: 10px; fill: #1e40af; text-anchor: middle; }
+  </style>
+
+  <text x="440" y="30" class="h">扛住规模的两条轴（可叠加）</text>
+
+  <!-- 轴一 模型并行 -->
+  <rect x="32" y="50" width="396" height="150" rx="8" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/>
+  <rect x="32" y="50" width="396" height="28" rx="8" fill="#1e40af"/>
+  <rect x="32" y="64" width="396" height="14" fill="#1e40af"/>
+  <text x="230" y="69" class="lab">轴一 · 模型并行（单卡装不下）</text>
+  <text x="230" y="98" class="body" fill="#1e40af" font-weight="700">把同一个模型劈开摊到多块卡</text>
+  <text x="118" y="124" class="sub" fill="#1e40af">张量并行 = 切“一层的宽”</text>
+  <rect x="62" y="134" width="50" height="40" rx="3" fill="#bfdbfe"/>
+  <rect x="116" y="134" width="50" height="40" rx="3" fill="#bfdbfe"/>
+  <line x1="89" y1="134" x2="89" y2="174" stroke="#1e40af" stroke-dasharray="2 2"/>
+  <line x1="143" y1="134" x2="143" y2="174" stroke="#1e40af" stroke-dasharray="2 2"/>
+  <text x="114" y="190" class="sub">一层矩阵切几片，各算一角</text>
+  <text x="342" y="124" class="sub" fill="#1e40af">流水线并行 = 切“层的深”</text>
+  <rect x="262" y="134" width="76" height="18" rx="3" fill="#bfdbfe"/>
+  <rect x="262" y="156" width="76" height="18" rx="3" fill="#93c5fd"/>
+  <text x="356" y="147" class="sub" text-anchor="start" fill="#1e40af">层1–10 → 卡A</text>
+  <text x="356" y="169" class="sub" text-anchor="start" fill="#1e40af">层11–20 → 卡B</text>
+
+  <!-- 轴二 多副本 -->
+  <rect x="452" y="50" width="396" height="150" rx="8" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.5"/>
+  <rect x="452" y="50" width="396" height="28" rx="8" fill="#166534"/>
+  <rect x="452" y="64" width="396" height="14" fill="#166534"/>
+  <text x="650" y="69" class="lab">轴二 · 多副本 + 负载均衡（用户太多）</text>
+  <text x="650" y="98" class="body" fill="#166534" font-weight="700">复制 N 个完整副本，前面挂负载均衡</text>
+  <rect x="600" y="112" width="100" height="22" rx="4" fill="#166534"/>
+  <text x="650" y="127" class="lab">负载均衡</text>
+  <line x1="630" y1="134" x2="540" y2="152" stroke="#16a34a"/>
+  <line x1="650" y1="134" x2="650" y2="152" stroke="#16a34a"/>
+  <line x1="670" y1="134" x2="760" y2="152" stroke="#16a34a"/>
+  <rect x="510" y="152" width="60" height="34" rx="4" fill="#bbf7d0"/>
+  <rect x="620" y="152" width="60" height="34" rx="4" fill="#bbf7d0"/>
+  <rect x="730" y="152" width="60" height="34" rx="4" fill="#bbf7d0"/>
+  <text x="540" y="173" class="sub" fill="#166534">副本1</text>
+  <text x="650" y="173" class="sub" fill="#166534">副本2</text>
+  <text x="760" y="173" class="sub" fill="#166534">副本3</text>
+  <text x="650" y="197" class="sub" fill="#166534">就是你的老本行（每份都贵）</text>
+
+  <!-- 叠加 -->
+  <rect x="32" y="214" width="816" height="146" rx="8" fill="#fffbeb" stroke="#d97706" stroke-width="1.5"/>
+  <text x="440" y="238" text-anchor="middle" fill="#92400e" font-weight="700" font-size="13.5">真实部署：两条轴叠加</text>
+  <!-- 8卡单元 x4 -->
+  <g>
+    <rect x="70" y="258" width="150" height="74" rx="6" fill="#fff7ed" stroke="#1e40af" stroke-width="1.2"/>
+    <text x="145" y="276" class="sub" fill="#1e40af" font-weight="700">8 卡张量并行</text>
+    <g fill="#bfdbfe">
+      <rect x="84" y="286" width="14" height="14" rx="2"/><rect x="102" y="286" width="14" height="14" rx="2"/><rect x="120" y="286" width="14" height="14" rx="2"/><rect x="138" y="286" width="14" height="14" rx="2"/>
+      <rect x="84" y="304" width="14" height="14" rx="2"/><rect x="102" y="304" width="14" height="14" rx="2"/><rect x="120" y="304" width="14" height="14" rx="2"/><rect x="138" y="304" width="14" height="14" rx="2"/>
+    </g>
+    <text x="180" y="326" class="sub" fill="#1e40af">= 1 个 70B 实例</text>
+  </g>
+  <text x="250" y="300" class="body" fill="#92400e" font-weight="700">× 4 份</text>
+  <g>
+    <rect x="310" y="262" width="100" height="40" rx="5" fill="#dcfce7" stroke="#166534"/>
+    <rect x="430" y="262" width="100" height="40" rx="5" fill="#dcfce7" stroke="#166534"/>
+    <rect x="550" y="262" width="100" height="40" rx="5" fill="#dcfce7" stroke="#166534"/>
+    <rect x="670" y="262" width="100" height="40" rx="5" fill="#dcfce7" stroke="#166534"/>
+    <text x="360" y="286" class="sub" fill="#166534">实例1</text>
+    <text x="480" y="286" class="sub" fill="#166534">实例2</text>
+    <text x="600" y="286" class="sub" fill="#166534">实例3</text>
+    <text x="720" y="286" class="sub" fill="#166534">实例4</text>
+  </g>
+  <rect x="310" y="314" width="460" height="30" rx="5" fill="#fde68a"/>
+  <text x="540" y="334" text-anchor="middle" fill="#92400e" font-weight="700" font-size="12">负载均衡分流 → 既装得下，又伺候得了多人</text>
+</svg>
