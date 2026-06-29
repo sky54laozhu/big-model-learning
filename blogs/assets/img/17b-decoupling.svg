@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 400" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+  <title id="t">解耦的硬证据：同一个模型，换个 harness 成绩天差地别</title>
+  <desc id="d">CORE-Bench 基准上，同一个 Opus 4.5 模型一个字没改，只把脚手架从简陋版换成完整 Claude Code harness，分数从 42% 跳到 78%。柱状对比图清晰显示这一跳。结论：可靠性来自周围的工程设计，而不是更聪明的模型。模型越进化，harness 不会消失，只会一起进化。原理（model）前十六篇已拆完，盖楼（harness）才刚开始。</desc>
+  <style>
+    .h { font-weight: 700; fill: #1a1a1a; text-anchor: middle; font-size: 18px; }
+    .lab { fill: #ffffff; font-weight: 700; font-size: 12.5px; text-anchor: middle; }
+    .body { font-size: 11.5px; text-anchor: middle; }
+    .sub { fill: #6b7280; font-size: 11px; text-anchor: middle; }
+    .big { font-weight: 700; text-anchor: middle; }
+  </style>
+
+  <text x="440" y="30" class="h">同一个模型，换个 harness，天差地别</text>
+  <text x="440" y="52" class="sub">CORE-Bench · Opus 4.5 一个字没改，只换了外面的脚手架</text>
+
+  <!-- 坐标基线 -->
+  <line x1="150" y1="300" x2="560" y2="300" stroke="#9ca3af" stroke-width="1.4"/>
+  <text x="135" y="304" class="sub" text-anchor="end">0%</text>
+  <line x1="146" y1="200" x2="150" y2="200" stroke="#9ca3af" stroke-width="1.4"/>
+  <text x="135" y="204" class="sub" text-anchor="end">50%</text>
+  <line x1="146" y1="110" x2="150" y2="110" stroke="#9ca3af" stroke-width="1.4"/>
+  <text x="135" y="114" class="sub" text-anchor="end">100%</text>
+
+  <!-- 柱1：简陋脚手架 42% -->
+  <rect x="210" y="216" width="110" height="84" rx="6" fill="#fecaca" stroke="#dc2626" stroke-width="1.5"/>
+  <text x="265" y="206" class="big" fill="#b91c1c" font-size="22">42%</text>
+  <text x="265" y="324" class="body" fill="#b91c1c" font-weight="700">简陋脚手架</text>
+  <text x="265" y="342" class="sub" fill="#dc2626">minimal harness</text>
+
+  <!-- 柱2：完整 harness 78% -->
+  <rect x="390" y="160" width="110" height="140" rx="6" fill="#bbf7d0" stroke="#16a34a" stroke-width="1.5"/>
+  <text x="445" y="150" class="big" fill="#166534" font-size="22">78%</text>
+  <text x="445" y="324" class="body" fill="#166534" font-weight="700">完整 Claude Code</text>
+  <text x="445" y="342" class="sub" fill="#15803d">full harness</text>
+
+  <!-- 跳跃箭头 -->
+  <path d="M328 200 Q360 175 385 178" stroke="#7c3aed" stroke-width="2" fill="none" marker-end="url(#ar)"/>
+  <defs><marker id="ar" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#7c3aed"/></marker></defs>
+  <text x="358" y="150" class="big" fill="#7c3aed" font-size="13">+36pp</text>
+  <text x="358" y="166" class="sub" fill="#7c3aed">只换脚手架</text>
+
+  <!-- 右侧结论卡 -->
+  <rect x="592" y="92" width="256" height="220" rx="10" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.5"/>
+  <rect x="592" y="92" width="256" height="30" rx="10" fill="#6d28d9"/>
+  <rect x="592" y="108" width="256" height="14" fill="#6d28d9"/>
+  <text x="720" y="113" class="lab">model 与 harness 解耦</text>
+  <text x="720" y="148" class="body" fill="#5b21b6">同模型不同 harness</text>
+  <text x="720" y="170" class="big" fill="#6d28d9" font-size="16">摆动 15—34 个百分点</text>
+  <line x1="612" y1="190" x2="828" y2="190" stroke="#ddd6fe" stroke-width="1.4"/>
+  <text x="720" y="216" class="body" fill="#5b21b6" font-weight="700">可靠性来自工程设计，</text>
+  <text x="720" y="236" class="body" fill="#5b21b6" font-weight="700">不是更聪明的模型</text>
+  <text x="720" y="266" class="sub" fill="#6d28d9">模型越进化，harness</text>
+  <text x="720" y="284" class="sub" fill="#6d28d9">不会消失，只会一起进化</text>
+
+  <!-- 底部金句 -->
+  <rect x="150" y="358" width="580" height="30" rx="8" fill="#eef2ff"/>
+  <text x="440" y="378" class="body" fill="#3730a3" font-weight="700">原理（model）前十六篇已拆完 · 盖楼（harness）才刚开始 = 第四阶段</text>
+</svg>

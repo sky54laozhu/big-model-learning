@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 440" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+  <title id="t">Harness 解剖：会抖的模型在中心，确定性零件包住它</title>
+  <desc id="d">公式 Agent 等于 Model 加 Harness。中心是会抖的模型，只负责出主意，标注同输入可能不同输出、会编。外面一圈确定性工程零件包住它：Agent Loop 心脏（吐JSON到执行到塞回结果循环）、上下文策展、记忆与压缩、子agent编排、错误重试、验证循环。口诀：你只要不是模型，你就是 harness。Claude Code 就是一个 harness。</desc>
+  <style>
+    .h { font-weight: 700; fill: #1a1a1a; text-anchor: middle; font-size: 18px; }
+    .lab { fill: #ffffff; font-weight: 700; font-size: 12.5px; text-anchor: middle; }
+    .body { font-size: 11px; text-anchor: middle; }
+    .sub { fill: #6b7280; font-size: 11px; text-anchor: middle; }
+    .part { font-weight: 700; font-size: 12px; text-anchor: middle; }
+  </style>
+
+  <text x="440" y="30" class="h">Agent = Model + Harness</text>
+  <text x="440" y="52" class="sub">「你只要不是那个模型，你就是 harness」</text>
+
+  <!-- 外框：harness 边界 -->
+  <rect x="120" y="68" width="640" height="312" rx="14" fill="#faf5ff" stroke="#7c3aed" stroke-width="1.6" stroke-dasharray="6 4"/>
+  <rect x="120" y="68" width="180" height="26" rx="13" fill="#6d28d9"/>
+  <text x="210" y="86" class="lab">Harness（确定性脚手架）</text>
+
+  <!-- 中心：会抖的模型 -->
+  <ellipse cx="440" cy="224" rx="118" ry="62" fill="#fef2f2" stroke="#dc2626" stroke-width="1.8"/>
+  <text x="440" y="208" class="part" fill="#b91c1c" font-size="14">Model（会抖的芯片）</text>
+  <text x="440" y="230" class="body" fill="#b91c1c">只负责「出主意」</text>
+  <text x="440" y="250" class="sub" fill="#dc2626">同输入≠同输出 · 会编</text>
+
+  <!-- 六个零件围一圈 -->
+  <!-- 上：Agent Loop -->
+  <rect x="346" y="104" width="188" height="40" rx="9" fill="#3730a3"/>
+  <text x="440" y="122" class="lab">❤ Agent Loop（心脏）</text>
+  <text x="440" y="137" class="body" fill="#c7d2fe">吐 JSON → 执行 → 塞回 → 循环</text>
+
+  <!-- 左上：上下文策展 -->
+  <rect x="138" y="116" width="158" height="44" rx="9" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.4"/>
+  <text x="217" y="135" class="part" fill="#166534">上下文策展</text>
+  <text x="217" y="151" class="sub" fill="#15803d">放什么 / 压什么（柱一）</text>
+
+  <!-- 右上：记忆 / 压缩 -->
+  <rect x="584" y="116" width="158" height="44" rx="9" fill="#eff6ff" stroke="#2563eb" stroke-width="1.4"/>
+  <text x="663" y="135" class="part" fill="#1e40af">记忆 / 压缩</text>
+  <text x="663" y="151" class="sub" fill="#1d4ed8">旧的蒸成摘要（柱二）</text>
+
+  <!-- 左下：子 agent 编排 -->
+  <rect x="138" y="288" width="158" height="44" rx="9" fill="#fffbeb" stroke="#d97706" stroke-width="1.4"/>
+  <text x="217" y="307" class="part" fill="#92400e">子 agent 编排</text>
+  <text x="217" y="323" class="sub" fill="#b45309">派小弟分头干</text>
+
+  <!-- 右下：错误重试 -->
+  <rect x="584" y="288" width="158" height="44" rx="9" fill="#fffbeb" stroke="#d97706" stroke-width="1.4"/>
+  <text x="663" y="307" class="part" fill="#92400e">错误重试</text>
+  <text x="663" y="323" class="sub" fill="#b45309">出错 → 兜住 → 再来</text>
+
+  <!-- 下：验证循环 -->
+  <rect x="346" y="304" width="188" height="40" rx="9" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.4"/>
+  <text x="440" y="322" class="part" fill="#166534">验证循环</text>
+  <text x="440" y="338" class="sub" fill="#15803d">干完跑一遍自检（柱三）</text>
+
+  <text x="440" y="406" class="body" fill="#6d28d9" font-weight="700">你每天用的 Claude Code，就是一个 harness</text>
+  <text x="440" y="426" class="sub">外圈每个零件 = 用确定手段兜住中心那块会抖的模型</text>
+</svg>

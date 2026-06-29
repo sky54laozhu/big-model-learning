@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 420" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+  <title id="t">工程思维的三根柱子</title>
+  <desc id="d">工程不同于科学：科学求唯一正确答案，工程求约束下够好的方案。三根柱子撑起工程思维：柱子一约束下权衡，戴着镣铐跳舞求够好；柱子二可复用的纪律，靠章法不靠手感；柱子三驯服不确定性，用确定手段兜住会抖的模型零件，这一根是AI应用独有。三根柱子上方托着一块横梁：从懂原理到会盖楼。</desc>
+  <style>
+    .h { font-weight: 700; fill: #1a1a1a; text-anchor: middle; font-size: 18px; }
+    .lab { fill: #ffffff; font-weight: 700; font-size: 13px; text-anchor: middle; }
+    .body { font-size: 11.5px; text-anchor: middle; }
+    .sub { fill: #6b7280; font-size: 11px; text-anchor: middle; }
+    .tag { font-size: 10.5px; text-anchor: middle; font-weight: 700; }
+  </style>
+
+  <text x="440" y="30" class="h">工程思维的三根柱子</text>
+
+  <!-- 科学 vs 工程 对照条 -->
+  <rect x="140" y="46" width="600" height="34" rx="8" fill="#f3f4f6" stroke="#d1d5db" stroke-width="1"/>
+  <text x="250" y="68" class="body" fill="#6b7280">科学问：本质上是不是<tspan font-weight="700" fill="#374151">真的</tspan>？</text>
+  <text x="440" y="68" class="body" fill="#9ca3af">→</text>
+  <text x="630" y="68" class="body" fill="#374151">工程问：我的约束下怎样<tspan font-weight="700" fill="#1a1a1a">够好</tspan>？</text>
+
+  <!-- 横梁：懂原理 → 会盖楼 -->
+  <rect x="80" y="100" width="720" height="40" rx="9" fill="#0f766e"/>
+  <text x="440" y="125" class="lab" font-size="14">从「懂原理」跨到「会盖楼」，中间那层 = 工程</text>
+
+  <!-- 三根柱子 -->
+  <!-- 柱子一 -->
+  <rect x="92" y="150" width="220" height="226" rx="8" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.5"/>
+  <rect x="92" y="150" width="220" height="30" rx="8" fill="#166534"/>
+  <rect x="92" y="166" width="220" height="14" fill="#166534"/>
+  <text x="202" y="171" class="lab">柱子一 · 约束下权衡</text>
+  <text x="202" y="208" class="body" fill="#166534" font-weight="700" font-size="13">戴着镣铐跳舞</text>
+  <text x="202" y="232" class="body" fill="#166534">求「够好」，不求「正确」</text>
+  <line x1="120" y1="252" x2="284" y2="252" stroke="#bbf7d0" stroke-width="1.4"/>
+  <text x="202" y="278" class="body" fill="#166534">两堵墙下做取舍：</text>
+  <text x="202" y="300" class="sub" fill="#15803d">多塞信息 ↔ 被噪声淹</text>
+  <text x="202" y="320" class="sub" fill="#15803d">省 token ↔ 丢细节</text>
+  <rect x="132" y="338" width="140" height="26" rx="13" fill="#bbf7d0"/>
+  <text x="202" y="355" class="tag" fill="#166534">你每天都在用</text>
+
+  <!-- 柱子二 -->
+  <rect x="330" y="150" width="220" height="226" rx="8" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/>
+  <rect x="330" y="150" width="220" height="30" rx="8" fill="#1e40af"/>
+  <rect x="330" y="166" width="220" height="14" fill="#1e40af"/>
+  <text x="440" y="171" class="lab">柱子二 · 可复用的纪律</text>
+  <text x="440" y="208" class="body" fill="#1e40af" font-weight="700" font-size="13">靠章法，不靠手感</text>
+  <text x="440" y="232" class="body" fill="#1e40af">下次还能再做对</text>
+  <line x1="358" y1="252" x2="522" y2="252" stroke="#bfdbfe" stroke-width="1.4"/>
+  <text x="440" y="278" class="body" fill="#1e40af">模式 · 清单 · 踩过的坑</text>
+  <text x="440" y="302" class="sub" fill="#1d4ed8">碰运气调 prompt（玄学）</text>
+  <text x="440" y="320" class="sub" fill="#1d4ed8">↓ 沉淀成 ↓ 上下文工程</text>
+  <rect x="370" y="338" width="140" height="26" rx="13" fill="#bfdbfe"/>
+  <text x="440" y="355" class="tag" fill="#1e40af">你每天都在用</text>
+
+  <!-- 柱子三 -->
+  <rect x="568" y="150" width="220" height="226" rx="8" fill="#fffbeb" stroke="#d97706" stroke-width="1.5"/>
+  <rect x="568" y="150" width="220" height="30" rx="8" fill="#b45309"/>
+  <rect x="568" y="166" width="220" height="14" fill="#b45309"/>
+  <text x="678" y="171" class="lab">柱子三 · 驯服不确定性</text>
+  <text x="678" y="208" class="body" fill="#92400e" font-weight="700" font-size="13">确定手段兜住会抖的零件</text>
+  <text x="678" y="232" class="body" fill="#92400e">模型同输入≠同输出，会编</text>
+  <line x1="596" y1="252" x2="760" y2="252" stroke="#fde68a" stroke-width="1.4"/>
+  <text x="678" y="278" class="body" fill="#92400e">重试 · 校验 · backup · RAG</text>
+  <text x="678" y="302" class="sub" fill="#b45309">零件越不可靠，</text>
+  <text x="678" y="320" class="sub" fill="#b45309">越<tspan font-weight="700">需要</tspan>工程纪律</text>
+  <rect x="608" y="338" width="140" height="26" rx="13" fill="#fde68a"/>
+  <text x="678" y="355" class="tag" fill="#92400e">AI 应用独有</text>
+
+  <text x="440" y="402" class="sub">三根柱子焊成的实体，业界叫 Harness</text>
+</svg>
