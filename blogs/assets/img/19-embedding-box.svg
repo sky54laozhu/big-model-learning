@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 470" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+  <title id="t">染色盒子：句子怎么变成一支有意义的箭</title>
+  <desc id="d">染色盒子分三步把句子变成一支语义向量。①整句拆成token，比如"苹果 发布 了 新 手机"，此时查表得到的"苹果"是死的、固定的向量。②整句过一遍Transformer，Attention让每个token看一眼周围的词，"苹果"看到旁边是"手机"于是被上下文染色，方向改变。③把染好色的token向量池化（平均）成一支箭，这支箭的方向就代表整句话的意思。下方对比：在"苹果真好吃"里苹果被染向"水果"方向，在"苹果发布新手机"里苹果被染向"公司"方向，同一个词因上下文不同指向不同。</desc>
+  <style>
+    .h { font-weight: 700; fill: #1a1a1a; text-anchor: middle; font-size: 18px; }
+    .step { font-weight: 700; font-size: 13px; text-anchor: middle; }
+    .tok { font-size: 12.5px; text-anchor: middle; fill: #1f2937; }
+    .body { font-size: 11.5px; text-anchor: middle; }
+    .sub { fill: #6b7280; font-size: 10.5px; text-anchor: middle; }
+    .lab { font-size: 11px; text-anchor: middle; font-weight: 700; }
+  </style>
+
+  <text x="440" y="30" class="h">染色盒子：句子 → 一支有意义的箭</text>
+
+  <defs>
+    <marker id="ar" markerWidth="10" markerHeight="10" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#6b7280"/></marker>
+    <marker id="arb" markerWidth="9" markerHeight="9" refX="6" refY="3.5" orient="auto"><path d="M0 0 L7 3.5 L0 7 z" fill="#2563eb"/></marker>
+  </defs>
+
+  <!-- ① 整句 token -->
+  <text x="120" y="64" class="step" fill="#1e40af">① 整句拆成 token</text>
+  <g>
+    <rect x="44" y="78" width="46" height="30" rx="6" fill="#eff6ff" stroke="#2563eb" stroke-width="1.4"/>
+    <text x="67" y="98" class="tok">苹果</text>
+    <rect x="96" y="78" width="46" height="30" rx="6" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1.2"/>
+    <text x="119" y="98" class="tok">发布</text>
+    <rect x="148" y="78" width="20" height="30" rx="6" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1.2"/>
+    <text x="158" y="98" class="tok">了</text>
+    <rect x="174" y="78" width="20" height="30" rx="6" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1.2"/>
+    <text x="184" y="98" class="tok">新</text>
+    <rect x="200" y="78" width="46" height="30" rx="6" fill="#eff6ff" stroke="#2563eb" stroke-width="1.4"/>
+    <text x="223" y="98" class="tok">手机</text>
+  </g>
+  <text x="145" y="128" class="sub">查表得到的"苹果"是死的、固定的向量</text>
+
+  <!-- arrow ① → ② -->
+  <path d="M145 142 L145 168" stroke="#6b7280" stroke-width="1.8" fill="none" marker-end="url(#ar)"/>
+
+  <!-- ② Transformer 染色 -->
+  <rect x="40" y="174" width="800" height="120" rx="10" fill="#faf5ff" stroke="#7c3aed" stroke-width="1.6"/>
+  <rect x="40" y="174" width="800" height="26" rx="10" fill="#6d28d9"/>
+  <rect x="40" y="188" width="800" height="12" fill="#6d28d9"/>
+  <text x="440" y="192" class="lab" fill="#ffffff">② 整句过一遍 Transformer —— Attention 让每个 token 看一眼周围</text>
+
+  <!-- mini tokens inside transformer with attention arrows -->
+  <circle cx="120" cy="246" r="20" fill="#ddd6fe" stroke="#7c3aed" stroke-width="1.4"/>
+  <text x="120" y="250" class="tok" fill="#5b21b6">苹果</text>
+  <circle cx="300" cy="246" r="20" fill="#ede9fe" stroke="#a78bfa" stroke-width="1.2"/>
+  <text x="300" y="250" class="tok" fill="#6d28d9">发布</text>
+  <circle cx="440" cy="246" r="20" fill="#ede9fe" stroke="#a78bfa" stroke-width="1.2"/>
+  <text x="440" y="250" class="tok" fill="#6d28d9">新</text>
+  <circle cx="580" cy="246" r="20" fill="#ddd6fe" stroke="#7c3aed" stroke-width="1.4"/>
+  <text x="580" y="250" class="tok" fill="#5b21b6">手机</text>
+  <!-- attention edges 苹果 ← others -->
+  <path d="M282 240 Q200 214 140 234" stroke="#2563eb" stroke-width="1.3" fill="none" marker-end="url(#arb)" opacity="0.8"/>
+  <path d="M562 240 Q340 200 142 232" stroke="#2563eb" stroke-width="1.3" fill="none" marker-end="url(#arb)" opacity="0.8"/>
+  <text x="690" y="240" class="body" fill="#5b21b6">"苹果"看到旁边是"手机"</text>
+  <text x="690" y="260" class="body" fill="#5b21b6">→ 被上下文染色，方向改变</text>
+
+  <!-- arrow ② → ③ -->
+  <path d="M440 300 L440 326" stroke="#6b7280" stroke-width="1.8" fill="none" marker-end="url(#ar)"/>
+
+  <!-- ③ 池化 → 1 支箭 -->
+  <rect x="280" y="332" width="320" height="58" rx="9" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.6"/>
+  <text x="440" y="356" class="step" fill="#166534">③ 池化（平均）成 1 支箭</text>
+  <text x="440" y="378" class="sub" fill="#15803d">这支箭的方向 = 整句话的意思 → 拿去比余弦</text>
+
+  <!-- 底部对比：两个苹果不同方向 -->
+  <text x="440" y="418" class="body" fill="#374151" font-weight="700">同一个"苹果"，上下文不同 → 染成不同方向：</text>
+  <!-- mini coordinate -->
+  <line x1="640" y1="458" x2="760" y2="458" stroke="#d1d5db" stroke-width="1"/>
+  <line x1="660" y1="462" x2="660" y2="430" stroke="#d1d5db" stroke-width="1"/>
+  <path d="M660 458 L735 436" stroke="#b45309" stroke-width="2" fill="none" marker-end="url(#ar)"/>
+  <text x="745" y="432" class="sub" fill="#b45309">水果</text>
+  <path d="M660 458 L690 426" stroke="#2563eb" stroke-width="2" fill="none" marker-end="url(#arb)"/>
+  <text x="688" y="420" class="sub" fill="#1e40af">公司</text>
+  <text x="300" y="446" class="sub" fill="#6b7280">「苹果真好吃」指水果　·　「苹果发布新手机」指公司</text>
+</svg>

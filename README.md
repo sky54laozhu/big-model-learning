@@ -2,7 +2,7 @@
 
 > 一个全栈开发者从零开始理解大模型原理的学习记录 · 从直觉到工程，每学一块写一篇博客
 >
-> **进度：18 篇正文 + 2 篇番外 / 共 31 篇**
+> **进度：19 篇正文 + 2 篇番外 / 共 31 篇**
 
 ## 学习理念
 
@@ -60,7 +60,7 @@
 | 番外 | [什么是"工程"？从 Prompt 到 Harness](blogs/17b-what-is-engineering.md) | ✅ |
 | 番外 | [这颗"大脑"和你的不一样](blogs/18a-brain-vs-model.md) | ✅ |
 | 18 | [结构化输出与工具调用](blogs/18-structured-output-tool-calling.md) | ✅ |
-| 19 | Embedding 应用：语义搜索与分类 | 🚧 |
+| 19 | [Embedding 应用：语义搜索与分类](blogs/19-embedding-applications.md) | ✅ |
 | 20 | RAG 原理：给模型外挂知识库 | 🚧 |
 | 21 | RAG 工程：向量库、分块与重排序 | 🚧 |
 | 22 | 评估与质量度量 | 🚧 |

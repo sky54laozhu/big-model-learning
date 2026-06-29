@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 440" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+  <title id="t">分类：每类例句池化成原型箭，新文本比余弦选最近的类</title>
+  <desc id="d">分类的高效做法分两步。离线准备：把每一类已标好的几十条例句箭池化（平均）成一支代表箭，叫原型箭，差评例句池化成差评原型、中评池化成中评原型、好评池化成好评原型。查询：来一条新评论，染色成一支箭，只跟这3支原型箭比余弦，落在哪个原型最近就判为哪一类。图中新评论"这玩意儿用着真闹心"没有负面关键词，但它的箭方向最接近差评原型，所以判差评——抓的是意思不是字面。</desc>
+  <style>
+    .h { font-weight: 700; fill: #1a1a1a; text-anchor: middle; font-size: 18px; }
+    .ht { font-weight: 700; font-size: 13px; text-anchor: middle; }
+    .body { font-size: 11.5px; text-anchor: middle; }
+    .sub { fill: #6b7280; font-size: 10.5px; text-anchor: middle; }
+    .lab { font-size: 11px; text-anchor: middle; font-weight: 700; }
+  </style>
+
+  <text x="440" y="30" class="h">分类：例句池化成"原型箭"，新文本找最近</text>
+
+  <defs>
+    <marker id="ar" markerWidth="10" markerHeight="10" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#6b7280"/></marker>
+    <marker id="arr" markerWidth="10" markerHeight="10" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#dc2626"/></marker>
+  </defs>
+
+  <!-- 左：离线 池化成原型 -->
+  <text x="220" y="62" class="ht" fill="#374151">离线：每类例句 → 池化（平均）→ 1 支原型箭</text>
+
+  <!-- 差评 -->
+  <g>
+    <rect x="44" y="80" width="118" height="64" rx="8" fill="#fef2f2" stroke="#dc2626" stroke-width="1.3"/>
+    <text x="103" y="100" class="sub" fill="#b91c1c">几十条差评例句</text>
+    <circle cx="70" cy="120" r="3" fill="#dc2626"/><circle cx="90" cy="128" r="3" fill="#dc2626"/><circle cx="110" cy="116" r="3" fill="#dc2626"/><circle cx="130" cy="126" r="3" fill="#dc2626"/><circle cx="100" cy="134" r="3" fill="#dc2626"/>
+    <path d="M168 112 L210 112" stroke="#6b7280" stroke-width="1.6" fill="none" marker-end="url(#ar)"/>
+    <text x="189" y="104" class="sub">池化</text>
+    <rect x="216" y="96" width="104" height="32" rx="8" fill="#dc2626"/>
+    <text x="268" y="116" class="lab" fill="#ffffff">差评原型</text>
+  </g>
+  <!-- 中评 -->
+  <g>
+    <rect x="44" y="156" width="118" height="64" rx="8" fill="#fffbeb" stroke="#d97706" stroke-width="1.3"/>
+    <text x="103" y="176" class="sub" fill="#92400e">几十条中评例句</text>
+    <circle cx="70" cy="196" r="3" fill="#d97706"/><circle cx="90" cy="204" r="3" fill="#d97706"/><circle cx="110" cy="192" r="3" fill="#d97706"/><circle cx="130" cy="202" r="3" fill="#d97706"/><circle cx="100" cy="210" r="3" fill="#d97706"/>
+    <path d="M168 188 L210 188" stroke="#6b7280" stroke-width="1.6" fill="none" marker-end="url(#ar)"/>
+    <text x="189" y="180" class="sub">池化</text>
+    <rect x="216" y="172" width="104" height="32" rx="8" fill="#d97706"/>
+    <text x="268" y="192" class="lab" fill="#ffffff">中评原型</text>
+  </g>
+  <!-- 好评 -->
+  <g>
+    <rect x="44" y="232" width="118" height="64" rx="8" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.3"/>
+    <text x="103" y="252" class="sub" fill="#166534">几十条好评例句</text>
+    <circle cx="70" cy="272" r="3" fill="#16a34a"/><circle cx="90" cy="280" r="3" fill="#16a34a"/><circle cx="110" cy="268" r="3" fill="#16a34a"/><circle cx="130" cy="278" r="3" fill="#16a34a"/><circle cx="100" cy="286" r="3" fill="#16a34a"/>
+    <path d="M168 264 L210 264" stroke="#6b7280" stroke-width="1.6" fill="none" marker-end="url(#ar)"/>
+    <text x="189" y="256" class="sub">池化</text>
+    <rect x="216" y="248" width="104" height="32" rx="8" fill="#16a34a"/>
+    <text x="268" y="268" class="lab" fill="#ffffff">好评原型</text>
+  </g>
+
+  <!-- 右：向量空间，新点找最近 -->
+  <rect x="392" y="80" width="460" height="300" rx="10" fill="#f9fafb" stroke="#9ca3af" stroke-width="1.4"/>
+  <text x="622" y="104" class="ht" fill="#374151">查询：新评论只跟 3 支原型箭比余弦</text>
+
+  <!-- 三个原型在空间中 -->
+  <circle cx="500" cy="180" r="9" fill="#dc2626"/>
+  <text x="500" y="162" class="sub" fill="#b91c1c" font-weight="700">差评原型</text>
+  <circle cx="740" cy="180" r="9" fill="#16a34a"/>
+  <text x="740" y="162" class="sub" fill="#166534" font-weight="700">好评原型</text>
+  <circle cx="620" cy="320" r="9" fill="#d97706"/>
+  <text x="620" y="344" class="sub" fill="#92400e" font-weight="700">中评原型</text>
+
+  <!-- 新评论点 -->
+  <circle cx="540" cy="232" r="6" fill="#1e40af"/>
+  <text x="540" y="252" class="sub" fill="#1e40af" font-weight="700">新评论</text>
+  <!-- 距离线（红=最近） -->
+  <path d="M540 232 L506 188" stroke="#dc2626" stroke-width="2.2" fill="none"/>
+  <path d="M540 232 L731 184" stroke="#9ca3af" stroke-width="1.2" fill="none" stroke-dasharray="4 3"/>
+  <path d="M540 232 L614 312" stroke="#9ca3af" stroke-width="1.2" fill="none" stroke-dasharray="4 3"/>
+  <text x="470" y="216" class="sub" fill="#b91c1c">最近 → 判差评</text>
+
+  <text x="622" y="372" class="sub" fill="#6b7280">「这玩意儿用着真闹心」无负面词，但箭最靠近差评原型 —— 抓意思不抓字面</text>
+</svg>
