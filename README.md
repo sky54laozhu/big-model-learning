@@ -1,106 +1,109 @@
-# 大模型学习之路 — 全栈工程师的 AI 原理探索
+# 全栈工程师的大模型学习笔记
 
-> 一个全栈开发者从零开始理解大模型原理的学习记录
+> 一个全栈开发者从零开始理解大模型原理的学习记录 · 从直觉到工程，每学一块写一篇博客
+>
+> **进度：18 篇正文 + 2 篇番外 / 共 31 篇**
 
 ## 学习理念
 
 - **用工程师的方式学 AI**：用你熟悉的编程思维来理解每个概念
 - **从直觉到数学**：先建立直觉，再补数学，最后看代码实现
+- **引导式推导**：先把概念推通，再落成博客，每篇配 SVG 图解
 - **每学一块，写一篇博客**：教是最好的学
 
-## 学习路线（6 个阶段，约 12-16 周）
+> 📚 **完整目录与路线图见 [`blogs/README.md`](blogs/README.md)**，下方为带跳转链接的速览。
 
-### 第一阶段：建立直觉（第 1-2 周）
-> 目标：不看公式，用工程师能理解的方式搞懂"大模型到底在干什么"
-
-| # | 主题 | 博客产出 | 核心问题 |
-|---|------|----------|----------|
-| 1 | 大模型到底在做什么？ | 《从 if-else 到概率预测：程序员眼中的大模型》 | 为什么"预测下一个 token"能产生智能？ |
-| 2 | Token 与 Embedding | 《文字是怎么变成数字的：Token 和 Embedding 图解》 | 计算机如何"理解"语言？向量空间的直觉 |
-| 3 | 动手体验 API | 《用 Claude/OpenAI API 写第一个 AI 应用》 | temperature、top_p 这些参数到底在调什么？ |
-
-### 第二阶段：神经网络基础（第 3-5 周）
-> 目标：理解神经网络的核心思想，为理解 Transformer 打基础
-
-| # | 主题 | 博客产出 | 核心问题 |
-|---|------|----------|----------|
-| 4 | 从线性回归到神经网络 | 《一个函数如何学会认猫：神经网络极简入门》 | 什么是"学习"？权重、损失函数、梯度下降 |
-| 5 | 反向传播 | 《梯度下降：AI 是怎么"练习"的》 | 为什么 AI 能越来越准？链式法则的直觉 |
-| 6 | 用 Python 手写神经网络 | 《100 行 Python 实现一个迷你神经网络》 | 不用框架，纯手写理解每一步 |
-
-### 第三阶段：理解 Transformer（第 6-8 周）⭐ 核心
-> 目标：这是大模型的心脏，彻底搞懂 Attention 机制
-
-| # | 主题 | 博客产出 | 核心问题 |
-|---|------|----------|----------|
-| 7 | 为什么需要 Attention | 《从 RNN 的困境到 Attention 的顿悟》 | 序列建模的挑战，为什么要"注意力" |
-| 8 | Self-Attention 详解 | 《Q、K、V 到底是什么：Self-Attention 逐步拆解》 | 用查数据库的类比理解 Query/Key/Value |
-| 9 | 完整 Transformer 架构 | 《把 Transformer 拆成零件：逐层图解》 | Multi-Head、FFN、LayerNorm、位置编码 |
-| 10 | 手写一个 mini-Transformer | 《200 行代码实现 mini-GPT》 | 用 PyTorch 从零搭建，训练一个能写字的模型 |
-
-### 第四阶段：从 Transformer 到大模型（第 9-11 周）
-> 目标：理解"大力出奇迹"背后的工程与科学
-
-| # | 主题 | 博客产出 | 核心问题 |
-|---|------|----------|----------|
-| 11 | Scaling Laws | 《为什么模型越大越聪明：Scaling Laws 解读》 | 参数量、数据量、计算量的关系 |
-| 12 | 预训练与数据 | 《喂给 GPT 的万亿 token 从哪来》 | 数据清洗、去重、质量控制 |
-| 13 | 涌现能力 | 《大模型的"顿悟时刻"：涌现能力探秘》 | 为什么量变产生质变？ |
-| 14 | RLHF 与对齐 | 《让 AI 听话：RLHF 和人类对齐》 | SFT → Reward Model → PPO/DPO 全流程 |
-
-### 第五阶段：工程实践（第 12-14 周）
-> 目标：把原理知识转化为工程能力
-
-| # | 主题 | 博客产出 | 核心问题 |
-|---|------|----------|----------|
-| 15 | Prompt Engineering 原理 | 《Prompt 工程背后的科学：为什么这样写更好》 | 从模型原理解释 prompt 技巧 |
-| 16 | RAG 系统 | 《给大模型装上外脑：RAG 架构全解》 | Embedding → 检索 → 增强生成 |
-| 17 | Fine-tuning | 《用 LoRA 微调你的专属模型》 | 全参数微调 vs LoRA vs QLoRA |
-| 18 | Agent 架构 | 《让 AI 自己干活：Agent 系统设计》 | ReAct、Tool Use、规划与反思 |
-
-### 第六阶段：前沿与思考（第 15-16 周）
-> 目标：建立全局视野，形成自己的理解
-
-| # | 主题 | 博客产出 | 核心问题 |
-|---|------|----------|----------|
-| 19 | MoE 与高效架构 | 《不是所有参数都要用：MoE 架构解读》 | Mixtral、Switch Transformer |
-| 20 | 多模态 | 《让 AI 看图说话：多模态模型原理》 | CLIP、Vision Transformer |
-| 21 | 推理与部署 | 《大模型跑起来的工程挑战》 | 量化、KV Cache、vLLM、推理优化 |
-| 22 | 全景总结 | 《全栈工程师的大模型认知地图》 | 把所有知识串成一张图 |
-
-## 学习方法
-
-### 每个主题的学习步骤
-1. **问 Claude Code** — 先让 AI 用类比帮你建立直觉
-2. **读论文/教程** — 带着直觉去看正式材料
-3. **写代码验证** — 在这个 repo 里写实验代码
-4. **写博客输出** — 用自己的话复述，检验是否真懂
-
-### 推荐资源
-- **视频**：3Blue1Brown《Neural Networks》、Andrej Karpathy《Let's build GPT》
-- **教程**：Jay Alammar 的图解 Transformer 系列
-- **论文**：Attention Is All You Need（第三阶段再读）
-- **书籍**：《动手学深度学习》(d2l.ai)
-- **实践**：Andrej Karpathy 的 nanoGPT
+---
 
 ## 博客目录
 
-> 学习过程中产出的博客文章存放在 `blogs/` 目录下
+### 第一阶段：理解大模型
+> 🏁 里程碑：能看懂 Transformer 论文
 
-（待产出）
+| # | 标题 | 状态 |
+|---|------|:----:|
+| 01 | [从 if-else 到概率预测：大模型是什么](blogs/01-what-is-llm.md) | ✅ |
+| 02 | [Token 与 Embedding：文字怎么变成数字](blogs/02-token-and-embedding.md) | ✅ |
+| 03 | [梯度下降：模型怎么学习](blogs/03-gradient-descent.md) | ✅ |
+| 04 | [Attention：让 token 理解上下文](blogs/04-attention.md) | ✅ |
+| 05 | [Transformer 完整架构：拼成一台机器](blogs/05-transformer-architecture.md) | ✅ |
+| 06 | [向量基础补课：程序员已经会的数学](blogs/06-vector-basics.md) | ✅ |
+
+### 第二阶段：训练的秘密
+> 🏁 里程碑：能理解 Hugging Face 上任何模型卡片
+
+| # | 标题 | 状态 |
+|---|------|:----:|
+| 07 | [Tokenizer 深入：BPE 算法与词表构建](blogs/07-tokenizer-bpe.md) | ✅ |
+| 08 | [预训练：从随机噪声到语言能力](blogs/08-pretraining.md) | ✅ |
+| 09 | [微调：让通才变专家](blogs/09-fine-tuning.md) | ✅ |
+| 10 | [LoRA 低秩补课：只动 1% 参数的微调](blogs/10-lora-low-rank.md) | ✅ |
+| 11 | [RLHF 与 RLVR：对齐人类意图](blogs/11-rlhf-rlvr.md) | ✅ |
+| 12 | [模型的物理形态：参数、精度与显存](blogs/12-model-physical-form.md) | ✅ |
+
+### 第三阶段：推理与部署
+> 🏁 里程碑：能独立部署模型并理解性能瓶颈
+
+| # | 标题 | 状态 |
+|---|------|:----:|
+| 13 | [推理过程：KV Cache 与批处理](blogs/13-kv-cache-batching.md) | ✅ |
+| 14 | [量化与蒸馏：大模型瘦身术](blogs/14-quantization-distillation.md) | ✅ |
+| 15 | [上下文窗口与长文本策略](blogs/15-context-window.md) | ✅ |
+| 16 | [模型部署实战：从权重文件到 API 服务](blogs/16-model-deployment.md) | ✅ |
+
+### 第四阶段：构建 AI 应用
+> 🏁 里程碑：能独立设计并交付生产级 AI 功能
+
+| # | 标题 | 状态 |
+|---|------|:----:|
+| 17 | [Context Engineering：超越 Prompt 的上下文工程](blogs/17-context-engineering.md) | ✅ |
+| 番外 | [什么是"工程"？从 Prompt 到 Harness](blogs/17b-what-is-engineering.md) | ✅ |
+| 番外 | [这颗"大脑"和你的不一样](blogs/18a-brain-vs-model.md) | ✅ |
+| 18 | [结构化输出与工具调用](blogs/18-structured-output-tool-calling.md) | ✅ |
+| 19 | Embedding 应用：语义搜索与分类 | 🚧 |
+| 20 | RAG 原理：给模型外挂知识库 | 🚧 |
+| 21 | RAG 工程：向量库、分块与重排序 | 🚧 |
+| 22 | 评估与质量度量 | 🚧 |
+| 23 | 对话记忆与状态管理 | 🚧 |
+| 24 | Agent：让模型自主行动 | 🚧 |
+| 25 | Multi-Agent 与工作流编排 | 🚧 |
+
+### 第五阶段：AI 架构设计
+> 🏁 里程碑：能设计完整的 AI 平台架构
+
+| # | 标题 | 状态 |
+|---|------|:----:|
+| 26 | 模型选型与智能路由 | 🚧 |
+| 27 | LLM 网关：统一接入层设计 | 🚧 |
+| 28 | 韧性设计与成本工程 | 🚧 |
+| 29 | AI 系统的测试与持续交付 | 🚧 |
+| 30 | 安全与防护栏设计 | 🚧 |
+| 31 | AI 平台战略：治理、多租户与演进 | 🚧 |
+
+---
+
+## 学习方法
+
+每个主题的学习步骤：
+
+1. **引导式推导** — 用类比和反问，先把概念在对话里推通
+2. **对抗式审核** — 写完用多 agent 交叉审核，只改确认为真的问题
+3. **图解输出** — 每篇配 SVG 图解，把抽象机制画成看得见的东西
+4. **写博客** — 用自己的话复述，检验是否真懂
 
 ## 目录结构
 
 ```
 big-model-learning/
-├── README.md              # 本文件：学习路线总览
-├── blogs/                 # 博客文章
-│   ├── 01-what-is-llm.md
-│   ├── ...
-├── code/                  # 实验代码
-│   ├── 01-api-playground/
-│   ├── 02-neural-net/
-│   ├── 03-transformer/
-│   ├── ...
-└── notes/                 # 学习笔记（草稿）
+├── README.md      # 本文件：带链接的博客速览
+├── blogs/         # 博客文章 + 完整路线图（blogs/README.md）
+│   └── assets/img/  # 每篇配套 SVG 图解
+├── code/          # 实验代码
+├── notes/         # 学习笔记 / 调研留档
+├── animations/    # 视频动画工程（Remotion）
+└── videos/        # 视频脚本与成片
 ```
+
+---
+
+*GitHub: [sky54laozhu/big-model-learning](https://github.com/sky54laozhu/big-model-learning)*
