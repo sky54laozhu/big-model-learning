@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 400" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+  <title id="t">两堵墙：为什么不能把料一股脑全倒进去</title>
+  <desc id="d">硬墙是容量与成本：上下文窗口有物理上限，超了截断报错，KV Cache显存正比于长度，token越多越贵越慢。软墙是质量：就算塞得下也会变笨，信噪比让固定注意力预算被稀释，Lost in the Middle让正中间的信息最易被忽略。两堵墙逼出一个最优化问题，即预算约束下的动态策展。</desc>
+  <style>
+    .h { font-weight: 700; fill: #1a1a1a; text-anchor: middle; font-size: 18px; }
+    .lab { fill: #ffffff; font-weight: 600; font-size: 13px; text-anchor: middle; }
+    .body { font-size: 12.5px; text-anchor: start; }
+    .sub { font-size: 11px; text-anchor: start; }
+  </style>
+
+  <text x="440" y="30" class="h">两堵墙：为什么不能把料一股脑全倒进去</text>
+
+  <!-- 硬墙 -->
+  <rect x="32" y="50" width="396" height="186" rx="8" fill="#fffbeb" stroke="#d97706" stroke-width="1.5"/>
+  <rect x="32" y="50" width="396" height="28" rx="8" fill="#b45309"/>
+  <rect x="32" y="64" width="396" height="14" fill="#b45309"/>
+  <text x="230" y="69" class="lab">第一堵 · 硬墙（容量 / 成本）</text>
+  <text x="50" y="100" class="body" fill="#92400e" font-weight="700">窗口有物理上限，超了直接截断 / 报错</text>
+  <!-- token bar -->
+  <g>
+    <rect x="50" y="116" width="22" height="20" rx="2" fill="#fcd34d"/>
+    <rect x="74" y="116" width="22" height="20" rx="2" fill="#fcd34d"/>
+    <rect x="98" y="116" width="22" height="20" rx="2" fill="#fcd34d"/>
+    <rect x="122" y="116" width="22" height="20" rx="2" fill="#fcd34d"/>
+    <rect x="146" y="116" width="22" height="20" rx="2" fill="#fcd34d"/>
+    <rect x="170" y="116" width="22" height="20" rx="2" fill="#fcd34d"/>
+    <rect x="194" y="116" width="22" height="20" rx="2" fill="#fcd34d"/>
+    <rect x="218" y="116" width="22" height="20" rx="2" fill="#fcd34d"/>
+    <rect x="242" y="116" width="22" height="20" rx="2" fill="#fcd34d"/>
+    <rect x="266" y="116" width="22" height="20" rx="2" fill="#fcd34d"/>
+  </g>
+  <line x1="292" y1="110" x2="292" y2="142" stroke="#b91c1c" stroke-width="3"/>
+  <text x="293" y="106" class="sub" fill="#b91c1c" font-weight="700" text-anchor="middle">上限</text>
+  <g opacity="0.45">
+    <rect x="298" y="116" width="22" height="20" rx="2" fill="#fca5a5"/>
+    <rect x="322" y="116" width="22" height="20" rx="2" fill="#fca5a5"/>
+    <rect x="346" y="116" width="22" height="20" rx="2" fill="#fca5a5"/>
+  </g>
+  <text x="334" y="152" class="sub" fill="#b91c1c" font-weight="700" text-anchor="middle">截断</text>
+  <text x="50" y="184" class="body" fill="#92400e">KV Cache 显存 ∝ 长度</text>
+  <text x="50" y="204" class="sub" fill="#b45309">→ token 越多，每次调用越贵、越慢，不能无限堆</text>
+  <text x="50" y="224" class="sub" fill="#b45309">（回扣 Blog 13 / 15）</text>
+
+  <!-- 软墙 -->
+  <rect x="452" y="50" width="396" height="186" rx="8" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.5"/>
+  <rect x="452" y="50" width="396" height="28" rx="8" fill="#6d28d9"/>
+  <rect x="452" y="64" width="396" height="14" fill="#6d28d9"/>
+  <text x="650" y="69" class="lab">第二堵 · 软墙（质量）</text>
+  <text x="470" y="100" class="body" fill="#5b21b6" font-weight="700">就算塞得下，全倒进去也会把模型搞笨</text>
+  <text x="470" y="128" class="sub" fill="#5b21b6">· 信噪比：注意力是固定的一碗饭，</text>
+  <text x="482" y="146" class="sub" fill="#5b21b6">10 万 token 一起抢 → 信号被噪声稀释</text>
+  <text x="470" y="176" class="sub" fill="#5b21b6">· Lost in the Middle：注意力呈 U 形，</text>
+  <text x="482" y="194" class="sub" fill="#5b21b6">关键信息落在正中间，最易被忽略</text>
+  <!-- mini U curve -->
+  <g>
+    <path d="M700 222 C 716 188, 730 188, 746 210 C 762 188, 776 188, 792 222" fill="none" stroke="#7c3aed" stroke-width="2"/>
+    <text x="746" y="186" class="sub" fill="#7c3aed" text-anchor="middle" font-size="10">首尾高 · 中间低</text>
+  </g>
+
+  <!-- 结论 -->
+  <rect x="32" y="252" width="816" height="120" rx="8" fill="#eef2ff" stroke="#4f46e5" stroke-width="1.5"/>
+  <text x="440" y="282" text-anchor="middle" fill="#3730a3" font-weight="700" font-size="14.5">两堵墙一夹 → 逼出一个最优化问题</text>
+  <text x="440" y="312" text-anchor="middle" fill="#312e81" font-size="12.5">地皮又小又贵、中间地段还不值钱：每一轮都得当场决定 —— 放什么 / 不放什么 / 放多少 / 什么顺序</text>
+  <rect x="232" y="330" width="416" height="30" rx="6" fill="#c7d2fe"/>
+  <text x="440" y="350" text-anchor="middle" fill="#3730a3" font-weight="700" font-size="13">这就是 Context Engineering：预算约束下的动态策展</text>
+</svg>

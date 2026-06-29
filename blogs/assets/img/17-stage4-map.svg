@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 400" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+  <title id="t">第四阶段路线图：三类策展手段</title>
+  <desc id="d">本篇Context Engineering是总览框架。先导篇是番外什么是工程和提示词怎么写。三类策展手段：招1 RAG检索增强，500篇里只捞相关几段，治软墙加硬墙；招2 记忆与压缩，旧对话蒸成一句话留着，治硬墙加软墙；招3 工具调用到Agent，给模型工具让它自己判断缺啥去取，是范式跳跃治两堵墙。范式翻转：从你伺候模型喂到嘴边，到模型自己按需去查。</desc>
+  <style>
+    .h { font-weight: 700; fill: #1a1a1a; text-anchor: middle; font-size: 18px; }
+    .lab { fill: #ffffff; font-weight: 700; font-size: 12.5px; text-anchor: middle; }
+    .body { font-size: 11.5px; text-anchor: start; }
+    .sub { fill: #6b7280; font-size: 11px; text-anchor: middle; }
+    .pill { font-size: 11px; text-anchor: middle; font-weight: 700; }
+  </style>
+
+  <text x="440" y="28" class="h">第四阶段「构建 AI 应用」路线图</text>
+
+  <!-- CE 总览 -->
+  <rect x="300" y="42" width="280" height="42" rx="9" fill="#3730a3"/>
+  <text x="440" y="68" class="lab" font-size="14">Context Engineering（本篇 · 总览）</text>
+  <text x="440" y="104" class="sub">先导：番外「什么是‘工程’」 · 提示词 / 系统提示词怎么写</text>
+
+  <!-- connectors -->
+  <g stroke="#9ca3af" stroke-width="1.4" fill="none">
+    <path d="M440 114 L440 122 L164 122 L164 130"/>
+    <path d="M440 122 L716 122 L716 130"/>
+    <path d="M440 122 L440 130"/>
+  </g>
+
+  <!-- 招1 RAG -->
+  <rect x="32" y="130" width="264" height="172" rx="8" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.5"/>
+  <rect x="32" y="130" width="264" height="28" rx="8" fill="#166534"/>
+  <rect x="32" y="144" width="264" height="14" fill="#166534"/>
+  <text x="164" y="149" class="lab">招 1 · RAG（检索增强）</text>
+  <text x="48" y="184" class="body" fill="#166534" font-weight="700">场景</text>
+  <text x="92" y="184" class="body" fill="#166534">500 篇里只放得下几段</text>
+  <text x="48" y="212" class="body" fill="#166534" font-weight="700">做法</text>
+  <text x="92" y="212" class="body" fill="#166534">只捞当下相关的几段塞进去</text>
+  <rect x="74" y="248" width="180" height="28" rx="14" fill="#bbf7d0"/>
+  <text x="164" y="266" class="pill" fill="#166534">治：软墙 + 硬墙</text>
+
+  <!-- 招2 记忆/压缩 -->
+  <rect x="308" y="130" width="264" height="172" rx="8" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/>
+  <rect x="308" y="130" width="264" height="28" rx="8" fill="#1e40af"/>
+  <rect x="308" y="144" width="264" height="14" fill="#1e40af"/>
+  <text x="440" y="149" class="lab">招 2 · 记忆 / 历史压缩</text>
+  <text x="324" y="184" class="body" fill="#1e40af" font-weight="700">场景</text>
+  <text x="368" y="184" class="body" fill="#1e40af">历史长到快撑爆窗口</text>
+  <text x="324" y="212" class="body" fill="#1e40af" font-weight="700">做法</text>
+  <text x="368" y="212" class="body" fill="#1e40af">旧对话不删，蒸成一句话留着</text>
+  <rect x="350" y="248" width="180" height="28" rx="14" fill="#bfdbfe"/>
+  <text x="440" y="266" class="pill" fill="#1e40af">治：硬墙 + 软墙</text>
+
+  <!-- 招3 工具/Agent -->
+  <rect x="584" y="130" width="264" height="172" rx="8" fill="#fffbeb" stroke="#d97706" stroke-width="1.5"/>
+  <rect x="584" y="130" width="264" height="28" rx="8" fill="#b45309"/>
+  <rect x="584" y="144" width="264" height="14" fill="#b45309"/>
+  <text x="716" y="149" class="lab">招 3 · 工具调用 → Agent</text>
+  <text x="600" y="184" class="body" fill="#92400e" font-weight="700">场景</text>
+  <text x="644" y="184" class="body" fill="#92400e">模型要自己去查、去算</text>
+  <text x="600" y="212" class="body" fill="#92400e" font-weight="700">做法</text>
+  <text x="644" y="212" class="body" fill="#92400e">给它工具，自己判断缺啥去取</text>
+  <rect x="626" y="248" width="180" height="28" rx="14" fill="#fde68a"/>
+  <text x="716" y="266" class="pill" fill="#92400e">范式跳跃 · 治两堵</text>
+
+  <!-- 范式翻转 banner -->
+  <rect x="32" y="318" width="816" height="64" rx="8" fill="#fdf2f8" stroke="#db2777" stroke-width="1.5"/>
+  <text x="440" y="343" text-anchor="middle" fill="#9d174d" font-weight="700" font-size="13.5">范式翻转（招 3 的精髓）</text>
+  <text x="440" y="367" text-anchor="middle" fill="#9d174d" font-size="12.5">前：你伺候模型，提前把饭喂到嘴边　→　后：模型自己说“我缺数据，我去查”（just-in-time 按需拉取）</text>
+</svg>

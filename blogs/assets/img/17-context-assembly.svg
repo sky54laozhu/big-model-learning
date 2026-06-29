@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 400" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+  <title id="t">输入是一整坨 Context</title>
+  <desc id="d">模型真正看到的输入由六类成分拼成：系统提示词、工具与MCP说明、历史对话、检索资料RAG、工具调用结果、用户当前这句话。它们由开发者、程序、用户分别放入，汇成一整坨Context喂给权重冻死的模型f，得到输出。你唯一能动的就是这一坨，f锁死。</desc>
+  <style>
+    .h { font-weight: 700; fill: #1a1a1a; text-anchor: middle; font-size: 18px; }
+    .chip { font-size: 12.5px; text-anchor: start; font-weight: 600; }
+    .sub { fill: #6b7280; font-size: 11px; text-anchor: middle; }
+    .wht { fill: #ffffff; text-anchor: middle; }
+  </style>
+
+  <text x="440" y="30" class="h">输入 = 一整坨 Context（不只是你那句问题）</text>
+
+  <!-- 六类成分 chips -->
+  <!-- dev: blue / program: green / user: amber -->
+  <g>
+    <rect x="36" y="58" width="232" height="34" rx="6" fill="#dbeafe" stroke="#2563eb" stroke-width="1.2"/>
+    <text x="50" y="80" class="chip" fill="#1e40af">系统提示词　<tspan fill="#2563eb" font-weight="400" font-size="10.5">（开发者）</tspan></text>
+  </g>
+  <g>
+    <rect x="36" y="100" width="232" height="34" rx="6" fill="#dbeafe" stroke="#2563eb" stroke-width="1.2"/>
+    <text x="50" y="122" class="chip" fill="#1e40af">工具 / MCP 说明　<tspan fill="#2563eb" font-weight="400" font-size="10.5">（开发者）</tspan></text>
+  </g>
+  <g>
+    <rect x="36" y="142" width="232" height="34" rx="6" fill="#dcfce7" stroke="#16a34a" stroke-width="1.2"/>
+    <text x="50" y="164" class="chip" fill="#166534">历史对话　<tspan fill="#16a34a" font-weight="400" font-size="10.5">（你的程序）</tspan></text>
+  </g>
+  <g>
+    <rect x="36" y="184" width="232" height="34" rx="6" fill="#dcfce7" stroke="#16a34a" stroke-width="1.2"/>
+    <text x="50" y="206" class="chip" fill="#166534">检索资料 RAG　<tspan fill="#16a34a" font-weight="400" font-size="10.5">（你的程序）</tspan></text>
+  </g>
+  <g>
+    <rect x="36" y="226" width="232" height="34" rx="6" fill="#dcfce7" stroke="#16a34a" stroke-width="1.2"/>
+    <text x="50" y="248" class="chip" fill="#166534">工具调用结果　<tspan fill="#16a34a" font-weight="400" font-size="10.5">（你的程序）</tspan></text>
+  </g>
+  <g>
+    <rect x="36" y="268" width="232" height="34" rx="6" fill="#fde68a" stroke="#d97706" stroke-width="1.2"/>
+    <text x="50" y="290" class="chip" fill="#92400e">用户当前这句话　<tspan fill="#b45309" font-weight="400" font-size="10.5">（用户）</tspan></text>
+  </g>
+
+  <!-- 汇聚线 -->
+  <g stroke="#9ca3af" stroke-width="1.3" fill="none">
+    <path d="M268 75 Q330 75 360 178"/>
+    <path d="M268 117 Q340 117 360 180"/>
+    <path d="M268 159 L360 182"/>
+    <path d="M268 201 L360 184"/>
+    <path d="M268 243 Q340 243 360 186"/>
+    <path d="M268 285 Q330 285 360 188"/>
+  </g>
+
+  <!-- 一整坨 Context 节点 -->
+  <circle cx="392" cy="183" r="30" fill="#fff7ed" stroke="#d97706" stroke-width="1.5"/>
+  <text x="392" y="179" class="sub" fill="#92400e" font-weight="700">一整坨</text>
+  <text x="392" y="194" class="sub" fill="#92400e" font-weight="700">Context</text>
+
+  <!-- 粗箭头 -->
+  <defs>
+    <marker id="ar" markerWidth="9" markerHeight="9" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#374151"/></marker>
+  </defs>
+  <line x1="424" y1="183" x2="486" y2="183" stroke="#374151" stroke-width="2.5" marker-end="url(#ar)"/>
+
+  <!-- 模型 f 黑盒 -->
+  <rect x="498" y="123" width="214" height="120" rx="10" fill="#1f2937"/>
+  <text x="605" y="165" class="wht" font-weight="700" font-size="22">模型 f</text>
+  <text x="605" y="192" class="wht" font-size="13" fill="#e5e7eb">权重冻死 ❄ 一个 bit 不变</text>
+  <text x="605" y="214" class="sub" fill="#9ca3af">两个工程师拿到的是同一个 f</text>
+
+  <!-- 输出 -->
+  <line x1="712" y1="183" x2="748" y2="183" stroke="#374151" stroke-width="2.5" marker-end="url(#ar)"/>
+  <rect x="752" y="161" width="96" height="44" rx="8" fill="#eef2ff" stroke="#6366f1" stroke-width="1.3"/>
+  <text x="800" y="188" class="sub" fill="#4338ca" font-weight="700" font-size="13">输出</text>
+
+  <!-- 底部结论 -->
+  <rect x="36" y="336" width="812" height="40" rx="8" fill="#fffbeb" stroke="#d97706" stroke-width="1.3"/>
+  <text x="442" y="361" text-anchor="middle" fill="#92400e" font-weight="700" font-size="13.5">你唯一能动的，全在左边这一坨 —— f 锁死了。雕琢这一坨的组装 = Context Engineering</text>
+</svg>
