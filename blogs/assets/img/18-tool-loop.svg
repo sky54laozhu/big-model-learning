@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 470" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+  <title id="t">工具调用 loop：模型吐请求、harness 执行、结果回灌</title>
+  <desc id="d">工具调用是一个循环。①模型吐出受schema约束的JSON调用请求，比如查天气北京，吐完就停下不执行。中间有一道控制闸门：模型只是想调，真正放不放行由harness的代码说了算，可以校验拦截或要人工确认。②harness工具执行模块接手：parse解析、按schema校验参数、查表找到真正的查天气函数、调用它去撞真实天气API。③拿到返回值比如22度，塞回context当一条工具结果。然后模型看到结果，决定下一步：再调一个工具，还是给用户答复，回到①形成循环。若②校验失败（如参数city等于火星），把错误塞回context让模型重试一轮，这是校验循环。模型负责决策，harness负责执行。</desc>
+  <style>
+    .h { font-weight: 700; fill: #1a1a1a; text-anchor: middle; font-size: 18px; }
+    .lab { fill: #ffffff; font-weight: 700; font-size: 13px; text-anchor: middle; }
+    .body { font-size: 11.5px; text-anchor: middle; }
+    .mono { font-family: 'SF Mono', Menlo, monospace; font-size: 11px; text-anchor: middle; }
+    .sub { fill: #6b7280; font-size: 10.5px; text-anchor: middle; }
+    .tag { font-size: 11px; text-anchor: middle; font-weight: 700; }
+  </style>
+
+  <text x="440" y="30" class="h">工具调用：一圈转起来的 agent loop</text>
+
+  <defs><marker id="ar" markerWidth="10" markerHeight="10" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#6b7280"/></marker></defs>
+
+  <!-- ① 模型 吐请求 (上) -->
+  <rect x="250" y="52" width="380" height="76" rx="9" fill="#fef2f2" stroke="#dc2626" stroke-width="1.6"/>
+  <text x="440" y="74" class="body" fill="#b91c1c" font-weight="700">① 模型：决定调谁、吐受约束的 JSON</text>
+  <text x="440" y="96" class="mono" fill="#991b1b">{"name":"查天气","arguments":{"city":"北京"}}</text>
+  <text x="440" y="116" class="sub" fill="#dc2626">吐到此为止 —— 它并不执行，停下来等</text>
+
+  <!-- 控制闸门 (① → ②) -->
+  <path d="M630 96 L724 96 L724 188" stroke="#6b7280" stroke-width="1.8" fill="none" marker-end="url(#ar)"/>
+  <rect x="648" y="132" width="186" height="40" rx="9" fill="#fdf2f8" stroke="#db2777" stroke-width="1.4"/>
+  <text x="741" y="150" class="tag" fill="#9d174d">🚦 控制闸门</text>
+  <text x="741" y="166" class="sub" fill="#9d174d">模型想调；放不放行你说了算</text>
+
+  <!-- ② harness 执行 (右下) -->
+  <rect x="470" y="196" width="360" height="96" rx="9" fill="#faf5ff" stroke="#7c3aed" stroke-width="1.6"/>
+  <rect x="470" y="196" width="360" height="26" rx="9" fill="#6d28d9"/>
+  <rect x="470" y="210" width="360" height="12" fill="#6d28d9"/>
+  <text x="650" y="214" class="lab">② harness 工具执行模块（不是模型！）</text>
+  <text x="650" y="242" class="body" fill="#5b21b6">parse → 按 schema 校验参数 → 查表找到真正的</text>
+  <text x="650" y="262" class="mono" fill="#5b21b6">查天气() → 调它（真去撞天气 API）</text>
+  <text x="650" y="282" class="sub" fill="#7c3aed">回扣 17b：模型只吐数据，确定性代码才动手</text>
+
+  <!-- ② → ③ -->
+  <path d="M470 256 L150 256 L150 292" stroke="#6b7280" stroke-width="1.8" fill="none" marker-end="url(#ar)"/>
+
+  <!-- ③ 结果回灌 (左下) -->
+  <rect x="40" y="300" width="380" height="78" rx="9" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.6"/>
+  <text x="230" y="322" class="body" fill="#166534" font-weight="700">③ 结果回灌 context</text>
+  <text x="230" y="343" class="mono" fill="#15803d">工具结果：{"temp":22}</text>
+  <text x="230" y="363" class="sub" fill="#15803d">塞回那"一整坨"，当作模型下一步的输入</text>
+
+  <!-- ③ → ① 回到模型决定下一步 -->
+  <path d="M230 300 L230 90 L250 90" stroke="#6b7280" stroke-width="1.8" fill="none" marker-end="url(#ar)"/>
+  <rect x="64" y="170" width="172" height="40" rx="9" fill="#eff6ff" stroke="#2563eb" stroke-width="1.4"/>
+  <text x="150" y="188" class="tag" fill="#1e40af">模型看到结果</text>
+  <text x="150" y="204" class="sub" fill="#1e40af">再调一个？还是答复用户？</text>
+
+  <!-- 校验失败重试 -->
+  <rect x="470" y="306" width="360" height="60" rx="9" fill="#fffbeb" stroke="#d97706" stroke-width="1.4"/>
+  <text x="650" y="328" class="tag" fill="#92400e">校验失败怎么办（如 city:"火星"）</text>
+  <text x="650" y="348" class="sub" fill="#b45309">把错误塞回 context → 让模型重看、重试一轮</text>
+  <text x="650" y="362" class="sub" fill="#b45309">（柱子三：应用层兜住语义）</text>
+
+  <text x="440" y="404" class="body" fill="#374151" font-weight="700">①是上半场拧紧的螺丝；②③是执行+回灌 —— 这一圈就是 agent loop 的心脏第一次跳动</text>
+  <text x="440" y="428" class="sub">模型负责「想」，harness 负责「做」；第 24 篇的 Agent，无非把这个圈转得更久、更自主</text>
+</svg>

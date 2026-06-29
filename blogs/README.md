@@ -48,7 +48,7 @@
 | 17 | [Context Engineering：超越 Prompt 的上下文工程](17-context-engineering.md) | 为什么同一个模型，别人用得比你好？ | ✅ | |
 | 番外 | [什么是"工程"？从 Prompt 到 Harness](17b-what-is-engineering.md) | 凭什么这堆事配叫"工程"？ | ✅ | |
 | 番外 | [这颗"大脑"和你的不一样](18a-brain-vs-model.md) | 把模型当人，会在哪栽跟头？ | ✅ | |
-| 18 | 结构化输出与工具调用 | 怎么让模型稳定返回 JSON 并调用外部 API？ | | |
+| 18 | [结构化输出与工具调用](18-structured-output-tool-calling.md) | 怎么让模型稳定返回 JSON 并调用外部 API？ | ✅ | |
 | 19 | Embedding 应用：语义搜索与分类 | 怎么让计算机理解「相似」这件事？ | | |
 | 20 | RAG 原理：给模型外挂知识库 | 模型不知道的事，怎么让它答对？ | | |
 | 21 | RAG 工程：向量库、分块与重排序 | 为什么你的 RAG 效果总是不好？ | | |

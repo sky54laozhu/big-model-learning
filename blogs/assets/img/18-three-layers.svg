@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 460" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+  <title id="t">结构化输出能在三个层强制</title>
+  <desc id="d">让模型输出守规矩可以在三个层下手。模型层：微调或RLHF让它偏好吐JSON，本质还是求、概率性。推理层：约束解码，吐每个token前把非法候选概率清零，机制性保证合法，JSON mode与Structured Outputs在这层，跑在vLLM等推理引擎里，权重一个bit没动。应用层：harness把结果parse、按schema校验、不合法就打回重试，兜底。一句话：求作用在分布层只是掰赔率，约束解码作用在采样层关死门，harness在最外层兜住语义。能在推理层焊死就焊死，焊不死的harness用校验循环兜住。</desc>
+  <style>
+    .h { font-weight: 700; fill: #1a1a1a; text-anchor: middle; font-size: 18px; }
+    .lab { fill: #ffffff; font-weight: 700; font-size: 13px; text-anchor: middle; }
+    .body { font-size: 11.5px; text-anchor: start; }
+    .sub { fill: #6b7280; font-size: 10.5px; text-anchor: middle; }
+    .tag { font-size: 11px; text-anchor: middle; font-weight: 700; }
+  </style>
+
+  <text x="440" y="30" class="h">"让输出守规矩"，能在三个层下手</text>
+
+  <!-- 金鱼/模型 出 token -->
+  <rect x="330" y="46" width="220" height="34" rx="9" fill="#fef2f2" stroke="#dc2626" stroke-width="1.5"/>
+  <text x="440" y="68" class="body" fill="#b91c1c" font-weight="700" text-anchor="middle">模型（金鱼）：一个个吐 token</text>
+  <path d="M440 80 L440 96" stroke="#9ca3af" stroke-width="1.6" marker-end="url(#a)"/>
+  <defs><marker id="a" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#9ca3af"/></marker></defs>
+
+  <!-- 模型层 -->
+  <rect x="120" y="100" width="640" height="92" rx="8" fill="#fffbeb" stroke="#d97706" stroke-width="1.5"/>
+  <rect x="120" y="100" width="160" height="92" rx="8" fill="#b45309"/>
+  <rect x="264" y="100" width="16" height="92" fill="#b45309"/>
+  <text x="200" y="140" class="lab">① 模型层</text>
+  <text x="200" y="162" class="sub" fill="#fde9c8">权重内部</text>
+  <text x="300" y="132" class="body" fill="#92400e" font-weight="700">微调 / RLHF 让它「偏好」吐 JSON</text>
+  <text x="300" y="156" class="body" fill="#92400e">本质还是「求」，只是求得狠 —— 概率性，仍会翻车</text>
+  <rect x="600" y="146" width="140" height="26" rx="13" fill="#fde68a"/>
+  <text x="670" y="163" class="tag" fill="#92400e">作用在「分布」层</text>
+
+  <path d="M440 192 L440 206" stroke="#9ca3af" stroke-width="1.6" marker-end="url(#a)"/>
+
+  <!-- 推理层 -->
+  <rect x="120" y="210" width="640" height="100" rx="8" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.5"/>
+  <rect x="120" y="210" width="160" height="100" rx="8" fill="#166534"/>
+  <rect x="264" y="210" width="16" height="100" fill="#166534"/>
+  <text x="200" y="252" class="lab">② 推理层</text>
+  <text x="200" y="274" class="sub" fill="#c7f0d4">vLLM 等引擎</text>
+  <text x="300" y="242" class="body" fill="#166534" font-weight="700">约束解码：吐每个 token 前，把「非法」候选概率清零</text>
+  <text x="300" y="264" class="body" fill="#166534">给金鱼的嘴套模具 —— 机制性，吐出来必合法</text>
+  <text x="300" y="286" class="body" fill="#15803d" font-size="11">JSON mode / Structured Outputs 就在这层</text>
+  <rect x="600" y="256" width="140" height="26" rx="13" fill="#bbf7d0"/>
+  <text x="670" y="273" class="tag" fill="#166534">作用在「采样」层</text>
+
+  <path d="M440 310 L440 324" stroke="#9ca3af" stroke-width="1.6" marker-end="url(#a)"/>
+
+  <!-- 应用层 -->
+  <rect x="120" y="328" width="640" height="92" rx="8" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/>
+  <rect x="120" y="328" width="160" height="92" rx="8" fill="#1e40af"/>
+  <rect x="264" y="328" width="16" height="92" fill="#1e40af"/>
+  <text x="200" y="368" class="lab">③ 应用层</text>
+  <text x="200" y="390" class="sub" fill="#c7d6f5">harness</text>
+  <text x="300" y="362" class="body" fill="#1e40af" font-weight="700">parse → 按 schema 校验 → 不合法就打回重试</text>
+  <text x="300" y="384" class="body" fill="#1e40af">推理层焊不死的，harness 用校验循环兜住语义</text>
+  <rect x="600" y="374" width="140" height="26" rx="13" fill="#bfdbfe"/>
+  <text x="670" y="391" class="tag" fill="#1e40af">兜在「最外」层</text>
+
+  <text x="440" y="444" class="sub" font-size="11.5">能在推理层焊死就焊死，焊不死的 harness 兜住 —— 这就是柱子三：用确定手段兜住会抖的零件</text>
+</svg>
