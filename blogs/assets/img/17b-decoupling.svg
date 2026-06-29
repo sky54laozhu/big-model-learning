@@ -16,11 +16,11 @@
 
   <!-- 坐标基线 -->
   <line x1="150" y1="300" x2="560" y2="300" stroke="#9ca3af" stroke-width="1.4"/>
-  <text x="135" y="304" class="sub" text-anchor="end">0%</text>
+  <text x="138" y="304" fill="#6b7280" font-size="11" text-anchor="end">0%</text>
   <line x1="146" y1="200" x2="150" y2="200" stroke="#9ca3af" stroke-width="1.4"/>
-  <text x="135" y="204" class="sub" text-anchor="end">50%</text>
+  <text x="138" y="204" fill="#6b7280" font-size="11" text-anchor="end">50%</text>
   <line x1="146" y1="110" x2="150" y2="110" stroke="#9ca3af" stroke-width="1.4"/>
-  <text x="135" y="114" class="sub" text-anchor="end">100%</text>
+  <text x="138" y="114" fill="#6b7280" font-size="11" text-anchor="end">100%</text>
 
   <!-- 柱1：简陋脚手架 42% -->
   <rect x="210" y="216" width="110" height="84" rx="6" fill="#fecaca" stroke="#dc2626" stroke-width="1.5"/>
