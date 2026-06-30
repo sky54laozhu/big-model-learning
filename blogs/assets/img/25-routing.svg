@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 470" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+  <title id="t">Routing 工作流：模型分类 + 代码分派</title>
+  <desc id="d">一封自然语言客服邮件先进模型做三选一分类（需要理解力，交给模型，受约束的结构化输出，吐完即止无循环），分类结果交给代码 switch 按类别分派：退款走退款流程、投诉转人工、咨询查知识库。控制流写死在 switch 里，攥在 harness 手里。</desc>
+  <style>
+    .h  { font-weight: 700; fill: #1a1a1a; font-size: 18px; }
+    .bx { font-weight: 700; font-size: 13px; text-anchor: middle; }
+    .bs { font-size: 11px; text-anchor: middle; }
+    .lb { font-size: 11.5px; text-anchor: middle; fill: #6b7280; }
+    .tag{ font-weight: 700; font-size: 12px; text-anchor: middle; }
+  </style>
+  <defs>
+    <marker id="ar" markerWidth="10" markerHeight="10" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#9ca3af"/></marker>
+  </defs>
+
+  <text x="40" y="34" class="h">Routing：模型只管「归类」，代码管「分派」</text>
+
+  <!-- email -->
+  <rect x="40" y="150" width="150" height="80" rx="10" fill="#eef2f7" stroke="#94a3b8" stroke-width="1.5"/>
+  <text x="115" y="180" class="bx" fill="#334155">客服邮件</text>
+  <text x="115" y="202" class="bs" fill="#475569">一段自然语言</text>
+  <text x="115" y="220" class="bs" fill="#94a3b8">「钱扣了没动静」</text>
+
+  <!-- model classify -->
+  <rect x="265" y="140" width="200" height="100" rx="10" fill="#dbeafe" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="365" y="118" class="tag" fill="#1e40af">需要理解力 → 模型</text>
+  <text x="365" y="172" class="bx" fill="#1e40af">① 模型分类</text>
+  <text x="365" y="194" class="bs" fill="#1e40af">退款 / 投诉 / 咨询 三选一</text>
+  <text x="365" y="214" class="bs" fill="#1e40af">受约束输出，吐完即止</text>
+  <text x="365" y="230" class="bs" fill="#60a5fa">（无循环，不是 Agent）</text>
+
+  <!-- switch -->
+  <rect x="540" y="150" width="150" height="80" rx="10" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="615" y="118" class="tag" fill="#92400e">控制流 → 代码写死</text>
+  <text x="615" y="184" class="bx" fill="#92400e">② switch</text>
+  <text x="615" y="206" class="bs" fill="#92400e">按类别分派</text>
+
+  <!-- 3 branches -->
+  <rect x="730" y="92" width="118" height="52" rx="8" fill="#dcfce7" stroke="#16a34a" stroke-width="1.3"/>
+  <text x="789" y="116" class="bx" fill="#166534">退款流程</text>
+  <text x="789" y="134" class="bs" fill="#166534">case 退款</text>
+
+  <rect x="730" y="164" width="118" height="52" rx="8" fill="#dcfce7" stroke="#16a34a" stroke-width="1.3"/>
+  <text x="789" y="188" class="bx" fill="#166534">转人工</text>
+  <text x="789" y="206" class="bs" fill="#166534">case 投诉</text>
+
+  <rect x="730" y="236" width="118" height="52" rx="8" fill="#dcfce7" stroke="#16a34a" stroke-width="1.3"/>
+  <text x="789" y="260" class="bx" fill="#166534">查知识库</text>
+  <text x="789" y="278" class="bs" fill="#166534">case 咨询</text>
+
+  <!-- arrows -->
+  <line x1="190" y1="190" x2="263" y2="190" stroke="#9ca3af" stroke-width="1.6" marker-end="url(#ar)"/>
+  <line x1="465" y1="190" x2="538" y2="190" stroke="#9ca3af" stroke-width="1.6" marker-end="url(#ar)"/>
+  <path d="M690 178 L710 178 L710 118 L728 118" fill="none" stroke="#9ca3af" stroke-width="1.5" marker-end="url(#ar)"/>
+  <path d="M690 190 L728 190" fill="none" stroke="#9ca3af" stroke-width="1.5" marker-end="url(#ar)"/>
+  <path d="M690 202 L710 202 L710 262 L728 262" fill="none" stroke="#9ca3af" stroke-width="1.5" marker-end="url(#ar)"/>
+
+  <text x="440" y="360" class="lb">模型只在「需要理解力」的一格做受约束决策；「类别 → 动作」的控制流，始终攥在 harness 的 switch 代码里</text>
+  <text x="440" y="384" class="lb" fill="#92400e">自主性是旋钮，不是开关 —— 能写死的写死，非要理解力的才放权</text>
+</svg>

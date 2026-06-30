@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 520" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+  <title id="t">Orchestrator-workers 模式与三笔代价</title>
+  <desc id="d">一台编排 agent 把调研 5 家竞品的任务切成 5 份派下去，5 台子 agent 各自一个隔离的 context 窗口并行调研，结果汇总进第 6 台合成 agent 出对比表。子 agent 是一次性的隔离上下文容器，专治单 context 越堆越大的病。下方标注隔离带来的三笔代价：账一通信靠显式结构化契约、账二成本约单轮对话 15 倍是奢侈品、账三局部失败是错误雪球的分布式升级版。</desc>
+  <style>
+    .h  { font-weight: 700; fill: #1a1a1a; font-size: 18px; }
+    .bx { font-weight: 700; font-size: 13px; text-anchor: middle; }
+    .bs { font-size: 10.5px; text-anchor: middle; }
+    .wk { font-weight: 700; font-size: 11.5px; text-anchor: middle; }
+    .cost{ font-size: 11.5px; }
+    .costh{ font-weight: 700; font-size: 12.5px; }
+    .lb { font-size: 11px; text-anchor: middle; fill: #6b7280; }
+  </style>
+  <defs>
+    <marker id="ar" markerWidth="10" markerHeight="10" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#9ca3af"/></marker>
+  </defs>
+
+  <text x="40" y="34" class="h">Orchestrator-workers：切分 → 隔离并行 → 汇总</text>
+
+  <!-- orchestrator -->
+  <rect x="40" y="90" width="150" height="80" rx="10" fill="#ede9fe" stroke="#7c3aed" stroke-width="1.5"/>
+  <text x="115" y="122" class="bx" fill="#5b21b6">编排 agent</text>
+  <text x="115" y="143" class="bs" fill="#5b21b6">切成 5 份派活</text>
+  <text x="115" y="159" class="bs" fill="#7c3aed">+ 下发字段契约</text>
+
+  <!-- 5 workers -->
+  <g>
+    <rect x="270" y="44" width="150" height="44" rx="8" fill="#dbeafe" stroke="#3b82f6" stroke-width="1.3"/>
+    <text x="345" y="62" class="wk" fill="#1e40af">worker 1 · 查 A 家</text>
+    <text x="345" y="79" class="bs" fill="#60a5fa">独立 context</text>
+  </g>
+  <g>
+    <rect x="270" y="100" width="150" height="44" rx="8" fill="#dbeafe" stroke="#3b82f6" stroke-width="1.3"/>
+    <text x="345" y="118" class="wk" fill="#1e40af">worker 2 · 查 B 家</text>
+    <text x="345" y="135" class="bs" fill="#60a5fa">独立 context</text>
+  </g>
+  <g>
+    <rect x="270" y="156" width="150" height="44" rx="8" fill="#dbeafe" stroke="#3b82f6" stroke-width="1.3"/>
+    <text x="345" y="174" class="wk" fill="#1e40af">worker 3 · 查 C 家</text>
+    <text x="345" y="191" class="bs" fill="#60a5fa">独立 context</text>
+  </g>
+  <g>
+    <rect x="270" y="212" width="150" height="44" rx="8" fill="#dbeafe" stroke="#3b82f6" stroke-width="1.3"/>
+    <text x="345" y="230" class="wk" fill="#1e40af">worker 4 · 查 D 家</text>
+    <text x="345" y="247" class="bs" fill="#60a5fa">独立 context</text>
+  </g>
+  <g>
+    <rect x="270" y="268" width="150" height="44" rx="8" fill="#dbeafe" stroke="#3b82f6" stroke-width="1.3"/>
+    <text x="345" y="286" class="wk" fill="#1e40af">worker 5 · 查 E 家</text>
+    <text x="345" y="303" class="bs" fill="#60a5fa">独立 context</text>
+  </g>
+
+  <!-- synthesizer -->
+  <rect x="500" y="156" width="160" height="80" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/>
+  <text x="580" y="188" class="bx" fill="#166534">第 6 台 · 汇总</text>
+  <text x="580" y="209" class="bs" fill="#166534">5 份结果 → 对比表</text>
+  <text x="580" y="225" class="bs" fill="#15803d">需校验真假</text>
+
+  <!-- arrows orchestrator -> workers -->
+  <path d="M190 120 L230 120 L230 66 L268 66" fill="none" stroke="#9ca3af" stroke-width="1.4" marker-end="url(#ar)"/>
+  <path d="M190 126 L240 126 L240 122 L268 122" fill="none" stroke="#9ca3af" stroke-width="1.4" marker-end="url(#ar)"/>
+  <path d="M190 132 L250 132 L250 178 L268 178" fill="none" stroke="#9ca3af" stroke-width="1.4" marker-end="url(#ar)"/>
+  <path d="M190 138 L240 138 L240 234 L268 234" fill="none" stroke="#9ca3af" stroke-width="1.4" marker-end="url(#ar)"/>
+  <path d="M190 144 L230 144 L230 290 L268 290" fill="none" stroke="#9ca3af" stroke-width="1.4" marker-end="url(#ar)"/>
+
+  <!-- arrows workers -> synth -->
+  <path d="M420 66 L460 66 L460 180 L498 180" fill="none" stroke="#9ca3af" stroke-width="1.4" marker-end="url(#ar)"/>
+  <path d="M420 122 L455 122 L455 188 L498 188" fill="none" stroke="#9ca3af" stroke-width="1.4" marker-end="url(#ar)"/>
+  <path d="M420 178 L498 196" fill="none" stroke="#9ca3af" stroke-width="1.4" marker-end="url(#ar)"/>
+  <path d="M420 234 L455 234 L455 204 L498 204" fill="none" stroke="#9ca3af" stroke-width="1.4" marker-end="url(#ar)"/>
+  <path d="M420 290 L460 290 L460 212 L498 212" fill="none" stroke="#9ca3af" stroke-width="1.4" marker-end="url(#ar)"/>
+
+  <text x="345" y="338" class="lb">子 agent = 一次性的、隔离的 context 容器 —— 专治第 24 篇「单 context 越堆越大」的病</text>
+
+  <!-- three costs -->
+  <text x="40" y="378" class="costh" fill="#b91c1c">但隔离的对偶面，是三笔新账：</text>
+
+  <rect x="40" y="392" width="256" height="100" rx="9" fill="#fef2f2" stroke="#ef4444" stroke-width="1.3"/>
+  <text x="56" y="414" class="costh" fill="#b91c1c">账一 · 通信</text>
+  <text x="56" y="436" class="cost" fill="#7f1d1d">worker 间没共享记忆，</text>
+  <text x="56" y="454" class="cost" fill="#7f1d1d">谁也看不见谁 → 全靠</text>
+  <text x="56" y="472" class="cost" fill="#7f1d1d">显式结构化契约（回扣18）</text>
+
+  <rect x="312" y="392" width="256" height="100" rx="9" fill="#fef2f2" stroke="#ef4444" stroke-width="1.3"/>
+  <text x="328" y="414" class="costh" fill="#b91c1c">账二 · 成本</text>
+  <text x="328" y="436" class="cost" fill="#7f1d1d">6 台各烧自己的循环，</text>
+  <text x="328" y="454" class="cost" fill="#7f1d1d">约单轮对话 15 倍 token</text>
+  <text x="328" y="472" class="cost" fill="#7f1d1d">→ 是奢侈品，不是默认项</text>
+
+  <rect x="584" y="392" width="256" height="100" rx="9" fill="#fef2f2" stroke="#ef4444" stroke-width="1.3"/>
+  <text x="600" y="414" class="costh" fill="#b91c1c">账三 · 局部失败</text>
+  <text x="600" y="436" class="cost" fill="#7f1d1d">1 份编造混进汇总，</text>
+  <text x="600" y="454" class="cost" fill="#7f1d1d">无人见过全过程难抓</text>
+  <text x="600" y="472" class="cost" fill="#7f1d1d">=「偏」的分布式升级版</text>
+</svg>
