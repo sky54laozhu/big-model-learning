@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 380" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+  <title id="t">混合检索：向量路 + 关键词路，RRF 融合</title>
+  <desc id="d">混合检索把用户问题同时送进两路。上面是向量路，管语义：问题染色成箭、过向量索引ANN，能匹配意思相同但措辞不同的资料，比如用户搜自研处理器能命中写A17芯片的段落。下面是关键词路，管字面：用BM25走倒排索引做精确字面匹配，能命中精确型号、专名、罕见缩写，比如SKU-8842一字不差。两路各出一个排名，用RRF倒数排名融合揉成一个候选集，再交给重排序。向量补语义、关键词补字面，盲区互相填，最大化召回别漏。</desc>
+  <style>
+    .h { font-weight: 700; fill: #1a1a1a; font-size: 18px; }
+    .bx { font-size: 11.5px; text-anchor: middle; fill: #1f2937; }
+    .lane { font-weight: 700; font-size: 12px; text-anchor: middle; }
+    .ex { font-size: 10.5px; text-anchor: middle; fill: #6b7280; }
+  </style>
+
+  <text x="40" y="30" class="h">混合检索：两路一起撒网，盲区互相填</text>
+
+  <defs>
+    <marker id="ar" markerWidth="10" markerHeight="10" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#6b7280"/></marker>
+  </defs>
+
+  <!-- 用户问题 -->
+  <rect x="40" y="158" width="96" height="44" rx="9" fill="#f3f4f6" stroke="#6b7280" stroke-width="1.5"/>
+  <text x="88" y="184" class="bx" font-weight="700">用户问题</text>
+  <!-- 分叉 -->
+  <path d="M136 172 C160 172 158 96 178 96" stroke="#6b7280" stroke-width="1.6" fill="none" marker-end="url(#ar)"/>
+  <path d="M136 188 C160 188 158 264 178 264" stroke="#6b7280" stroke-width="1.6" fill="none" marker-end="url(#ar)"/>
+
+  <!-- ===== 向量路 ===== -->
+  <text x="312" y="62" class="lane" fill="#1e40af">向量路 · 管「意思相同」</text>
+  <rect x="180" y="76" width="124" height="40" rx="8" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="242" y="100" class="bx" fill="#1e40af">问题染色 → 箭</text>
+  <path d="M304 96 L330 96" stroke="#6b7280" stroke-width="1.6" fill="none" marker-end="url(#ar)"/>
+  <rect x="332" y="76" width="124" height="40" rx="8" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="394" y="100" class="bx" fill="#1e40af">向量索引 ANN</text>
+  <text x="318" y="138" class="ex">例：「自研处理器」≈「A17 芯片」</text>
+
+  <!-- ===== 关键词路 ===== -->
+  <rect x="180" y="244" width="124" height="40" rx="8" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
+  <text x="242" y="268" class="bx" fill="#92400e">BM25 关键词</text>
+  <path d="M304 264 L330 264" stroke="#6b7280" stroke-width="1.6" fill="none" marker-end="url(#ar)"/>
+  <rect x="332" y="244" width="124" height="40" rx="8" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
+  <text x="394" y="268" class="bx" fill="#92400e">倒排索引</text>
+  <text x="318" y="306" class="ex">例：「SKU-8842」一字不差也能中</text>
+  <text x="312" y="324" class="lane" fill="#92400e">关键词路 · 管「字面精确」</text>
+
+  <!-- ===== RRF 融合 ===== -->
+  <path d="M456 96 C496 96 494 168 512 178" stroke="#6b7280" stroke-width="1.6" fill="none" marker-end="url(#ar)"/>
+  <path d="M456 264 C496 264 494 202 512 192" stroke="#6b7280" stroke-width="1.6" fill="none" marker-end="url(#ar)"/>
+  <rect x="514" y="160" width="120" height="52" rx="9" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.8"/>
+  <text x="574" y="182" class="bx" font-weight="700" fill="#5b21b6">RRF 融合</text>
+  <text x="574" y="200" class="ex" fill="#6d28d9">两路排名揉成一个</text>
+  <path d="M634 186 L662 186" stroke="#6b7280" stroke-width="1.6" fill="none" marker-end="url(#ar)"/>
+
+  <!-- 候选集 -->
+  <rect x="664" y="162" width="150" height="48" rx="9" fill="#dcfce7" stroke="#16a34a" stroke-width="1.6"/>
+  <text x="739" y="183" class="bx" font-weight="700" fill="#166534">候选集</text>
+  <text x="739" y="201" class="ex" fill="#15803d">→ 交给重排序精排</text>
+</svg>
