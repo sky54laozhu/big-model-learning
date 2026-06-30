@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 400" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+  <title id="t">切块的拉扯：太大染不准、太碎断语义、重叠切兜底</title>
+  <desc id="d">把文档切块有三种情况的拉扯。第一种切太大：一整块里混了五个不相干主题，池化成一支浑浊的平均箭，方向落在中间空地，染不准。第二种切太碎：一句"退款需在15天内申请，但生鲜类除外"被拦腰切断，检索可能只捞到前半句"15天内"，漏了后半句"生鲜类除外"，模型照残缺资料答错。第三种是常用兜底，重叠切：让相邻两块之间留一段重叠区，切断处的信息两边都保留，不会丢。</desc>
+  <style>
+    .h { font-weight: 700; fill: #1a1a1a; font-size: 18px; }
+    .cap { font-weight: 700; font-size: 13.5px; text-anchor: middle; }
+    .body { font-size: 11.5px; text-anchor: middle; fill: #374151; }
+    .sm { font-size: 10.5px; text-anchor: middle; fill: #6b7280; }
+    .verdict { font-weight: 700; font-size: 11.5px; text-anchor: middle; }
+  </style>
+
+  <text x="40" y="32" class="h">块切多大？三种切法的拉扯</text>
+
+  <defs>
+    <marker id="ar" markerWidth="10" markerHeight="10" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#9ca3af"/></marker>
+  </defs>
+
+  <!-- ===== 列1：切太大 ===== -->
+  <text x="150" y="68" class="cap" fill="#b91c1c">切太大</text>
+  <rect x="58" y="82" width="184" height="118" rx="8" fill="#fef2f2" stroke="#dc2626" stroke-width="1.5"/>
+  <text x="150" y="102" class="sm" fill="#991b1b">一块里混了 5 个主题</text>
+  <text x="150" y="122" class="body">退款政策 · 配送范围</text>
+  <text x="150" y="142" class="body">营业时间 · 会员等级</text>
+  <text x="150" y="162" class="body">发票流程 ……</text>
+  <line x1="150" y1="174" x2="150" y2="186" stroke="#9ca3af" stroke-width="1.5" marker-end="url(#ar)"/>
+  <!-- 浑浊箭 -->
+  <line x1="110" y1="232" x2="190" y2="232" stroke="#e5e7eb" stroke-width="1"/>
+  <line x1="150" y1="236" x2="150" y2="208" stroke="#e5e7eb" stroke-width="1"/>
+  <path d="M150 232 L168 216" stroke="#9ca3af" stroke-width="3" fill="none" marker-end="url(#ar)"/>
+  <text x="150" y="262" class="verdict" fill="#b91c1c">浑浊平均箭 → 染不准</text>
+  <text x="150" y="280" class="sm">方向落在主题间的空地，谁都不像</text>
+
+  <!-- ===== 列2：切太碎 ===== -->
+  <text x="430" y="68" class="cap" fill="#b45309">切太碎</text>
+  <!-- 完整句 -->
+  <rect x="318" y="84" width="224" height="34" rx="7" fill="#fffbeb" stroke="#d97706" stroke-width="1.4"/>
+  <text x="430" y="105" class="body" fill="#92400e">退款需在 15 天内申请，但生鲜类除外</text>
+  <!-- 剪刀切断线 -->
+  <text x="430" y="138" class="sm" fill="#b45309">✂ 拦腰切成两块</text>
+  <!-- 两半 -->
+  <rect x="318" y="150" width="108" height="46" rx="7" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/>
+  <text x="372" y="170" class="body" fill="#166534">退款需在</text>
+  <text x="372" y="187" class="body" fill="#166534">15 天内申请</text>
+  <rect x="434" y="150" width="108" height="46" rx="7" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1.4" stroke-dasharray="4 3"/>
+  <text x="488" y="170" class="body" fill="#9ca3af">但生鲜类</text>
+  <text x="488" y="187" class="body" fill="#9ca3af">除外</text>
+  <text x="372" y="214" class="sm" fill="#166534">检索捞到 ✓</text>
+  <text x="488" y="214" class="sm" fill="#b91c1c">漏了 ✗</text>
+  <text x="430" y="262" class="verdict" fill="#b45309">断语义 → 照残缺资料答错</text>
+  <text x="430" y="280" class="sm">只看到"15 天"，丢了"生鲜除外"</text>
+
+  <!-- ===== 列3：重叠切（兜底）===== -->
+  <text x="710" y="68" class="cap" fill="#166534">重叠切（兜底）</text>
+  <!-- 块A -->
+  <rect x="606" y="92" width="150" height="40" rx="7" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/>
+  <text x="681" y="116" class="body" fill="#166534">块 A …… 15 天内申请，</text>
+  <!-- 重叠区 -->
+  <rect x="636" y="138" width="148" height="34" rx="7" fill="#bbf7d0" stroke="#16a34a" stroke-width="1.5" stroke-dasharray="4 3"/>
+  <text x="710" y="159" class="sm" fill="#15803d">重叠区（两块都含）</text>
+  <!-- 块B -->
+  <rect x="664" y="178" width="150" height="40" rx="7" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/>
+  <text x="739" y="202" class="body" fill="#166534">15 天内申请，但生鲜除外 块 B</text>
+  <text x="710" y="262" class="verdict" fill="#166534">留重叠 → 切断处两边都不丢</text>
+  <text x="710" y="280" class="sm">相邻块各延伸一段，兜住边界信息</text>
+
+  <!-- 底部结论 -->
+  <line x1="40" y1="312" x2="820" y2="312" stroke="#e5e7eb" stroke-width="1"/>
+  <text x="430" y="342" class="body" font-weight="700" fill="#374151" font-size="13">在"够小好染"和"够整不断语义"之间找平衡——具体旋钮（块大小、重叠多少）留给工程篇。</text>
+  <text x="430" y="368" class="sm" font-size="11">这一篇只钉原理：为什么要切块、为什么不能瞎切。</text>
+</svg>

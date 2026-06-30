@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 480" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+  <title id="t">RAG 全景：离线建库 + 在线查询两条时间线</title>
+  <desc id="d">RAG 活在两条时间线上。上面是离线时间线，提前跑一次：把知识库文档切块、每块染色成语义向量、建ANN索引、存进向量库。下面是在线时间线，用户每问一次实时跑：用户问题也染色，去向量库检索捞回最相似的top-K块（R），把这几块拼成铁律三明治（A），喂给模型据此生成答案（G）。两条线的关键连接是：入库和查询用的是同一个染色动作、进的是同一个向量空间，所以问题的箭和资料的箭才能比夹角；向量库里现成的资料箭，正是在线检索去捞的对象。</desc>
+  <style>
+    .h { font-weight: 700; fill: #1a1a1a; font-size: 18px; }
+    .lane { font-weight: 700; font-size: 13.5px; }
+    .tag { font-size: 11px; fill: #6b7280; }
+    .bx { font-size: 12.5px; text-anchor: middle; fill: #1f2937; }
+    .rag { font-weight: 700; font-size: 12px; text-anchor: middle; }
+    .note { font-size: 11px; fill: #7c3aed; }
+  </style>
+
+  <text x="40" y="32" class="h">RAG 全景：离线建库 + 在线查询，两条时间线</text>
+
+  <defs>
+    <marker id="g" markerWidth="10" markerHeight="10" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#6b7280"/></marker>
+    <marker id="p" markerWidth="10" markerHeight="10" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#7c3aed"/></marker>
+  </defs>
+
+  <!-- ===== 离线 lane ===== -->
+  <text x="40" y="70" class="lane" fill="#6d28d9">离线 · 提前跑一次</text>
+  <text x="178" y="70" class="tag">（知识库建好就备着）</text>
+
+  <!-- boxes -->
+  <g>
+    <rect x="40"  y="84" width="120" height="46" rx="8" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1.4"/>
+    <text x="100" y="105" class="bx">文档</text><text x="100" y="122" class="bx" fill="#6b7280" font-size="10.5">（公司知识库）</text>
+    <rect x="196" y="84" width="120" height="46" rx="8" fill="#faf5ff" stroke="#7c3aed" stroke-width="1.4"/>
+    <text x="256" y="112" class="bx" fill="#5b21b6">① 切块</text>
+    <rect x="352" y="84" width="120" height="46" rx="8" fill="#faf5ff" stroke="#7c3aed" stroke-width="1.4"/>
+    <text x="412" y="112" class="bx" fill="#5b21b6">② 逐块染色</text>
+    <rect x="508" y="84" width="120" height="46" rx="8" fill="#faf5ff" stroke="#7c3aed" stroke-width="1.4"/>
+    <text x="568" y="112" class="bx" fill="#5b21b6">③ 建 ANN 索引</text>
+    <!-- 向量库 cylinder -->
+    <g>
+      <path d="M676 96 a44 9 0 0 1 88 0 v36 a44 9 0 0 1 -88 0 z" fill="#ede9fe" stroke="#7c3aed" stroke-width="1.6"/>
+      <ellipse cx="720" cy="96" rx="44" ry="9" fill="#ddd6fe" stroke="#7c3aed" stroke-width="1.6"/>
+      <text x="720" y="122" class="bx" fill="#5b21b6">向量库</text>
+    </g>
+  </g>
+  <!-- offline arrows -->
+  <path d="M160 107 L194 107" stroke="#6b7280" stroke-width="1.6" fill="none" marker-end="url(#g)"/>
+  <path d="M316 107 L350 107" stroke="#6b7280" stroke-width="1.6" fill="none" marker-end="url(#g)"/>
+  <path d="M472 107 L506 107" stroke="#6b7280" stroke-width="1.6" fill="none" marker-end="url(#g)"/>
+  <path d="M628 107 L672 107" stroke="#6b7280" stroke-width="1.6" fill="none" marker-end="url(#g)"/>
+
+  <!-- ===== 连接：向量库 → 在线检索 ===== -->
+  <path d="M720 134 C720 210 430 210 360 318" stroke="#7c3aed" stroke-width="1.8" fill="none" stroke-dasharray="5 4" marker-end="url(#p)"/>
+  <text x="60" y="250" class="note">向量库里现成的"资料箭"，正是在线检索要捞的对象</text>
+  <text x="60" y="270" class="note">入库 &amp; 查询 = 同一个染色动作 → 进同一向量空间，才能比夹角</text>
+
+  <!-- ===== 在线 lane ===== -->
+  <text x="40" y="300" class="lane" fill="#1e40af">在线 · 用户每问一次实时跑</text>
+
+  <g>
+    <rect x="40"  y="316" width="120" height="46" rx="8" fill="#eff6ff" stroke="#2563eb" stroke-width="1.4"/>
+    <text x="100" y="344" class="bx" fill="#1e40af">用户问题</text>
+    <rect x="196" y="316" width="120" height="46" rx="8" fill="#eff6ff" stroke="#2563eb" stroke-width="1.4"/>
+    <text x="256" y="344" class="bx" fill="#1e40af">问题染色</text>
+    <rect x="332" y="316" width="120" height="46" rx="8" fill="#dbeafe" stroke="#2563eb" stroke-width="1.8"/>
+    <text x="392" y="338" class="rag" fill="#1e3a8a">R · 检索</text>
+    <text x="392" y="354" class="bx" fill="#1e40af" font-size="10.5">捞 top-K 块</text>
+    <rect x="492" y="316" width="120" height="46" rx="8" fill="#fef3c7" stroke="#d97706" stroke-width="1.8"/>
+    <text x="552" y="338" class="rag" fill="#92400e">A · 拼三明治</text>
+    <text x="552" y="354" class="bx" fill="#92400e" font-size="10.5">资料+铁律+问题</text>
+    <rect x="652" y="316" width="120" height="46" rx="8" fill="#dcfce7" stroke="#16a34a" stroke-width="1.8"/>
+    <text x="712" y="338" class="rag" fill="#166534">G · 生成</text>
+    <text x="712" y="354" class="bx" fill="#166534" font-size="10.5">据此答 + 压幻觉</text>
+  </g>
+  <!-- online arrows -->
+  <path d="M160 339 L194 339" stroke="#6b7280" stroke-width="1.6" fill="none" marker-end="url(#g)"/>
+  <path d="M316 339 L330 339" stroke="#6b7280" stroke-width="1.6" fill="none" marker-end="url(#g)"/>
+  <path d="M452 339 L490 339" stroke="#6b7280" stroke-width="1.6" fill="none" marker-end="url(#g)"/>
+  <path d="M612 339 L650 339" stroke="#6b7280" stroke-width="1.6" fill="none" marker-end="url(#g)"/>
+  <!-- 答案 -->
+  <path d="M712 362 L712 392" stroke="#16a34a" stroke-width="1.8" fill="none" marker-end="url(#g)"/>
+  <text x="712" y="410" class="bx" fill="#166534" font-weight="700">据资料的回答</text>
+
+  <!-- 底部一句 -->
+  <text x="450" y="456" class="bx" fill="#374151" font-weight="700">一句话：R 捞 → A 拼（铁律是魂）→ G 据此答；质量被 R 的检索准度卡死（garbage in / out）。</text>
+</svg>

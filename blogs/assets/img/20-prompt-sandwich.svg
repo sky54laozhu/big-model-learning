@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 430" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+  <title id="t">铁律三明治：喂给模型的 prompt 分三层</title>
+  <desc id="d">喂给模型的 prompt 拼成一个三层三明治。第一层是指令，写明角色和铁律"只能依据下面资料回答，没有的就说我不知道，禁止编"，这一层是整个三明治的魂。第二层是检索到的资料，每段带来源编号。第三层是用户的问题。右侧标注：少了第一层那条铁律，资料会被模型无视，照样用脑子里烤死的记忆回答。</desc>
+  <style>
+    .h { font-weight: 700; fill: #1a1a1a; font-size: 18px; }
+    .lab { font-weight: 700; font-size: 13px; }
+    .body { font-size: 12.5px; fill: #1f2937; }
+    .sub { fill: #6b7280; font-size: 11px; }
+    .soul { font-weight: 700; font-size: 12px; fill: #b91c1c; }
+  </style>
+
+  <text x="40" y="34" class="h">喂给模型的 prompt = 一个三层三明治</text>
+
+  <defs>
+    <marker id="ar" markerWidth="10" markerHeight="10" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#b91c1c"/></marker>
+  </defs>
+
+  <!-- ① 指令层（魂，高亮红框） -->
+  <rect x="40" y="56" width="540" height="92" rx="9" fill="#fef2f2" stroke="#dc2626" stroke-width="2"/>
+  <text x="60" y="82" class="lab" fill="#b91c1c">① 指令（角色 + 铁律）</text>
+  <text x="60" y="106" class="body">你是客服助手。只能依据下面【资料】回答；</text>
+  <text x="60" y="128" class="body">资料里没有的，直接说"我不知道"，禁止编。</text>
+
+  <!-- ② 资料层 -->
+  <rect x="40" y="156" width="540" height="92" rx="9" fill="#eff6ff" stroke="#2563eb" stroke-width="1.6"/>
+  <text x="60" y="182" class="lab" fill="#1e40af">② 检索到的资料（带来源编号）</text>
+  <text x="60" y="206" class="body">[资料1]（来源：退款政策 v3）……</text>
+  <text x="60" y="228" class="body">[资料2]（来源：FAQ-23）……</text>
+
+  <!-- ③ 问题层 -->
+  <rect x="40" y="256" width="540" height="64" rx="9" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.6"/>
+  <text x="60" y="282" class="lab" fill="#166534">③ 用户的问题</text>
+  <text x="60" y="306" class="body">我们公司的退款政策是几天？</text>
+
+  <!-- 魂 标注 + 箭头指向 ① -->
+  <text x="620" y="84" class="soul">★ 这一层是魂</text>
+  <path d="M712 96 Q660 118 584 110" stroke="#b91c1c" stroke-width="1.8" fill="none" marker-end="url(#ar)"/>
+  <text x="600" y="120" class="sub">少了①那条铁律 →</text>
+  <text x="600" y="138" class="sub">资料被无视，模型</text>
+  <text x="600" y="156" class="sub">照用烤死的记忆答</text>
+
+  <!-- 底部一句话 -->
+  <text x="40" y="356" class="body" font-weight="700" fill="#374151">关键不在"塞"那个动作，在①那条把资料钉成"必须服从的依据"的铁律。</text>
+  <text x="40" y="392" class="sub">很多人 RAG 翻车，就栽在只拼了 ②③、忘了 ①。</text>
+</svg>
