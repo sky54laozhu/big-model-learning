@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 364" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+  <title id="t">LLM-as-judge：让模型当裁判</title>
+  <desc id="d">LLM-as-judge 的工作方式：把问题、参考答案（可选）、待评输出、评分标准 rubric 四样喂给一个现成的强模型当裁判，它读完输出分数或对错判断加理由。它靠谱的根据是评判比创作容易。但裁判会有偏好，要用人工抽样校准：拿一批人工标注当标尺，看裁判跟人判得一不一致，一致性够高才敢放它规模化跑。人校准机器，机器再去跑量。</desc>
+  <style>
+    .h { font-weight: 700; fill: #1a1a1a; font-size: 18px; }
+    .bx { font-size: 11.5px; text-anchor: middle; fill: #1f2937; }
+    .lab { font-weight: 700; font-size: 13px; text-anchor: middle; }
+    .tag { font-size: 10.5px; text-anchor: middle; fill: #6b7280; }
+  </style>
+
+  <text x="40" y="30" class="h">LLM-as-judge：让模型当裁判</text>
+
+  <defs>
+    <marker id="ar" markerWidth="10" markerHeight="10" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#6b7280"/></marker>
+    <marker id="aro" markerWidth="10" markerHeight="10" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#d97706"/></marker>
+  </defs>
+
+  <!-- 输入 4 项 -->
+  <rect x="44" y="66" width="200" height="34" rx="7" fill="#eff6ff" stroke="#2563eb" stroke-width="1.3"/>
+  <text x="144" y="88" class="bx" fill="#1e40af">问题</text>
+  <rect x="44" y="110" width="200" height="34" rx="7" fill="#eff6ff" stroke="#93c5fd" stroke-width="1.3"/>
+  <text x="144" y="132" class="bx" fill="#1e40af">参考答案（可选）</text>
+  <rect x="44" y="154" width="200" height="34" rx="7" fill="#eff6ff" stroke="#2563eb" stroke-width="1.3"/>
+  <text x="144" y="176" class="bx" fill="#1e40af">待评输出</text>
+  <rect x="44" y="198" width="200" height="34" rx="7" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
+  <text x="144" y="220" class="bx" fill="#92400e">评分标准（rubric）</text>
+
+  <!-- 汇聚箭头 -->
+  <path d="M244 83 C300 83 312 150 360 162" stroke="#6b7280" stroke-width="1.4" fill="none" marker-end="url(#ar)"/>
+  <path d="M244 127 C300 127 320 158 360 170" stroke="#6b7280" stroke-width="1.4" fill="none" marker-end="url(#ar)"/>
+  <path d="M244 171 C300 171 322 174 360 178" stroke="#6b7280" stroke-width="1.4" fill="none" marker-end="url(#ar)"/>
+  <path d="M244 215 C300 215 320 198 360 186" stroke="#6b7280" stroke-width="1.4" fill="none" marker-end="url(#ar)"/>
+
+  <!-- 裁判模型 -->
+  <rect x="360" y="120" width="160" height="110" rx="10" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.8"/>
+  <text x="440" y="156" class="lab" fill="#5b21b6">裁判模型</text>
+  <text x="440" y="178" class="bx" fill="#6d28d9">（现成强 LLM）</text>
+  <text x="440" y="206" class="tag" fill="#7c3aed">评判 &gt; 创作，所以敢用</text>
+
+  <!-- 输出 -->
+  <path d="M520 160 L578 138" stroke="#6b7280" stroke-width="1.5" fill="none" marker-end="url(#ar)"/>
+  <path d="M520 188 L578 206" stroke="#6b7280" stroke-width="1.5" fill="none" marker-end="url(#ar)"/>
+  <rect x="580" y="116" width="200" height="40" rx="8" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/>
+  <text x="680" y="141" class="bx" fill="#166534">分数 0–5 / 对错</text>
+  <rect x="580" y="186" width="200" height="40" rx="8" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.4"/>
+  <text x="680" y="211" class="bx" fill="#166534">理由（先说理由再打分）</text>
+
+  <!-- 人工校准 -->
+  <rect x="360" y="268" width="160" height="44" rx="9" fill="#fef9c3" stroke="#d97706" stroke-width="1.8"/>
+  <text x="440" y="295" class="lab" fill="#92400e">人工抽样校准</text>
+  <path d="M440 268 L440 232" stroke="#d97706" stroke-width="1.6" fill="none" stroke-dasharray="4 3" marker-end="url(#aro)"/>
+  <text x="610" y="295" class="tag" fill="#b45309">看裁判跟人判得一不一致 → 一致才敢放它跑量</text>
+</svg>

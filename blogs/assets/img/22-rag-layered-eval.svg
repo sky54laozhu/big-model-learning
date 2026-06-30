@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 396" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+  <title id="t">RAG 分层评估与病根定位</title>
+  <desc id="d">RAG 评估要分两层量。检索层量捞得对不对：命中率 recall@k 看该捞的在不在 top-K 里、精确率/MRR 看对的排第几，大多是机械判定便宜。生成层量答得好不好：忠实度 faithfulness 看有没有脱离资料瞎编、答案相关性看答到点没，靠 LLM 裁判。两层分数一组合，病根自己浮出来：检索分低就是根本没捞对，去改分块/混合检索/重排序；检索高但生成低是资料对了模型却瞎编跑题，去改 prompt/铁律；两层都高就是没病，守住别瞎改。</desc>
+  <style>
+    .h { font-weight: 700; fill: #1a1a1a; font-size: 18px; }
+    .hd { font-weight: 700; font-size: 12.5px; }
+    .li { font-size: 11.5px; fill: #374151; }
+    .tg { font-size: 10.5px; fill: #6b7280; }
+    .row { font-size: 12px; fill: #1f2937; }
+    .cap { font-size: 12.5px; text-anchor: middle; font-weight: 700; }
+  </style>
+
+  <text x="40" y="30" class="h">RAG 分层评估：两层分开量，病根自己浮出来</text>
+
+  <!-- 检索层 -->
+  <rect x="50" y="56" width="360" height="104" rx="10" fill="#eff6ff" stroke="#2563eb" stroke-width="1.6"/>
+  <text x="70" y="80" class="hd" fill="#1e40af">检索层 · 量「捞得对不对」</text>
+  <text x="70" y="104" class="li">· 命中率 recall@k：该捞的在 top-K 里吗</text>
+  <text x="70" y="126" class="li">· 精确率 / MRR：对的那段排第几</text>
+  <text x="70" y="150" class="tg" fill="#2563eb">多为机械判定（便宜，第一级）</text>
+
+  <!-- 生成层 -->
+  <rect x="450" y="56" width="360" height="104" rx="10" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.6"/>
+  <text x="470" y="80" class="hd" fill="#5b21b6">生成层 · 量「答得好不好」</text>
+  <text x="470" y="104" class="li">· 忠实度 faithfulness：脱离资料瞎编没</text>
+  <text x="470" y="126" class="li">· 答案相关性：答到点上没</text>
+  <text x="470" y="150" class="tg" fill="#7c3aed">靠 LLM 裁判（第三级）</text>
+
+  <text x="430" y="194" class="cap" fill="#374151">两层分数一组合 → 病根自己浮出来 →</text>
+
+  <!-- 病根定位三行 -->
+  <rect x="50" y="210" width="760" height="44" rx="8" fill="#fef2f2" stroke="#dc2626" stroke-width="1.4"/>
+  <text x="70" y="237" class="row" fill="#991b1b"><tspan font-weight="700">检索低</tspan>　→　根本没捞对　→　改 分块 / 混合检索 / 重排序（第 21 篇）</text>
+
+  <rect x="50" y="262" width="760" height="44" rx="8" fill="#fffbeb" stroke="#d97706" stroke-width="1.4"/>
+  <text x="70" y="289" class="row" fill="#92400e"><tspan font-weight="700">检索高 + 生成低</tspan>　→　资料对了但模型瞎编/跑题　→　改 prompt / 铁律（第 20 篇）</text>
+
+  <rect x="50" y="314" width="760" height="44" rx="8" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.4"/>
+  <text x="70" y="341" class="row" fill="#166534"><tspan font-weight="700">检索高 + 生成高</tspan>　→　没病，守住别瞎改</text>
+</svg>

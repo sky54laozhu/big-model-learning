@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 432" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+  <title id="t">评估三级阶梯</title>
+  <desc id="d">评估方法分三级阶梯，越往上越贵、越主观、越难规模化，能用下面那级就别上上面那级。第一级机械判定：代码能否编译、JSON schema 是否合法、分类标签是否相等，客观免费可自动跑万遍。第二级语义相似：用余弦相似度判答案跑没跑题，但判不了事实对错。第三级 LLM 裁判：用大模型当裁判判事实和好坏，会有偏好需要防。三级头顶悬着金标准：人工评估，三级全是逼近人觉得好不好的代理指标，人工还用来校准裁判。</desc>
+  <style>
+    .h { font-weight: 700; fill: #1a1a1a; font-size: 18px; }
+    .cap { font-size: 12px; text-anchor: middle; fill: #6b7280; }
+    .lv { font-weight: 700; font-size: 14px; text-anchor: middle; }
+    .sub { font-size: 11.5px; text-anchor: middle; }
+    .tag { font-size: 10.5px; text-anchor: middle; }
+    .gold { font-weight: 700; font-size: 13px; text-anchor: middle; fill: #92400e; }
+    .lbl { font-size: 10.5px; fill: #b45309; }
+  </style>
+
+  <text x="40" y="30" class="h">评估三级阶梯：能用下面那级，就别上上面那级</text>
+  <text x="410" y="52" class="cap">越往上 → 越贵、越主观、越难规模化</text>
+
+  <defs>
+    <marker id="ar" markerWidth="10" markerHeight="10" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#6b7280"/></marker>
+  </defs>
+
+  <!-- 金标准 banner -->
+  <rect x="540" y="80" width="240" height="50" rx="9" fill="#fef9c3" stroke="#d97706" stroke-width="1.8"/>
+  <text x="660" y="102" class="gold">★ 人工评估 = 金标准</text>
+  <text x="660" y="120" class="tag" fill="#b45309">三级都在逼近「人觉得好不好」</text>
+
+  <!-- ③ LLM 裁判 -->
+  <rect x="540" y="158" width="240" height="68" rx="9" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.8"/>
+  <text x="660" y="180" class="lv" fill="#5b21b6">③ LLM 裁判</text>
+  <text x="660" y="200" class="sub" fill="#6d28d9">LLM-as-judge：判「事实 / 好坏」</text>
+  <text x="660" y="217" class="tag" fill="#7c3aed">会偏 → rubric / 多裁判 / 给理由</text>
+  <!-- ③ → 金标准 虚线 -->
+  <path d="M660 158 L660 132" stroke="#d97706" stroke-width="1.5" fill="none" stroke-dasharray="4 3" marker-end="url(#ar)"/>
+  <text x="674" y="150" class="lbl">人校准裁判</text>
+
+  <!-- ② 语义相似 -->
+  <rect x="295" y="238" width="240" height="68" rx="9" fill="#eff6ff" stroke="#2563eb" stroke-width="1.6"/>
+  <text x="415" y="260" class="lv" fill="#1e40af">② 语义相似</text>
+  <text x="415" y="280" class="sub" fill="#1e40af">余弦：判「跑没跑题」</text>
+  <text x="415" y="297" class="tag" fill="#2563eb">判不了对错（反义句余弦也高）</text>
+
+  <!-- ① 机械判定 -->
+  <rect x="50" y="318" width="240" height="68" rx="9" fill="#dcfce7" stroke="#16a34a" stroke-width="1.6"/>
+  <text x="170" y="340" class="lv" fill="#166534">① 机械判定</text>
+  <text x="170" y="360" class="sub" fill="#166534">代码编译 / schema / ===</text>
+  <text x="170" y="377" class="tag" fill="#16a34a">客观·免费·可自动跑万遍</text>
+
+  <!-- 上升箭头 ①→②→③ -->
+  <path d="M292 350 C330 350 300 290 332 282" stroke="#6b7280" stroke-width="1.8" fill="none" marker-end="url(#ar)"/>
+  <path d="M537 270 C575 270 545 210 577 202" stroke="#6b7280" stroke-width="1.8" fill="none" marker-end="url(#ar)"/>
+
+  <!-- 底部一句 -->
+  <text x="410" y="418" class="cap" font-weight="700" fill="#374151">评估本身也要「约束下求够好」：先机械判，把贵尺子省给真没法机械判的那部分。</text>
+</svg>
