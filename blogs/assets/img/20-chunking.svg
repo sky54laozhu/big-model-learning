@@ -54,14 +54,14 @@
   <!-- ===== 列3：重叠切（兜底）===== -->
   <text x="710" y="68" class="cap" fill="#166534">重叠切（兜底）</text>
   <!-- 块A -->
-  <rect x="606" y="92" width="150" height="40" rx="7" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/>
-  <text x="681" y="116" class="body" fill="#166534">块 A …… 15 天内申请，</text>
+  <rect x="606" y="92" width="200" height="40" rx="7" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/>
+  <text x="706" y="116" class="body" fill="#166534">块 A … 15 天内申请，</text>
   <!-- 重叠区 -->
-  <rect x="636" y="138" width="148" height="34" rx="7" fill="#bbf7d0" stroke="#16a34a" stroke-width="1.5" stroke-dasharray="4 3"/>
-  <text x="710" y="159" class="sm" fill="#15803d">重叠区（两块都含）</text>
+  <rect x="632" y="138" width="148" height="34" rx="7" fill="#bbf7d0" stroke="#16a34a" stroke-width="1.5" stroke-dasharray="4 3"/>
+  <text x="706" y="159" class="sm" fill="#15803d">重叠区（两块都含）</text>
   <!-- 块B -->
-  <rect x="664" y="178" width="150" height="40" rx="7" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/>
-  <text x="739" y="202" class="body" fill="#166534">15 天内申请，但生鲜除外 块 B</text>
+  <rect x="606" y="178" width="200" height="40" rx="7" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/>
+  <text x="706" y="202" class="body" fill="#166534" font-size="10.5">块 B … 15 天内申请，但生鲜除外</text>
   <text x="710" y="262" class="verdict" fill="#166534">留重叠 → 切断处两边都不丢</text>
   <text x="710" y="280" class="sm">相邻块各延伸一段，兜住边界信息</text>
 
