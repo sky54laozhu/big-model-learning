@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 372" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+  <title id="t">阈值触发压缩</title>
+  <desc id="d">记忆线用两挡手段管 context 用量。压缩前：对话一轮轮累积，context 用量条逐渐填满，逼近 80% 阈值，再塞就撞硬墙。攒到阈值触发一次压缩：把更早的一批历史批量摘要成一段，最近 N 轮原文用滑动窗口保留不动。压缩后：context 用量大幅回落，腾出预算继续聊，代价是压缩那一下额外烧一次模型调用。</desc>
+  <style>
+    .h { font-weight: 700; fill: #1a1a1a; font-size: 18px; }
+    .rl { font-weight: 700; font-size: 13px; fill: #374151; }
+    .seg { font-size: 10px; text-anchor: middle; fill: #4b5563; }
+    .bx { font-weight: 700; font-size: 12px; text-anchor: middle; }
+    .bs { font-size: 10px; text-anchor: middle; }
+    .note { font-size: 11.5px; fill: #6b7280; }
+    .th { font-size: 11px; fill: #dc2626; font-weight: 700; }
+  </style>
+
+  <text x="40" y="32" class="h">记忆线：滑动窗口 + 攒到阈值再压缩</text>
+
+  <defs>
+    <marker id="ar" markerWidth="10" markerHeight="10" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#6b7280"/></marker>
+  </defs>
+
+  <!-- 压缩前 -->
+  <text x="40" y="86" class="rl">压缩前</text>
+  <rect x="118" y="68" width="622" height="34" rx="5" fill="#f9fafb" stroke="#d1d5db" stroke-width="1.2"/>
+  <!-- 满格的轮次块 -->
+  <g>
+    <rect x="120" y="70" width="44" height="30" fill="#e5e7eb"/>
+    <rect x="166" y="70" width="44" height="30" fill="#e5e7eb"/>
+    <rect x="212" y="70" width="44" height="30" fill="#e5e7eb"/>
+    <rect x="258" y="70" width="44" height="30" fill="#e5e7eb"/>
+    <rect x="304" y="70" width="44" height="30" fill="#e5e7eb"/>
+    <rect x="350" y="70" width="44" height="30" fill="#e5e7eb"/>
+    <rect x="396" y="70" width="44" height="30" fill="#e5e7eb"/>
+    <rect x="442" y="70" width="44" height="30" fill="#fde68a"/>
+    <rect x="488" y="70" width="44" height="30" fill="#e5e7eb"/>
+    <rect x="534" y="70" width="44" height="30" fill="#e5e7eb"/>
+    <rect x="580" y="70" width="44" height="30" fill="#fecaca"/>
+    <rect x="626" y="70" width="44" height="30" fill="#fecaca"/>
+    <rect x="672" y="70" width="44" height="30" fill="#fecaca"/>
+  </g>
+  <text x="430" y="89" class="seg">每一轮原文一字不动地累积 →</text>
+  <!-- 阈值线 -->
+  <path d="M626 60 L626 110" stroke="#dc2626" stroke-width="1.6" stroke-dasharray="4 3"/>
+  <text x="632" y="58" class="th">阈值 ~80%</text>
+  <text x="700" y="124" class="th" text-anchor="end">再塞就撞硬墙</text>
+
+  <!-- 触发箭头 -->
+  <path d="M430 110 L430 168" stroke="#6b7280" stroke-width="2" fill="none" marker-end="url(#ar)"/>
+  <text x="446" y="144" class="note" font-weight="700" fill="#374151">攒到阈值，触发一次压缩（额外烧一次模型调用）</text>
+
+  <!-- 压缩后 -->
+  <text x="40" y="208" class="rl">压缩后</text>
+  <rect x="118" y="186" width="622" height="40" rx="5" fill="#f9fafb" stroke="#d1d5db" stroke-width="1.2"/>
+  <!-- 摘要块 -->
+  <rect x="122" y="190" width="150" height="32" rx="4" fill="#ede9fe" stroke="#7c3aed" stroke-width="1.4"/>
+  <text x="197" y="205" class="bx" fill="#5b21b6">更早历史 → 摘要</text>
+  <text x="197" y="218" class="bs" fill="#6d28d9">有损 · 用密度换容量</text>
+  <!-- 最近N轮原文 -->
+  <rect x="280" y="190" width="44" height="32" fill="#bbf7d0"/>
+  <rect x="326" y="190" width="44" height="32" fill="#bbf7d0"/>
+  <rect x="372" y="190" width="44" height="32" fill="#fde68a"/>
+  <rect x="418" y="190" width="44" height="32" fill="#bbf7d0"/>
+  <text x="372" y="240" class="bs" fill="#166534" font-weight="700">最近 N 轮原文（滑动窗口·不动）</text>
+  <!-- 腾出的预算 -->
+  <rect x="466" y="190" width="270" height="32" rx="4" fill="#ffffff" stroke="#d1d5db" stroke-width="1.2" stroke-dasharray="5 4"/>
+  <text x="601" y="210" class="bs" fill="#6b7280">腾出的预算，继续聊</text>
+
+  <!-- 底注 -->
+  <text x="410" y="352" class="note" text-anchor="middle" font-weight="700" fill="#374151">黄块=订单 A1234 这类关键事实：它走的是「状态线」精确保留，不靠这里的有损摘要兜底</text>
+</svg>

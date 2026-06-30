@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 430" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+  <title id="t">对话信息劈成两条线</title>
+  <desc id="d">把对话历史劈成两条独立的线，每轮拼回 context。状态线管关键事实（订单号、金额、流程阶段），用结构化抽取，精确、原样回放、可改写，绝不进压缩机，填入 context 的状态层。记忆线管对话流，分两挡：滑动窗口把最近 N 轮原文保留护住指代和精度，阈值摘要把更早历史有损压缩用密度换容量。最终 context 从上到下拼成：系统提示、状态、更早历史的摘要、最近 N 轮原文、当前问题。</desc>
+  <style>
+    .h { font-weight: 700; fill: #1a1a1a; font-size: 18px; }
+    .ct { font-weight: 700; font-size: 13.5px; }
+    .cl { font-size: 11.5px; }
+    .bx { font-weight: 700; font-size: 13px; text-anchor: middle; }
+    .bs { font-size: 10.5px; text-anchor: middle; }
+    .cap { font-size: 12px; text-anchor: middle; fill: #6b7280; }
+  </style>
+
+  <text x="40" y="32" class="h">关键一刀：对话信息不是一种，劈成两条线</text>
+
+  <defs>
+    <marker id="ar" markerWidth="10" markerHeight="10" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#9ca3af"/></marker>
+  </defs>
+
+  <!-- 状态线 card -->
+  <rect x="40" y="78" width="232" height="118" rx="9" fill="#eff6ff" stroke="#2563eb" stroke-width="1.8"/>
+  <text x="56" y="102" class="ct" fill="#1e40af">状态线 · 管关键事实（B 类）</text>
+  <text x="56" y="124" class="cl" fill="#1e40af">订单号 / 金额 / 选项 / 流程阶段</text>
+  <text x="56" y="146" class="cl" fill="#2563eb">结构化抽取（回扣 18）· 精确</text>
+  <text x="56" y="166" class="cl" fill="#2563eb">原样回放 · 可改写</text>
+  <text x="56" y="186" class="cl" font-weight="700" fill="#1e40af">绝不进有损压缩机</text>
+
+  <!-- 记忆线 card -->
+  <rect x="40" y="216" width="232" height="170" rx="9" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.8"/>
+  <text x="56" y="240" class="ct" fill="#5b21b6">记忆线 · 管对话流（A 类）</text>
+  <rect x="56" y="252" width="200" height="56" rx="6" fill="#ffffff" stroke="#a78bfa" stroke-width="1.3"/>
+  <text x="66" y="272" class="cl" font-weight="700" fill="#5b21b6">滑动窗口 → 最近 N 轮</text>
+  <text x="66" y="291" class="cl" fill="#6d28d9">原文保留，护指代和精度</text>
+  <rect x="56" y="316" width="200" height="60" rx="6" fill="#ffffff" stroke="#a78bfa" stroke-width="1.3"/>
+  <text x="66" y="336" class="cl" font-weight="700" fill="#5b21b6">阈值摘要 → 更早历史</text>
+  <text x="66" y="355" class="cl" fill="#6d28d9">有损压缩，用密度换容量</text>
+  <text x="66" y="371" class="cl" fill="#6d28d9">（compaction，攒满才压）</text>
+
+  <!-- context 拼装栈 -->
+  <text x="650" y="70" class="cap" font-weight="700" fill="#374151">每轮这样拼回 context ↓</text>
+  <rect x="515" y="80" width="270" height="40" rx="7" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1.4"/>
+  <text x="650" y="105" class="bx" fill="#374151">系统提示</text>
+
+  <rect x="515" y="126" width="270" height="56" rx="7" fill="#dbeafe" stroke="#2563eb" stroke-width="1.8"/>
+  <text x="650" y="150" class="bx" fill="#1e40af">状态 state</text>
+  <text x="650" y="170" class="bs" fill="#2563eb">结构化事实 · 精确</text>
+
+  <rect x="515" y="188" width="270" height="56" rx="7" fill="#ede9fe" stroke="#7c3aed" stroke-width="1.8"/>
+  <text x="650" y="212" class="bx" fill="#5b21b6">更早历史的摘要</text>
+  <text x="650" y="232" class="bs" fill="#6d28d9">有损 · 用密度换容量</text>
+
+  <rect x="515" y="250" width="270" height="56" rx="7" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.4"/>
+  <text x="650" y="274" class="bx" fill="#5b21b6">最近 N 轮原文</text>
+  <text x="650" y="294" class="bs" fill="#6d28d9">滑动窗口 · 一字不动</text>
+
+  <rect x="515" y="312" width="270" height="40" rx="7" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1.4"/>
+  <text x="650" y="337" class="bx" fill="#374151">当前问题</text>
+
+  <!-- arrows -->
+  <path d="M272 140 C360 150 430 154 511 154" stroke="#93c5fd" stroke-width="2" fill="none" marker-end="url(#ar)"/>
+  <path d="M260 346 C380 360 430 230 511 216" stroke="#c4b5fd" stroke-width="2" fill="none" marker-end="url(#ar)"/>
+  <path d="M260 280 C390 282 440 278 511 278" stroke="#c4b5fd" stroke-width="2" fill="none" marker-end="url(#ar)"/>
+
+  <text x="410" y="416" class="cap" font-weight="700" fill="#374151">两套机制、各管各的 —— 这就是「对话记忆 与 状态管理」那个「与」字的由来</text>
+</svg>

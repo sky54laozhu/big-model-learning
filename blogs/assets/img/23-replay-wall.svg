@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 360" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+  <title id="t">无脑全量回放撞两堵墙</title>
+  <desc id="d">把 80 轮对话历史原文全部塞进 messages 重放，会撞上两堵墙。硬墙：上下文窗口有物理上限，塞满即崩，而且 KV Cache 吃 O(N) 显存、Attention 是 O(N 平方) 算力，历史每长一轮每次请求都又慢又贵，这是容量加成本问题。软墙：就算装得下，关键那句被埋在长历史中间，Lost in the Middle，模型注意力够不着等于没说，这是信噪比问题。</desc>
+  <style>
+    .h { font-weight: 700; fill: #1a1a1a; font-size: 18px; }
+    .blob { font-size: 12.5px; text-anchor: middle; fill: #374151; }
+    .wt { font-weight: 700; font-size: 15px; }
+    .wl { font-size: 12px; }
+    .tag { font-size: 11px; }
+  </style>
+
+  <text x="40" y="32" class="h">无脑全量回放：短对话能用，长对话必死</text>
+
+  <defs>
+    <marker id="ar" markerWidth="10" markerHeight="10" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#6b7280"/></marker>
+  </defs>
+
+  <!-- 左：messages 大坨 -->
+  <rect x="44" y="74" width="208" height="250" rx="9" fill="#f3f4f6" stroke="#9ca3af" stroke-width="1.6"/>
+  <text x="148" y="98" class="blob" font-weight="700">messages：80 轮原文全塞</text>
+  <rect x="62" y="112" width="172" height="16" rx="3" fill="#e5e7eb"/>
+  <rect x="62" y="134" width="172" height="16" rx="3" fill="#e5e7eb"/>
+  <rect x="62" y="156" width="172" height="16" rx="3" fill="#e5e7eb"/>
+  <rect x="62" y="178" width="172" height="16" rx="3" fill="#fde68a"/>
+  <text x="148" y="190" class="tag" text-anchor="middle" fill="#92400e">订单 A1234（埋在中间）</text>
+  <rect x="62" y="200" width="172" height="16" rx="3" fill="#e5e7eb"/>
+  <rect x="62" y="222" width="172" height="16" rx="3" fill="#e5e7eb"/>
+  <rect x="62" y="244" width="172" height="16" rx="3" fill="#e5e7eb"/>
+  <rect x="62" y="266" width="172" height="16" rx="3" fill="#e5e7eb"/>
+  <rect x="62" y="288" width="172" height="16" rx="3" fill="#e5e7eb"/>
+
+  <path d="M256 199 L296 199" stroke="#6b7280" stroke-width="2" fill="none" marker-end="url(#ar)"/>
+
+  <!-- 硬墙 -->
+  <rect x="304" y="74" width="472" height="106" rx="9" fill="#fee2e2" stroke="#dc2626" stroke-width="1.8"/>
+  <text x="324" y="102" class="wt" fill="#991b1b">硬墙 · 装不下、烧不起</text>
+  <text x="324" y="126" class="wl" fill="#b91c1c">窗口有物理上限（回扣 15），塞满即崩</text>
+  <text x="324" y="148" class="wl" fill="#b91c1c">KV Cache 吃 O(N) 显存、Attention O(N²) 算力（回扣 13）</text>
+  <text x="324" y="169" class="tag" fill="#dc2626">→ 历史每长一轮，每次请求都又慢又贵（不只是容量，是成本）</text>
+
+  <!-- 软墙 -->
+  <rect x="304" y="200" width="472" height="106" rx="9" fill="#fef3c7" stroke="#d97706" stroke-width="1.8"/>
+  <text x="324" y="228" class="wt" fill="#92400e">软墙 · 装得下也用不好</text>
+  <text x="324" y="252" class="wl" fill="#b45309">关键那句（订单 A1234）埋在长历史正中间</text>
+  <text x="324" y="274" class="wl" fill="#b45309">Lost in the Middle（回扣 15 U 形曲线）</text>
+  <text x="324" y="295" class="tag" fill="#d97706">→ 注意力够不着，等于没说（信噪比问题）</text>
+
+  <text x="410" y="340" class="blob" font-weight="700" fill="#374151">逼出第 17 篇老题：在有限的 context 预算里，到底该放什么？= 策展招 2</text>
+</svg>
