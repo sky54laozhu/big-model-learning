@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 500" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+  <title id="t">降级链：守住可用，牺牲质量</title>
+  <desc id="d">从上往下四级台阶代表质量从高到低、可用性始终守住。档1换同厂商更小模型 Opus 到 Haiku（回扣26），档2换别的厂商 failover（回扣27），档3返回缓存旧答案，档4写死兜底话术或关闭 AI 功能。左侧三个扳机指向整条链：熔断跳闸、厂商 429 或挂了、预算撞顶。右侧箭头标质量下降，可用性始终守住。底部口诀：宁可给差的不给崩的，永远从降得最少那档往下摔。</desc>
+  <style>
+    .h  { font-weight: 700; fill: #1a1a1a; font-size: 18px; }
+    .rung{ font-weight: 700; font-size: 13.5px; }
+    .sub{ font-size: 11.5px; fill: #6b7280; }
+    .trg{ font-weight: 700; font-size: 11.5px; text-anchor: middle; }
+    .axis{ font-weight: 700; font-size: 12px; }
+    .rule{ font-weight: 700; font-size: 12.5px; fill: #1a1a1a; }
+  </style>
+
+  <text x="34" y="32" class="h">降级链：宁可给差的，不给崩的</text>
+
+  <!-- triggers column (left) -->
+  <text x="118" y="70" class="trg" fill="#9a3412">三个扳机</text>
+  <rect x="40" y="80" width="156" height="30" rx="6" fill="#fff7ed" stroke="#ea580c" stroke-width="1.3"/>
+  <text x="118" y="99" class="trg" fill="#9a3412">熔断跳闸</text>
+  <rect x="40" y="118" width="156" height="30" rx="6" fill="#fff7ed" stroke="#ea580c" stroke-width="1.3"/>
+  <text x="118" y="137" class="trg" fill="#9a3412">厂商 429 / 挂了</text>
+  <rect x="40" y="156" width="156" height="30" rx="6" fill="#fff7ed" stroke="#ea580c" stroke-width="1.3"/>
+  <text x="118" y="175" class="trg" fill="#9a3412">预算撞顶</text>
+  <!-- arrows from triggers into ladder -->
+  <line x1="196" y1="133" x2="236" y2="133" stroke="#ea580c" stroke-width="1.6" marker-end="url(#ar)"/>
+
+  <defs>
+    <marker id="ar" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+      <path d="M0,0 L9,4.5 L0,9 z" fill="#ea580c"/>
+    </marker>
+    <marker id="dn" markerWidth="9" markerHeight="9" refX="4.5" refY="8" orient="auto">
+      <path d="M0,0 L9,0 L4.5,9 z" fill="#2563eb"/>
+    </marker>
+  </defs>
+
+  <!-- ladder rungs -->
+  <!-- rung 1 -->
+  <rect x="248" y="92" width="520" height="60" rx="9" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.6"/>
+  <text x="266" y="118" class="rung" fill="#166534">档 1 · Opus → Haiku</text>
+  <text x="266" y="139" class="sub">换同厂商更小模型，质量掉一点、还是它自家的（回扣 26 模型大小轴）</text>
+  <!-- rung 2 -->
+  <rect x="278" y="176" width="490" height="60" rx="9" fill="#eff6ff" stroke="#2563eb" stroke-width="1.6"/>
+  <text x="296" y="202" class="rung" fill="#1e40af">档 2 · 换别的厂商（failover）</text>
+  <text x="296" y="223" class="sub">异构模型，质量跳变更大（回扣 27）</text>
+  <!-- rung 3 -->
+  <rect x="308" y="260" width="460" height="60" rx="9" fill="#fefce8" stroke="#ca8a04" stroke-width="1.6"/>
+  <text x="326" y="286" class="rung" fill="#854d0e">档 3 · 返回缓存里的旧答案</text>
+  <text x="326" y="307" class="sub">可能过时，但不惊动模型（本篇下半场的正职）</text>
+  <!-- rung 4 -->
+  <rect x="338" y="344" width="430" height="60" rx="9" fill="#fef2f2" stroke="#dc2626" stroke-width="1.6"/>
+  <text x="356" y="370" class="rung" fill="#b91c1c">档 4 · 写死兜底话术 / 关闭 AI</text>
+  <text x="356" y="391" class="sub">「系统繁忙」或走没有 AI 的老路径——彻底降，但不崩</text>
+
+  <!-- quality axis (right) -->
+  <line x1="800" y1="100" x2="800" y2="396" stroke="#2563eb" stroke-width="2" marker-end="url(#dn)"/>
+  <text x="812" y="240" class="axis" fill="#1e40af" transform="rotate(90 812 240)">质量 ↓（可用性始终守住）</text>
+
+  <!-- bottom rule -->
+  <rect x="34" y="428" width="734" height="52" rx="9" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.4"/>
+  <text x="50" y="450" class="rule">永远从「降得最少」那档开始试，扛不住才往下摔一格。</text>
+  <text x="50" y="470" class="sub">一条降级链，多个扳机 —— 熔断、failover、预算撞顶都能触发它。</text>
+</svg>

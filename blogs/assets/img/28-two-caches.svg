@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 470" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+  <title id="t">响应缓存 vs prompt caching：两码事</title>
+  <desc id="d">左栏响应缓存住你的 harness：命中则直接返回存好的答案，虚线绕过模型方框，模型完全不跑，治同一个问题重复问。右栏 prompt caching 住厂商推理侧：prompt 拆成固定长前缀（system 加工具加资料）和变化的用户问题，前缀复用存好的 KV 跳过重算 prefill（回扣13），问题照常 prefill，模型照跑生成新答案，Anthropic 前缀 token 省约90%，治不同问题共享长前缀。底部：两者正交可叠加。</desc>
+  <style>
+    .h  { font-weight: 700; fill: #1a1a1a; font-size: 18px; }
+    .col{ font-weight: 700; font-size: 14px; text-anchor: middle; }
+    .bx { font-weight: 700; font-size: 12.5px; text-anchor: middle; }
+    .sub{ font-size: 11px; fill: #6b7280; text-anchor: middle; }
+    .tag{ font-weight: 700; font-size: 11.5px; }
+    .rule{ font-weight: 700; font-size: 12.5px; text-anchor: middle; }
+  </style>
+  <defs>
+    <marker id="a3" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+      <path d="M0,0 L9,4.5 L0,9 z" fill="#64748b"/>
+    </marker>
+  </defs>
+
+  <text x="34" y="32" class="h">两种「缓存」，两码事 —— 别混</text>
+
+  <!-- LEFT column: response cache -->
+  <rect x="30" y="52" width="400" height="352" rx="10" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.6"/>
+  <text x="230" y="78" class="col" fill="#166534">响应缓存（住你的 harness）</text>
+
+  <rect x="80" y="98" width="120" height="42" rx="8" fill="#ffffff" stroke="#16a34a" stroke-width="1.3"/>
+  <text x="140" y="124" class="bx" fill="#166534">请求</text>
+
+  <!-- bypass dashed arrow around model -->
+  <path d="M200,119 C230,119 250,119 292,119" fill="none" stroke="#16a34a" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#a3)"/>
+  <text x="246" y="110" class="sub" fill="#166534">命中 → 直接返回</text>
+
+  <rect x="300" y="98" width="110" height="42" rx="8" fill="#dcfce7" stroke="#16a34a" stroke-width="1.3"/>
+  <text x="355" y="124" class="bx" fill="#166534">缓存的答案</text>
+
+  <!-- model box grayed / skipped -->
+  <rect x="130" y="176" width="200" height="56" rx="9" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.4" stroke-dasharray="5 4"/>
+  <text x="230" y="200" class="bx" fill="#64748b">模型</text>
+  <text x="230" y="220" class="sub">完全不跑（被绕过）</text>
+
+  <rect x="60" y="262" width="340" height="120" rx="9" fill="#ffffff" stroke="#16a34a" stroke-width="1.2"/>
+  <text x="80" y="288" class="tag" fill="#166534">缓存什么：最终答案</text>
+  <text x="80" y="312" class="tag" fill="#166534">命中后：模型完全不跑</text>
+  <text x="80" y="336" class="tag" fill="#166534">治什么：同一个问题重复问</text>
+  <text x="80" y="362" class="tag" fill="#166534">住哪：你的网关 / 应用层</text>
+
+  <!-- RIGHT column: prompt caching -->
+  <rect x="470" y="52" width="400" height="352" rx="10" fill="#eff6ff" stroke="#2563eb" stroke-width="1.6"/>
+  <text x="670" y="78" class="col" fill="#1e40af">prompt caching（住厂商推理侧）</text>
+
+  <!-- prefix + question -->
+  <rect x="492" y="98" width="216" height="44" rx="8" fill="#dbeafe" stroke="#2563eb" stroke-width="1.3"/>
+  <text x="600" y="116" class="bx" fill="#1e40af">固定长前缀</text>
+  <text x="600" y="133" class="sub">system + 工具 + 资料</text>
+  <rect x="716" y="98" width="132" height="44" rx="8" fill="#ffffff" stroke="#2563eb" stroke-width="1.3"/>
+  <text x="782" y="116" class="bx" fill="#1e40af">用户问题</text>
+  <text x="782" y="133" class="sub">每次在变</text>
+
+  <text x="600" y="164" class="sub" fill="#1e40af">复用存好的 KV · 跳过重算 prefill（回扣 13）</text>
+  <text x="782" y="164" class="sub" fill="#1e40af">照常 prefill</text>
+
+  <!-- model box running -->
+  <rect x="560" y="180" width="220" height="56" rx="9" fill="#ffffff" stroke="#2563eb" stroke-width="1.6"/>
+  <text x="670" y="204" class="bx" fill="#1e40af">模型 · 照跑</text>
+  <text x="670" y="224" class="sub">生成新答案（省的是重算，不是免跑）</text>
+
+  <rect x="500" y="262" width="340" height="120" rx="9" fill="#ffffff" stroke="#2563eb" stroke-width="1.2"/>
+  <text x="520" y="288" class="tag" fill="#1e40af">缓存什么：前缀的 KV</text>
+  <text x="520" y="312" class="tag" fill="#1e40af">命中后：模型照跑，只省前缀 prefill</text>
+  <text x="520" y="336" class="tag" fill="#1e40af">治什么：不同问题、共享长前缀</text>
+  <text x="520" y="362" class="tag" fill="#1e40af">省：Anthropic 前缀 token 约 90%</text>
+
+  <!-- bottom rule -->
+  <rect x="30" y="420" width="840" height="38" rx="9" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.4"/>
+  <text x="450" y="444" class="rule" fill="#1a1a1a">两者正交、可叠加：热门原题走响应缓存（模型都不惊动）；长前缀的新问题走 prompt caching（省重算）。</text>
+</svg>
