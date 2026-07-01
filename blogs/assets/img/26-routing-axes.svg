@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 470" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+  <title id="t">模型选型是多维匹配：需求画像 ↔ 能力画像</title>
+  <desc id="d">左边一个 query 有它的需求画像（难度、上下文长度、能力专长、时延要求四根轴），右边一排候选模型各有能力画像（旗舰大模型、入门小模型、代码专用模型、超长窗口模型、批处理便宜档）。路由器的活是把左边需求画像对到右边最划算的那张能力画像上，大 vs 小只是难度这一根轴。</desc>
+  <style>
+    .h  { font-weight: 700; fill: #1a1a1a; font-size: 18px; }
+    .bx { font-weight: 700; font-size: 13px; text-anchor: middle; }
+    .bs { font-size: 11px; text-anchor: middle; }
+    .lb { font-size: 11.5px; text-anchor: middle; fill: #6b7280; }
+    .tag{ font-weight: 700; font-size: 12.5px; text-anchor: middle; }
+    .ax { font-size: 12px; fill: #334155; }
+    .mo { font-weight: 700; font-size: 12px; }
+    .ms { font-size: 10.5px; }
+  </style>
+  <defs>
+    <marker id="ar" markerWidth="10" markerHeight="10" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#9ca3af"/></marker>
+  </defs>
+
+  <text x="40" y="34" class="h">选型不是一根「难度」轴的滑块，是多维匹配</text>
+
+  <!-- LEFT: demand profile -->
+  <rect x="36" y="76" width="230" height="300" rx="12" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.6"/>
+  <text x="151" y="102" class="tag" fill="#1e40af">query 的「需求画像」</text>
+  <line x1="56" y1="114" x2="246" y2="114" stroke="#bfdbfe" stroke-width="1.2"/>
+  <text x="60" y="146" class="ax" font-weight="700">· 难度</text>
+  <text x="72" y="164" class="ms" fill="#64748b">要多强的推理力？</text>
+  <text x="60" y="200" class="ax" font-weight="700">· 上下文长度</text>
+  <text x="72" y="218" class="ms" fill="#64748b">要塞多少 token 进窗口？</text>
+  <text x="60" y="254" class="ax" font-weight="700">· 能力专长</text>
+  <text x="72" y="272" class="ms" fill="#64748b">写代码？写文案？</text>
+  <text x="60" y="308" class="ax" font-weight="700">· 时延 / 成本</text>
+  <text x="72" y="326" class="ms" fill="#64748b">急不急？量大不大？多省？</text>
+  <text x="151" y="360" class="bs" fill="#94a3b8">「大 vs 小」只是第一根轴</text>
+
+  <!-- MIDDLE: router -->
+  <rect x="330" y="196" width="130" height="76" rx="10" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.6"/>
+  <text x="395" y="228" class="bx" fill="#92400e">路由器</text>
+  <text x="395" y="250" class="bs" fill="#92400e">把需求对到</text>
+  <text x="395" y="266" class="bs" fill="#92400e">最划算的能力</text>
+  <text x="395" y="176" class="ms" fill="#b45309" text-anchor="middle">（住在 harness 里的控制流）</text>
+
+  <line x1="266" y1="234" x2="328" y2="234" stroke="#9ca3af" stroke-width="1.6" marker-end="url(#ar)"/>
+  <line x1="460" y1="234" x2="520" y2="234" stroke="#9ca3af" stroke-width="1.6" marker-end="url(#ar)"/>
+
+  <!-- RIGHT: candidate models -->
+  <text x="700" y="66" class="tag" fill="#166534">候选模型的「能力画像」</text>
+
+  <rect x="524" y="80" width="352" height="46" rx="8" fill="#ede9fe" stroke="#7c3aed" stroke-width="1.4"/>
+  <text x="540" y="100" class="mo" fill="#5b21b6" text-anchor="start">旗舰大模型</text>
+  <text x="540" y="117" class="ms" fill="#6d28d9" text-anchor="start">最强推理 · 贵 · 慢 —— 留给难活</text>
+
+  <rect x="524" y="134" width="352" height="46" rx="8" fill="#dbeafe" stroke="#3b82f6" stroke-width="1.4"/>
+  <text x="540" y="154" class="mo" fill="#1e40af" text-anchor="start">入门小模型</text>
+  <text x="540" y="171" class="ms" fill="#2563eb" text-anchor="start">便宜 · 快 —— 接住八成简单活</text>
+
+  <rect x="524" y="188" width="352" height="46" rx="8" fill="#dcfce7" stroke="#16a34a" stroke-width="1.4"/>
+  <text x="540" y="208" class="mo" fill="#166534" text-anchor="start">代码专用模型</text>
+  <text x="540" y="225" class="ms" fill="#15803d" text-anchor="start">同价位，写代码更强（能力专长轴）</text>
+
+  <rect x="524" y="242" width="352" height="46" rx="8" fill="#ffedd5" stroke="#f59e0b" stroke-width="1.4"/>
+  <text x="540" y="262" class="mo" fill="#b45309" text-anchor="start">超长窗口模型</text>
+  <text x="540" y="279" class="ms" fill="#d97706" text-anchor="start">20 万字装得下（上下文长度轴）</text>
+
+  <rect x="524" y="296" width="352" height="46" rx="8" fill="#f1f5f9" stroke="#64748b" stroke-width="1.4"/>
+  <text x="540" y="316" class="mo" fill="#334155" text-anchor="start">批处理便宜档</text>
+  <text x="540" y="333" class="ms" fill="#475569" text-anchor="start">半价 · 异步 —— 量大不急的任务</text>
+
+  <!-- takeaway -->
+  <text x="440" y="404" class="lb">每个 query 有需求画像，每个模型有能力画像；路由器的活，是把两者对上最划算的一档</text>
+  <text x="440" y="428" class="lb" fill="#92400e">选型不是「越强越好」，是「越匹配越好」 —— 高射炮能打蚊子，但你不会那么干</text>
+</svg>

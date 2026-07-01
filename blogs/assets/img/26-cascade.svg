@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 430" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+  <title id="t">模型级联：小的先试，扛不住再升级</title>
+  <desc id="d">query 先无脑交给便宜的小模型直接试答，小模型在吐答案的同时自报置信度（结构化输出的一个字段）。置信度够高就直接返回收工；置信度低或校验没过，才把 query 升级到旗舰大模型重答。判断扛不扛得住几乎不额外花钱，因为是小模型自己举手。</desc>
+  <style>
+    .h  { font-weight: 700; fill: #1a1a1a; font-size: 18px; }
+    .bx { font-weight: 700; font-size: 14px; text-anchor: middle; }
+    .bs { font-size: 11px; text-anchor: middle; }
+    .lb { font-size: 11.5px; text-anchor: middle; fill: #6b7280; }
+    .tag{ font-weight: 700; font-size: 12px; text-anchor: middle; }
+    .el { font-weight: 700; font-size: 12px; }
+  </style>
+  <defs>
+    <marker id="ar" markerWidth="10" markerHeight="10" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#9ca3af"/></marker>
+    <marker id="arg" markerWidth="10" markerHeight="10" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#16a34a"/></marker>
+    <marker id="aro" markerWidth="10" markerHeight="10" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#d97706"/></marker>
+  </defs>
+
+  <text x="40" y="34" class="h">级联：小模型先试 + 自报置信，扛不住才升级</text>
+
+  <!-- query -->
+  <rect x="36" y="150" width="128" height="70" rx="10" fill="#eef2f7" stroke="#94a3b8" stroke-width="1.5"/>
+  <text x="100" y="180" class="bx" fill="#334155">query</text>
+  <text x="100" y="202" class="bs" fill="#64748b">无脑先交给小的</text>
+
+  <!-- small model -->
+  <rect x="220" y="132" width="190" height="106" rx="10" fill="#dbeafe" stroke="#3b82f6" stroke-width="1.6"/>
+  <text x="315" y="112" class="tag" fill="#1e40af">便宜 · 快</text>
+  <text x="315" y="164" class="bx" fill="#1e40af">小模型 直接试答</text>
+  <text x="315" y="188" class="bs" fill="#1e40af">吐答案 + 自报置信度</text>
+  <text x="315" y="208" class="bs" fill="#1e40af">{"answer":"…",</text>
+  <text x="315" y="224" class="bs" fill="#1e40af">"confident": true/false}</text>
+
+  <!-- decision diamond -->
+  <polygon points="520,185 570,150 620,185 570,220" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.6"/>
+  <text x="570" y="181" class="bs" fill="#92400e" font-weight="700">扛得住?</text>
+  <text x="570" y="198" class="bs" fill="#92400e">自己举手</text>
+
+  <!-- return (confident) -->
+  <rect x="690" y="70" width="150" height="72" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/>
+  <text x="765" y="98" class="bx" fill="#166534">直接返回 · 收工</text>
+  <text x="765" y="118" class="bs" fill="#166534">八成简单活到此结束</text>
+  <text x="765" y="134" class="bs" fill="#16a34a">全程只花 1 次小调用</text>
+
+  <!-- escalate (big model) -->
+  <rect x="690" y="238" width="150" height="80" rx="10" fill="#ede9fe" stroke="#7c3aed" stroke-width="1.6"/>
+  <text x="765" y="266" class="bx" fill="#5b21b6">升级 · 旗舰大模型</text>
+  <text x="765" y="286" class="bs" fill="#5b21b6">贵但强，重答一遍</text>
+  <text x="765" y="302" class="bs" fill="#7c3aed">只有两成难活走到这</text>
+
+  <!-- arrows -->
+  <line x1="164" y1="185" x2="216" y2="185" stroke="#9ca3af" stroke-width="1.6" marker-end="url(#ar)"/>
+  <line x1="410" y1="185" x2="516" y2="185" stroke="#9ca3af" stroke-width="1.6" marker-end="url(#ar)"/>
+  <!-- confident up -->
+  <path d="M600 168 L645 168 L645 106 L688 106" fill="none" stroke="#16a34a" stroke-width="1.7" marker-end="url(#arg)"/>
+  <text x="628" y="140" class="el" fill="#166534" text-anchor="middle">置信高</text>
+  <!-- not confident down -->
+  <path d="M600 202 L645 202 L645 278 L688 278" fill="none" stroke="#d97706" stroke-width="1.7" marker-end="url(#aro)"/>
+  <text x="628" y="235" class="el" fill="#b45309" text-anchor="middle">置信低/校验没过</text>
+
+  <!-- takeaway -->
+  <text x="440" y="368" class="lb">「扛不扛得住」是小模型自己在同一次调用里举手 —— 判断那步几乎不额外花钱（回扣第 18 篇结构化输出）</text>
+  <text x="440" y="392" class="lb" fill="#5b21b6">浪费被精准挪到只占两成的难 query 上（小模型白试一场再升级）；八成简单活只花 1 次小调用，总账最省</text>
+</svg>

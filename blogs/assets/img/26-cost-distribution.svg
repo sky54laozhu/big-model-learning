@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 420" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+  <title id="t">query 难度的二八长尾分布</title>
+  <desc id="d">横轴是 query 难度、纵轴是数量。绝大多数 query 堆在简单端（约八成），只有一条细长尾巴伸向难端（约两成）。若整个系统只挂一个旗舰模型，覆盖在八成简单 query 上的旗舰调用全是浪费。</desc>
+  <style>
+    .h  { font-weight: 700; fill: #1a1a1a; font-size: 18px; }
+    .bx { font-weight: 700; font-size: 14px; text-anchor: middle; }
+    .bs { font-size: 11.5px; text-anchor: middle; }
+    .lb { font-size: 11.5px; text-anchor: middle; fill: #6b7280; }
+    .ax { font-size: 12px; fill: #6b7280; }
+  </style>
+  <defs>
+    <marker id="ar" markerWidth="10" markerHeight="10" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#9ca3af"/></marker>
+  </defs>
+
+  <text x="40" y="34" class="h">query 难度是二八长尾，不是均匀分布</text>
+
+  <!-- axes -->
+  <line x1="90" y1="300" x2="800" y2="300" stroke="#9ca3af" stroke-width="1.6" marker-end="url(#ar)"/>
+  <line x1="90" y1="300" x2="90" y2="90" stroke="#9ca3af" stroke-width="1.6" marker-end="url(#ar)"/>
+  <text x="808" y="304" class="ax" text-anchor="start" dominant-baseline="middle">难度 →</text>
+  <text x="82" y="80" class="ax" text-anchor="end">query 数量</text>
+
+  <!-- 80% region shading -->
+  <rect x="90" y="90" width="330" height="210" fill="#dcfce7" opacity="0.45"/>
+  <!-- 20% region shading -->
+  <rect x="420" y="90" width="380" height="210" fill="#fee2e2" opacity="0.4"/>
+
+  <!-- long-tail curve (filled) -->
+  <path d="M90 300 L90 120 C 160 120, 230 128, 300 175 C 360 215, 400 268, 450 285 C 520 296, 620 299, 790 300 Z"
+        fill="#86efac" stroke="#16a34a" stroke-width="2"/>
+
+  <!-- divider at 80/20 -->
+  <line x1="420" y1="90" x2="420" y2="300" stroke="#9ca3af" stroke-width="1.4" stroke-dasharray="5 4"/>
+
+  <!-- region labels -->
+  <text x="255" y="255" class="bx" fill="#166534">八成 · 简单活</text>
+  <text x="255" y="276" class="bs" fill="#166534">打招呼 / 格式化 / 复述 / 简单分类</text>
+
+  <text x="610" y="150" class="bx" fill="#b91c1c">两成 · 难活</text>
+  <text x="610" y="171" class="bs" fill="#b91c1c">复杂推理 / 长链条 / 真需要旗舰</text>
+  <text x="610" y="190" class="bs" fill="#dc2626">（细长的尾巴）</text>
+
+  <!-- bottom takeaway -->
+  <text x="255" y="336" class="lb" fill="#166534">这八成若全走旗舰 = 巨大浪费</text>
+  <text x="255" y="356" class="lb" fill="#166534">用重型查询通道返回一个静态图标</text>
+  <text x="610" y="336" class="lb" fill="#b91c1c">旗舰的推理力，只有这两成真需要</text>
+  <text x="610" y="356" class="lb" fill="#b91c1c">智能路由：便宜活分流走、难活才放行</text>
+</svg>
