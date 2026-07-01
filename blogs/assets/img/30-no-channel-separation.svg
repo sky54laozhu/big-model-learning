@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 470" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+  <title id="t">两种「分离」的硬度：SQL 注入可根治，prompt injection 不可</title>
+  <desc id="d">左半 SQL 注入靠参数化查询：指令通道（SELECT ... WHERE name = ?）和数据通道（user_input 原样当值）被 DB 引擎解析器机械焊死地隔成上下两条通道，数据永远变不回指令。右半 LLM：system 和 user 到模型面前被拍平成同一条 token 流，role 标签只是软边界，走同一套 attention，谁听谁全凭概率，结果是个大问号。底部结论：SQL 注入有硬通道分离所以可根治，prompt injection 没有通道分离只有软标签所以不可根治。</desc>
+  <style>
+    .h    { font-weight: 700; fill: #1a1a1a; font-size: 17px; }
+    .pt   { font-weight: 700; font-size: 14px; fill: #1a1a1a; }
+    .box  { font-weight: 700; font-size: 12.5px; }
+    .mono { font-family: 'SFMono-Regular', Consolas, monospace; font-size: 11.5px; }
+    .sub  { font-size: 11px; fill: #6b7280; }
+    .wall { font-weight: 700; font-size: 11px; fill: #ffffff; text-anchor: middle; }
+  </style>
+
+  <text x="34" y="34" class="h">同样是「数据越权变指令」，为什么一个能根治一个不能？</text>
+
+  <!-- ===== LEFT: SQL parameterized ===== -->
+  <rect x="30" y="58" width="405" height="300" rx="10" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.4"/>
+  <text x="50" y="88" class="pt">SQL 注入：参数化查询</text>
+
+  <!-- instruction lane -->
+  <rect x="50" y="102" width="365" height="50" rx="7" fill="#eff6ff" stroke="#2563eb" stroke-width="1.4"/>
+  <text x="64" y="122" class="box" fill="#1e40af">指令通道</text>
+  <text x="64" y="142" class="mono" fill="#334155">SELECT * FROM users WHERE name = ?</text>
+
+  <!-- hard wall divider -->
+  <rect x="50" y="158" width="365" height="16" rx="3" fill="#1f2937"/>
+  <text x="232" y="170" class="wall">DB 引擎解析器 · 机械焊死</text>
+
+  <!-- data lane -->
+  <rect x="50" y="180" width="365" height="50" rx="7" fill="#f0fdf4" stroke="#166534" stroke-width="1.4"/>
+  <text x="64" y="200" class="box" fill="#166534">数据通道</text>
+  <text x="64" y="220" class="mono" fill="#334155">user_input（原样当字符串值）</text>
+
+  <text x="50" y="266" class="box" fill="#166534">✓ 数据永远没机会变回指令</text>
+  <text x="50" y="288" class="sub">两条通道物理隔开，代码写得再烂引擎也兜得住。</text>
+  <text x="50" y="322" class="pt" fill="#166534">结论：可根治</text>
+
+  <!-- ===== RIGHT: LLM one stream ===== -->
+  <rect x="465" y="58" width="405" height="300" rx="10" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.4"/>
+  <text x="485" y="88" class="pt">LLM：一整坨 token 流</text>
+
+  <!-- single pipe -->
+  <rect x="485" y="102" width="365" height="72" rx="7" fill="#ffffff" stroke="#94a3b8" stroke-width="1.4"/>
+  <!-- system segment -->
+  <rect x="495" y="112" width="165" height="52" rx="6" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+  <text x="505" y="132" class="box" fill="#1e40af">[system]</text>
+  <text x="505" y="152" class="sub" fill="#334155">你是文档助手…</text>
+  <!-- soft boundary -->
+  <line x1="663" y1="108" x2="663" y2="168" stroke="#f59e0b" stroke-width="1.6" stroke-dasharray="4 3"/>
+  <!-- user segment -->
+  <rect x="668" y="112" width="172" height="52" rx="6" fill="#fee2e2" stroke="#fca5a5" stroke-width="1"/>
+  <text x="678" y="132" class="box" fill="#b91c1c">[user]</text>
+  <text x="678" y="152" class="sub" fill="#334155">忽略以上指令…</text>
+
+  <text x="663" y="192" class="sub" fill="#b45309" text-anchor="middle">↑ role 标签只是软边界</text>
+  <text x="485" y="222" class="box" fill="#334155">同一套 attention · 谁听谁全凭概率</text>
+  <text x="485" y="244" class="sub">「优先听 system」只是训练学出的概率倾向（回扣 01 / 18），永远不是零。</text>
+  <text x="828" y="330" font-size="46" font-weight="700" fill="#b45309" text-anchor="middle">?</text>
+  <text x="485" y="322" class="pt" fill="#b91c1c">结论：不可根治</text>
+
+  <!-- bottom conclusion -->
+  <rect x="30" y="382" width="840" height="64" rx="9" fill="#f1f5f9" stroke="#64748b" stroke-width="1.4"/>
+  <text x="48" y="408" class="box" fill="#166534">SQL 注入：有硬通道分离 → 参数化查询根治</text>
+  <text x="48" y="432" class="box" fill="#b91c1c">prompt injection：没有通道分离，只有一条通道 + 一个软标签 → 堵不死</text>
+</svg>

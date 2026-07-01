@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 460" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+  <title id="t">分水岭：动作层能焊死，语义层只能打地鼠</title>
+  <desc id="d">左半 (a) 动作层「这个动作准不准」是规则权限判定，画一堵砖墙贴三张便签：查权限白名单查身份、禁 DELETE 与危险路径、超额度走人工审批，确定性代码机械焊死，是承重墙，绿色对勾。右半 (b) 语义层「用户是不是在越狱」是意图判定，像打地鼠，冒出忽略以上指令、disregard the above、Base64 编码、角色扮演的壳，只能用另一个会抖的模型去判永远漏，橙色警告。底部核心律：能翻译成动作准不准的就别留在意图坏不坏里猜；别问用户是不是坏人（猜不准），问动作到底准不准（查得准）。</desc>
+  <style>
+    .h    { font-weight: 700; fill: #1a1a1a; font-size: 17px; }
+    .pt   { font-weight: 700; font-size: 14px; }
+    .note { font-weight: 700; font-size: 12.5px; fill: #14532d; }
+    .atk  { font-weight: 700; font-size: 12px; fill: #92400e; }
+    .sub  { font-size: 11px; fill: #6b7280; }
+    .rule { font-weight: 700; font-size: 13px; fill: #1a1a1a; }
+  </style>
+
+  <text x="34" y="34" class="h">承重墙搬到 harness 后，它能焊死什么、焊不死什么？</text>
+
+  <!-- divider -->
+  <line x1="450" y1="58" x2="450" y2="352" stroke="#cbd5e1" stroke-width="1.6" stroke-dasharray="5 4"/>
+
+  <!-- ===== LEFT: action layer ===== -->
+  <text x="34" y="88" class="pt" fill="#166534">(a) 动作层：这个动作准不准？</text>
+  <text x="34" y="108" class="sub">规则 / 权限判定</text>
+
+  <!-- brick wall -->
+  <rect x="40" y="120" width="380" height="176" rx="6" fill="#dcfce7" stroke="#166534" stroke-width="2"/>
+  <rect x="62" y="136" width="336" height="42" rx="6" fill="#ffffff" stroke="#86efac" stroke-width="1.2"/>
+  <text x="78" y="162" class="note">查权限白名单 · 查身份</text>
+  <rect x="62" y="186" width="336" height="42" rx="6" fill="#ffffff" stroke="#86efac" stroke-width="1.2"/>
+  <text x="78" y="212" class="note">禁 DELETE · 禁危险路径</text>
+  <rect x="62" y="236" width="336" height="42" rx="6" fill="#ffffff" stroke="#86efac" stroke-width="1.2"/>
+  <text x="78" y="262" class="note">超额度 → 人工审批</text>
+
+  <text x="34" y="322" class="pt" fill="#166534">✓ 确定性代码 · 机械焊死 · 承重墙</text>
+  <text x="34" y="343" class="sub">能焊死。</text>
+
+  <!-- ===== RIGHT: semantic layer ===== -->
+  <text x="470" y="88" class="pt" fill="#b45309">(b) 语义层：用户是不是在越狱？</text>
+  <text x="470" y="108" class="sub">意图 / 语义判定</text>
+
+  <!-- whack-a-mole box -->
+  <rect x="470" y="120" width="396" height="176" rx="6" fill="#fffbeb" stroke="#b45309" stroke-width="2"/>
+  <text x="486" y="146" class="atk" fill="#92400e">拦一个，冒一个：</text>
+  <rect x="486" y="156" width="176" height="30" rx="15" fill="#ffffff" stroke="#fbbf24" stroke-width="1.2"/>
+  <text x="500" y="176" class="atk">忽略以上指令</text>
+  <rect x="674" y="156" width="176" height="30" rx="15" fill="#ffffff" stroke="#fbbf24" stroke-width="1.2"/>
+  <text x="688" y="176" class="atk">disregard the above</text>
+  <rect x="486" y="194" width="176" height="30" rx="15" fill="#ffffff" stroke="#fbbf24" stroke-width="1.2"/>
+  <text x="500" y="214" class="atk">Base64 编码绕过</text>
+  <rect x="674" y="194" width="176" height="30" rx="15" fill="#ffffff" stroke="#fbbf24" stroke-width="1.2"/>
+  <text x="688" y="214" class="atk">套个角色扮演的壳</text>
+  <text x="486" y="252" class="sub" fill="#92400e">判「这段是不是恶意」= 语义理解问题，</text>
+  <text x="486" y="270" class="sub" fill="#92400e">唯一能判的是另一个会抖的模型。</text>
+
+  <text x="470" y="322" class="pt" fill="#b45309">⚠️ 只能逼近 · 永远漏 · 纵深软垫</text>
+  <text x="470" y="343" class="sub">焊不死。</text>
+
+  <!-- bottom core law -->
+  <rect x="30" y="372" width="840" height="66" rx="9" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="48" y="399" class="rule">核心律：能翻译成「动作准不准」的，就别留在「意图坏不坏」里猜（回扣 25 钉桩）。</text>
+  <text x="48" y="423" class="rule" fill="#1e40af">别问「用户是不是坏人」（猜不准），问「这个动作到底准不准」（查得准）。</text>
+</svg>

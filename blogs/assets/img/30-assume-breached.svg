@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 500" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+  <title id="t">假设被攻破，让攻破不产生损害（同一招用三次）+ 护栏链路</title>
+  <desc id="d">安全重心从「把坏东西挡在门外」挪到「进来了也搞不出事」。三行：模型必被越狱→最小权限让它没能力作恶；注入堵不住→可信身份 harness 从会话拿绝不信模型输出；提示词必泄露→里面不放秘密泄露成非事件。下方请求链路：用户输入→①入口护栏（PII 脱敏、注入检测，软层）→模型→②出口护栏（扫密钥、PII、内容审核，软层）→harness 动作墙（最小权限＋可信身份＋人工审批，承重墙）。软护栏降低风险，硬动作墙才真正兜底。</desc>
+  <style>
+    .h    { font-weight: 700; fill: #1a1a1a; font-size: 17px; }
+    .axis { font-weight: 700; font-size: 13px; fill: #1a1a1a; text-anchor: middle; }
+    .red  { font-weight: 700; font-size: 13px; fill: #b91c1c; text-anchor: middle; }
+    .grn  { font-weight: 700; font-size: 12.5px; fill: #14532d; }
+    .sub  { font-size: 10.5px; fill: #6b7280; }
+    .node { font-weight: 700; font-size: 12px; text-anchor: middle; }
+    .lab  { font-weight: 700; font-size: 11px; fill: #64748b; text-anchor: middle; }
+  </style>
+
+  <defs>
+    <marker id="ag" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+      <path d="M0,0 L9,4.5 L0,9 z" fill="#166534"/>
+    </marker>
+    <marker id="ab" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+      <path d="M0,0 L9,4.5 L0,9 z" fill="#64748b"/>
+    </marker>
+  </defs>
+
+  <text x="34" y="32" class="h">同一招用三次：假设它被攻破，让攻破不产生损害</text>
+
+  <!-- axis bar -->
+  <rect x="30" y="46" width="840" height="32" rx="8" fill="#1f2937"/>
+  <text x="450" y="67" class="axis" fill="#ffffff">安全重心：从「把坏东西挡在门外」（挡不住）→「进来了也搞不出事」</text>
+
+  <!-- Row 1 -->
+  <rect x="40" y="98" width="290" height="52" rx="9" fill="#fef2f2" stroke="#dc2626" stroke-width="1.8"/>
+  <text x="185" y="130" class="red">① 模型必被越狱</text>
+  <line x1="334" y1="124" x2="464" y2="124" stroke="#166534" stroke-width="2" marker-end="url(#ag)"/>
+  <rect x="470" y="98" width="395" height="52" rx="9" fill="#f0fdf4" stroke="#166534" stroke-width="1.8"/>
+  <text x="486" y="121" class="grn">最小权限：工具即权限，没能力作恶</text>
+  <text x="486" y="139" class="sub">别给 run_sql 万能钥匙 · 危险动作走人工审批（回扣 24）</text>
+
+  <!-- Row 2 -->
+  <rect x="40" y="166" width="290" height="52" rx="9" fill="#fef2f2" stroke="#dc2626" stroke-width="1.8"/>
+  <text x="185" y="198" class="red">② 注入堵不住</text>
+  <line x1="334" y1="192" x2="464" y2="192" stroke="#166534" stroke-width="2" marker-end="url(#ag)"/>
+  <rect x="470" y="166" width="395" height="52" rx="9" fill="#f0fdf4" stroke="#166534" stroke-width="1.8"/>
+  <text x="486" y="189" class="grn">可信身份 harness 从会话拿，绝不信模型输出</text>
+  <text x="486" y="207" class="sub">在 harness 层重建那条可信通道 · 想干也干不成</text>
+
+  <!-- Row 3 -->
+  <rect x="40" y="234" width="290" height="52" rx="9" fill="#fef2f2" stroke="#dc2626" stroke-width="1.8"/>
+  <text x="185" y="266" class="red">③ 提示词必泄露</text>
+  <line x1="334" y1="260" x2="464" y2="260" stroke="#166534" stroke-width="2" marker-end="url(#ag)"/>
+  <rect x="470" y="234" width="395" height="52" rx="9" fill="#f0fdf4" stroke="#166534" stroke-width="1.8"/>
+  <text x="486" y="257" class="grn">里面不放秘密（提示词 ≠ 保险箱）</text>
+  <text x="486" y="275" class="sub">密钥进环境变量 / 密钥管理 · 泄露成非事件</text>
+
+  <!-- pipeline -->
+  <line x1="30" y1="312" x2="870" y2="312" stroke="#e2e8f0" stroke-width="1.2"/>
+  <text x="34" y="338" class="grn" fill="#1a1a1a" font-size="13.5">落到链路上：两道软护栏 + 一道硬动作墙</text>
+
+  <!-- nodes -->
+  <rect x="34" y="360" width="104" height="54" rx="8" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.4"/>
+  <text x="86" y="391" class="node" fill="#334155">用户输入</text>
+
+  <text x="163" y="378" class="lab">①</text>
+  <line x1="138" y1="387" x2="184" y2="387" stroke="#64748b" stroke-width="1.5" marker-end="url(#ab)"/>
+
+  <rect x="188" y="350" width="152" height="74" rx="8" fill="#fffdf5" stroke="#b45309" stroke-width="1.4" stroke-dasharray="5 3"/>
+  <text x="264" y="374" class="node" fill="#92400e">入口护栏（软）</text>
+  <text x="264" y="394" class="sub" text-anchor="middle">PII 脱敏</text>
+  <text x="264" y="410" class="sub" text-anchor="middle">注入检测（尽力）</text>
+
+  <line x1="340" y1="387" x2="366" y2="387" stroke="#64748b" stroke-width="1.5" marker-end="url(#ab)"/>
+
+  <rect x="370" y="360" width="92" height="54" rx="8" fill="#eef2ff" stroke="#6366f1" stroke-width="1.4"/>
+  <text x="416" y="391" class="node" fill="#3730a3">[ 模型 ]</text>
+
+  <text x="475" y="378" class="lab">②</text>
+  <line x1="462" y1="387" x2="488" y2="387" stroke="#64748b" stroke-width="1.5" marker-end="url(#ab)"/>
+
+  <rect x="492" y="350" width="152" height="74" rx="8" fill="#fffdf5" stroke="#b45309" stroke-width="1.4" stroke-dasharray="5 3"/>
+  <text x="568" y="374" class="node" fill="#92400e">出口护栏（软）</text>
+  <text x="568" y="394" class="sub" text-anchor="middle">扫密钥 / PII</text>
+  <text x="568" y="410" class="sub" text-anchor="middle">有害内容审核</text>
+
+  <line x1="644" y1="387" x2="670" y2="387" stroke="#166534" stroke-width="2" marker-end="url(#ag)"/>
+
+  <rect x="674" y="344" width="192" height="86" rx="8" fill="#f0fdf4" stroke="#166534" stroke-width="2.4"/>
+  <text x="770" y="370" class="node" fill="#166534">harness 动作墙</text>
+  <text x="770" y="388" class="node" fill="#166534" font-size="11">（承重墙）</text>
+  <text x="770" y="408" class="sub" text-anchor="middle">最小权限 + 可信身份</text>
+  <text x="770" y="422" class="sub" text-anchor="middle">+ 人工审批</text>
+
+  <text x="34" y="456" class="sub" font-size="11.5">软护栏（虚线）降低风险、属纵深防御；真正兜底的是那道硬的动作墙（粗实线）。</text>
+</svg>
