@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 480" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+  <title id="t">所有 AI 请求都该过网关吗：一道天平</title>
+  <desc id="d">天平左盘「值得架网关」压着四块砝码：多模型多厂商、多团队算账、智能路由缓存、集中密钥；右盘「代价（分母）」压着三块砝码：多一跳延迟、网关自身成单点、运维高可用。下方决策口诀：规模乘多样性乘治理需求大则值得，单模型单团队原型则裸调 SDK 别过度工程；并提醒「外部才要网关」会翻车，因为 LLM 调用全是外部。</desc>
+  <style>
+    .h  { font-weight: 700; fill: #1a1a1a; font-size: 18px; }
+    .q  { font-weight: 700; font-size: 14px; text-anchor: middle; }
+    .pan{ font-weight: 700; font-size: 14px; text-anchor: middle; }
+    .chip{ font-weight: 700; font-size: 11.5px; text-anchor: middle; }
+    .lb { font-size: 12px; fill: #6b7280; }
+    .rule{ font-weight: 700; font-size: 12.5px; }
+  </style>
+
+  <text x="34" y="32" class="h">灵魂拷问：所有 AI 请求都该过一层网关吗？</text>
+
+  <!-- question banner -->
+  <rect x="270" y="46" width="360" height="32" rx="16" fill="#dbeafe" stroke="#2563eb" stroke-width="1.4"/>
+  <text x="450" y="67" class="q" fill="#1e40af">好处 ÷ 代价 &gt; 1 才架</text>
+
+  <!-- balance beam -->
+  <rect x="150" y="120" width="600" height="8" rx="4" fill="#94a3b8"/>
+  <!-- center post + fulcrum -->
+  <rect x="446" y="124" width="8" height="126" fill="#94a3b8"/>
+  <polygon points="450,232 414,300 486,300" fill="#cbd5e1" stroke="#94a3b8" stroke-width="1.3"/>
+  <!-- hangers -->
+  <line x1="250" y1="124" x2="250" y2="170" stroke="#cbd5e1" stroke-width="1.6"/>
+  <line x1="650" y1="124" x2="650" y2="170" stroke="#cbd5e1" stroke-width="1.6"/>
+
+  <!-- LEFT pan: worth it -->
+  <text x="250" y="162" class="pan" fill="#166534">✅ 值得架</text>
+  <rect x="92" y="170" width="316" height="132" rx="10" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.6"/>
+  <rect x="104" y="184" width="140" height="44" rx="7" fill="#ffffff" stroke="#16a34a" stroke-width="1.1"/>
+  <text x="174" y="203" class="chip" fill="#166534">多模型</text>
+  <text x="174" y="219" class="chip" fill="#166534">多厂商</text>
+  <rect x="256" y="184" width="140" height="44" rx="7" fill="#ffffff" stroke="#16a34a" stroke-width="1.1"/>
+  <text x="326" y="203" class="chip" fill="#166534">多团队</text>
+  <text x="326" y="219" class="chip" fill="#166534">统一算账限流</text>
+  <rect x="104" y="242" width="140" height="44" rx="7" fill="#ffffff" stroke="#16a34a" stroke-width="1.1"/>
+  <text x="174" y="261" class="chip" fill="#166534">智能路由</text>
+  <text x="174" y="277" class="chip" fill="#166534">/ 缓存</text>
+  <rect x="256" y="242" width="140" height="44" rx="7" fill="#ffffff" stroke="#16a34a" stroke-width="1.1"/>
+  <text x="326" y="261" class="chip" fill="#166534">集中管密钥</text>
+  <text x="326" y="277" class="chip" fill="#166534">泄露面收到 1</text>
+
+  <!-- RIGHT pan: costs -->
+  <text x="650" y="162" class="pan" fill="#b91c1c">代价（分母）</text>
+  <rect x="492" y="170" width="316" height="132" rx="10" fill="#fef2f2" stroke="#ef4444" stroke-width="1.6"/>
+  <rect x="504" y="184" width="292" height="32" rx="6" fill="#ffffff" stroke="#ef4444" stroke-width="1.1"/>
+  <text x="650" y="205" class="chip" fill="#b91c1c">多一跳延迟（那一跳不是零）</text>
+  <rect x="504" y="224" width="292" height="32" rx="6" fill="#ffffff" stroke="#ef4444" stroke-width="1.1"/>
+  <text x="650" y="245" class="chip" fill="#b91c1c">网关自身成新单点（最讽刺）</text>
+  <rect x="504" y="264" width="292" height="32" rx="6" fill="#ffffff" stroke="#ef4444" stroke-width="1.1"/>
+  <text x="650" y="285" class="chip" fill="#b91c1c">得自己养高可用（半夜被叫醒）</text>
+
+  <!-- decision bar -->
+  <rect x="34" y="330" width="832" height="118" rx="10" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.5"/>
+  <text x="50" y="358" class="rule" fill="#1e40af">判断轴 = 规模 × 多样性 × 治理需求</text>
+  <text x="50" y="382" class="lb"><tspan fill="#166534" font-weight="700">大</tspan> → 值得架网关（横切活够多够杂，收口收益压过成本）</text>
+  <text x="50" y="404" class="lb"><tspan fill="#b91c1c" font-weight="700">小</tspan>（单模型 / 单团队 / 原型 / 就一两个调用点）→ 裸调 SDK，别为不存在的问题付运维税</text>
+  <text x="50" y="432" class="lb" fill="#9a3412">⚠ 坑：「外部服务才要网关」会翻车 —— LLM 调用<tspan font-weight="700">全是外部</tspan>，套这条会推出「永远要网关」，错。轴是规模不是内外。</text>
+</svg>
