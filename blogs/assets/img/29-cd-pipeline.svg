@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 500" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+  <title id="t">持续交付流水线：把第 22 篇的评估飞轮工程化进发布管线</title>
+  <desc id="d">主干管道从任一改动（代码、prompt、模型、检索、参数）到版本化钉住这套配置，再到 CI 回归闸门（黄金集跑分，跌幅小于等于噪声地板才点绿），闸门红了打回改动。绿灯后进入线上防线：灰度 5% 真实流量、盯线上代理指标（点踩、追问、转人工）、稳了逐步放量 100%。指标塌则沿红线回滚，把整套配置钉回上一版。前三步是离线防线，后三步是线上防线。</desc>
+  <style>
+    .h    { font-weight: 700; fill: #1a1a1a; font-size: 17px; }
+    .band { font-weight: 700; font-size: 12px; }
+    .node { font-weight: 700; font-size: 12.5px; }
+    .sub  { font-size: 10.5px; fill: #6b7280; }
+    .tag  { font-weight: 700; font-size: 11px; text-anchor: middle; }
+  </style>
+
+  <defs>
+    <marker id="ar" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+      <path d="M0,0 L9,4.5 L0,9 z" fill="#2563eb"/>
+    </marker>
+    <marker id="arG" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+      <path d="M0,0 L9,4.5 L0,9 z" fill="#16a34a"/>
+    </marker>
+    <marker id="arR" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+      <path d="M0,0 L9,4.5 L0,9 z" fill="#dc2626"/>
+    </marker>
+  </defs>
+
+  <text x="34" y="32" class="h">发布管线 = 第 22 篇的评估飞轮，工程化进流水线</text>
+
+  <!-- offline band label -->
+  <rect x="34" y="52" width="892" height="24" rx="6" fill="#eff6ff"/>
+  <text x="480" y="69" class="band" fill="#1e40af" text-anchor="middle">离线防线 —— 上线前</text>
+
+  <!-- Row 1: nodes 1-3 -->
+  <!-- node 1 -->
+  <rect x="34" y="90" width="238" height="70" rx="9" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.5"/>
+  <text x="50" y="116" class="node" fill="#334155">① 任一改动</text>
+  <text x="50" y="136" class="sub">代码 / prompt / 模型 /</text>
+  <text x="50" y="152" class="sub">检索 / 参数</text>
+  <line x1="272" y1="125" x2="308" y2="125" stroke="#2563eb" stroke-width="1.8" marker-end="url(#ar)"/>
+
+  <!-- node 2 -->
+  <rect x="310" y="90" width="230" height="70" rx="9" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.5"/>
+  <text x="326" y="116" class="node" fill="#334155">② 版本化</text>
+  <text x="326" y="136" class="sub">钉住这一整套配置</text>
+  <text x="326" y="152" class="sub">（抓凶手 + 能回滚）</text>
+  <line x1="540" y1="125" x2="576" y2="125" stroke="#2563eb" stroke-width="1.8" marker-end="url(#ar)"/>
+
+  <!-- node 3: gate -->
+  <rect x="578" y="90" width="348" height="70" rx="9" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.8"/>
+  <text x="594" y="116" class="node" fill="#166534">③ CI 回归闸门</text>
+  <text x="594" y="136" class="sub">黄金集跑分：跌幅 ≤ 噪声地板 才点绿</text>
+  <text x="594" y="152" class="sub">红 → 打回改动重做</text>
+
+  <!-- red branch: gate back to node1 -->
+  <path d="M578,140 C500,182 360,182 153,162" fill="none" stroke="#dc2626" stroke-width="1.6" stroke-dasharray="5,4" marker-end="url(#arR)"/>
+  <text x="360" y="196" class="tag" fill="#b91c1c">红灯 · 打回</text>
+
+  <!-- green arrow down from gate to row 2 -->
+  <line x1="752" y1="160" x2="752" y2="248" stroke="#16a34a" stroke-width="2.2" marker-end="url(#arG)"/>
+  <text x="752" y="212" class="tag" fill="#166534">绿灯</text>
+
+  <!-- online band label -->
+  <rect x="34" y="258" width="892" height="24" rx="6" fill="#fefce8"/>
+  <text x="480" y="275" class="band" fill="#854d0e" text-anchor="middle">线上防线 —— 上线后</text>
+
+  <!-- Row 2: nodes 4-6 (right to left flow to mirror the down-arrow landing at right) -->
+  <!-- node 4 -->
+  <rect x="642" y="296" width="284" height="72" rx="9" fill="#fefce8" stroke="#ca8a04" stroke-width="1.6"/>
+  <text x="658" y="322" class="node" fill="#854d0e">④ 灰度 5% 真实流量</text>
+  <text x="658" y="342" class="sub">限制爆炸半径，真踩雷</text>
+  <text x="658" y="358" class="sub">也只炸一小撮人</text>
+
+  <!-- node 5 -->
+  <rect x="338" y="296" width="284" height="72" rx="9" fill="#fefce8" stroke="#ca8a04" stroke-width="1.6"/>
+  <text x="354" y="322" class="node" fill="#854d0e">⑤ 盯线上代理指标</text>
+  <text x="354" y="342" class="sub">点踩率 / 追问率 / 转人工率</text>
+  <text x="354" y="358" class="sub">（没法逐条叫裁判打分）</text>
+  <line x1="642" y1="332" x2="626" y2="332" stroke="#2563eb" stroke-width="1.8" marker-end="url(#ar)"/>
+
+  <!-- node 6 -->
+  <rect x="34" y="296" width="284" height="72" rx="9" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.6"/>
+  <text x="50" y="322" class="node" fill="#166534">⑥ 稳 → 逐步放量 100%</text>
+  <text x="50" y="342" class="sub">一档档往上加流量</text>
+  <text x="50" y="358" class="sub">全绿才铺满</text>
+  <line x1="338" y1="332" x2="322" y2="332" stroke="#2563eb" stroke-width="1.8" marker-end="url(#ar)"/>
+
+  <!-- rollback red line from node5 back up to node2 -->
+  <path d="M480,368 C480,420 480,430 425,430 L200,430 C160,430 155,180 320,162" fill="none" stroke="#dc2626" stroke-width="1.7" stroke-dasharray="6,4" marker-end="url(#arR)"/>
+  <rect x="486" y="392" width="440" height="46" rx="8" fill="#fef2f2" stroke="#dc2626" stroke-width="1.4"/>
+  <text x="502" y="412" class="node" fill="#b91c1c">指标塌 → 回滚</text>
+  <text x="502" y="430" class="sub">把整套配置钉回上一版（也许闯祸的根本不是代码）</text>
+</svg>

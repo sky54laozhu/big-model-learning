@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 520" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+  <title id="t">版本化对象炸开：谁动了我的分数？</title>
+  <desc id="d">中央问题：那 200 条平均分为什么塌了？周围五个嫌疑人指向它。代码 diff 是后端唯一嫌疑人、git blame 可查；系统提示词改一个字；模型版本用红色高亮标注厂商静默升级、git log 里没有它、你没 push 任何东西它自己就变了；RAG 知识库加检索配置（回扣20、21）；采样参数 temperature。底部结论：版本化钉住这一整套，既是抓凶手的前提，也是能回滚的前提；模型要钉到钉死的具体版本 claude-opus-4-8，别用 latest 浮动别名。</desc>
+  <style>
+    .h    { font-weight: 700; fill: #1a1a1a; font-size: 17px; }
+    .box  { font-weight: 700; font-size: 13px; }
+    .sub  { font-size: 10.5px; fill: #6b7280; }
+    .hub  { font-weight: 700; font-size: 13.5px; fill: #1a1a1a; text-anchor: middle; }
+    .rule { font-weight: 700; font-size: 12.5px; fill: #1a1a1a; }
+  </style>
+
+  <defs>
+    <marker id="ar" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+      <path d="M0,0 L9,4.5 L0,9 z" fill="#64748b"/>
+    </marker>
+    <marker id="arR" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+      <path d="M0,0 L9,4.5 L0,9 z" fill="#dc2626"/>
+    </marker>
+  </defs>
+
+  <text x="34" y="34" class="h">谁动了我的分数？—— 回归的嫌疑人不止代码</text>
+
+  <!-- central hub -->
+  <ellipse cx="450" cy="255" rx="128" ry="52" fill="#1f2937"/>
+  <text x="450" y="250" class="hub" fill="#ffffff">那 200 条平均分</text>
+  <text x="450" y="272" class="hub" fill="#fca5a5">为什么塌了？</text>
+
+  <!-- suspect boxes -->
+  <!-- 1 code diff top-left -->
+  <rect x="46" y="86" width="260" height="56" rx="8" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.4"/>
+  <text x="60" y="110" class="box" fill="#334155">① 代码 diff</text>
+  <text x="60" y="130" class="sub">后端唯一的嫌疑人 · git blame 可查</text>
+  <line x1="266" y1="142" x2="352" y2="212" stroke="#64748b" stroke-width="1.5" marker-end="url(#ar)"/>
+
+  <!-- 2 system prompt top-right -->
+  <rect x="594" y="86" width="260" height="56" rx="8" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.4"/>
+  <text x="608" y="110" class="box" fill="#334155">② 系统提示词</text>
+  <text x="608" y="130" class="sub">改一个字，分布就变了</text>
+  <line x1="634" y1="142" x2="548" y2="212" stroke="#64748b" stroke-width="1.5" marker-end="url(#ar)"/>
+
+  <!-- 3 model version left (red highlight) -->
+  <rect x="30" y="228" width="248" height="82" rx="8" fill="#fef2f2" stroke="#dc2626" stroke-width="2"/>
+  <text x="44" y="252" class="box" fill="#b91c1c">③ 模型版本 ⚠️</text>
+  <text x="44" y="272" class="sub">厂商静默升级 · git log 里没有它</text>
+  <text x="44" y="290" class="sub">你没 push 任何东西，它自己就变了</text>
+  <line x1="278" y1="262" x2="320" y2="258" stroke="#dc2626" stroke-width="1.8" marker-end="url(#arR)"/>
+
+  <!-- 4 RAG right -->
+  <rect x="622" y="228" width="248" height="82" rx="8" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.4"/>
+  <text x="636" y="252" class="box" fill="#334155">④ RAG 知识库 + 检索配置</text>
+  <text x="636" y="272" class="sub">换了文档、调了 top-K / 重排</text>
+  <text x="636" y="290" class="sub">（回扣 20 / 21）</text>
+  <line x1="622" y1="262" x2="580" y2="258" stroke="#64748b" stroke-width="1.5" marker-end="url(#ar)"/>
+
+  <!-- 5 sampling params bottom -->
+  <rect x="320" y="360" width="260" height="56" rx="8" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.4"/>
+  <text x="334" y="384" class="box" fill="#334155">⑤ 采样参数（temperature）</text>
+  <text x="334" y="404" class="sub">改一格，抖动带都可能变</text>
+  <line x1="450" y1="360" x2="450" y2="310" stroke="#64748b" stroke-width="1.5" marker-end="url(#ar)"/>
+
+  <!-- bottom rule -->
+  <rect x="34" y="446" width="832" height="56" rx="9" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="50" y="470" class="rule">版本化 = 钉住这一整套配置 → 既是「抓凶手」的前提，也是「能回滚」的前提。</text>
+  <text x="50" y="491" class="sub">模型尤其要钉到钉死的具体版本（claude-opus-4-8），别用浮动别名 latest；任一变更都重跑回归闸门。</text>
+</svg>

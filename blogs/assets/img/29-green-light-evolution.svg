@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 470" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+  <title id="t">绿灯规则的演化：从 assertEquals 到统计式回归闸门</title>
+  <desc id="d">上栏后端 CI 用 assertEquals(add(2,3),5)，单点精确二值判定，绿色对勾放行。中间一根粗箭头标注 assertEquals 失效（回扣22），尺子从等于换成够好。下栏 LLM 系统用公式：黄金集平均分相对基线的跌幅小于等于噪声地板才点绿灯，一组统计带容差。下方两个例子：0.88 掉到 0.87 跌 0.01 在噪声地板正负 0.02 内则放行绿灯；0.88 掉到 0.79 跌 0.09 超过噪声地板则判回归红灯。</desc>
+  <style>
+    .h    { font-weight: 700; fill: #1a1a1a; font-size: 17px; }
+    .lbl  { font-weight: 700; font-size: 13px; }
+    .sub  { font-size: 11px; fill: #6b7280; }
+    .mono { font-family: 'SF Mono','Menlo','Consolas',monospace; font-size: 13px; fill: #1a1a1a; }
+    .arrn { font-weight: 700; font-size: 12px; fill: #7c3aed; text-anchor: middle; }
+  </style>
+
+  <defs>
+    <marker id="dn" markerWidth="11" markerHeight="11" refX="5.5" refY="9" orient="auto">
+      <path d="M0,0 L11,0 L5.5,10 z" fill="#7c3aed"/>
+    </marker>
+  </defs>
+
+  <!-- top panel: backend CI -->
+  <text x="34" y="34" class="h">后端 CI：绿了就敢发</text>
+  <rect x="34" y="48" width="640" height="66" rx="9" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.4"/>
+  <text x="54" y="82" class="mono">assertEquals(add(2, 3), 5)</text>
+  <text x="54" y="103" class="sub">单点 · 精确 · 二值（红 / 绿）——跑一万遍都一样</text>
+  <!-- green check -->
+  <circle cx="726" cy="81" r="26" fill="#f0fdf4" stroke="#16a34a" stroke-width="2"/>
+  <path d="M713,81 l9,10 l17,-20" fill="none" stroke="#16a34a" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- transition arrow -->
+  <line x1="356" y1="122" x2="356" y2="176" stroke="#7c3aed" stroke-width="2.2" marker-end="url(#dn)"/>
+  <text x="440" y="145" class="arrn">assertEquals 失效（回扣 22）</text>
+  <text x="440" y="163" class="arrn">尺子从「等于」换成「够好」</text>
+
+  <!-- bottom panel: LLM system -->
+  <text x="34" y="205" class="h">LLM 系统：绿灯是统计出来的</text>
+  <rect x="34" y="220" width="812" height="62" rx="9" fill="#eff6ff" stroke="#2563eb" stroke-width="1.6"/>
+  <text x="54" y="248" class="lbl" fill="#1e40af">黄金集平均分「相对基线的跌幅」 ≤ 噪声地板　→　绿灯</text>
+  <text x="54" y="270" class="sub">一组 · 统计 · 带容差 —— 比的不是「等于」，是「跟上一版比掉了多少」</text>
+
+  <!-- two examples -->
+  <rect x="34" y="304" width="398" height="126" rx="9" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.6"/>
+  <text x="54" y="332" class="lbl" fill="#166534">例一 · 放行（绿）</text>
+  <text x="54" y="360" class="mono" fill="#166534">0.88 → 0.87</text>
+  <text x="54" y="386" class="sub">跌 0.01，在噪声地板 ±0.02 带内</text>
+  <text x="54" y="408" class="sub">= 抽卡手气差，不是回归 → 放行</text>
+
+  <rect x="448" y="304" width="398" height="126" rx="9" fill="#fef2f2" stroke="#dc2626" stroke-width="1.6"/>
+  <text x="468" y="332" class="lbl" fill="#b91c1c">例二 · 回归（红）</text>
+  <text x="468" y="360" class="mono" fill="#b91c1c">0.88 → 0.79</text>
+  <text x="468" y="386" class="sub">跌 0.09，远超噪声地板 ±0.02 带</text>
+  <text x="468" y="408" class="sub">= 信号盖过了噪声 → 真回归，红灯</text>
+</svg>
