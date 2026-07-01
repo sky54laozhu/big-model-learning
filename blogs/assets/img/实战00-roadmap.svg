@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 590" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <title id="t">实战卷路线图：从一次 chat() 调用盖成 mini-claude-code</title>
+  <desc id="d">底层是会抖的模型，往上一层层盖 harness：阶段 A 地基、B 工具与控制、C 自主与韧性、D 高级特性、E 收尾封顶，共 20 篇。</desc>
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+
+  <!-- 标题 -->
+  <text x="410" y="38" text-anchor="middle" font-size="21" font-weight="700" fill="#1e293b">从一次 chat() 调用，盖成一个 mini-claude-code</text>
+  <text x="410" y="64" text-anchor="middle" font-size="14" fill="#475569">实战卷 20 篇 · 每篇加一个零件 · 每篇跑通再进下一篇</text>
+
+  <!-- 左侧生长箭头 -->
+  <line x1="122" y1="520" x2="122" y2="98" stroke="#64748b" stroke-width="2"/>
+  <polygon points="122,88 116,102 128,102" fill="#64748b"/>
+  <text x="104" y="300" text-anchor="middle" font-size="13" fill="#64748b" transform="rotate(-90 104 300)">harness 越盖越高</text>
+
+  <!-- 阶段 E · 封顶 -->
+  <rect x="152" y="86" width="520" height="66" rx="8" fill="#dcfce7" stroke="#166534" stroke-width="2.5"/>
+  <text x="412" y="113" text-anchor="middle" font-size="16.5" font-weight="700" fill="#166534">阶段 E · 收尾，封顶成整机（实战 19–20）</text>
+  <text x="412" y="136" text-anchor="middle" font-size="13.5" fill="#15803d">最小 REPL 交互界面 → 焊成 mini-claude-code</text>
+
+  <!-- 阶段 D -->
+  <rect x="152" y="160" width="520" height="66" rx="8" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+  <text x="412" y="187" text-anchor="middle" font-size="16.5" font-weight="700" fill="#1e40af">阶段 D · 高级特性，逼近真 Claude Code（实战 12–18）</text>
+  <text x="412" y="210" text-anchor="middle" font-size="13" fill="#1d4ed8">子 agent · skills · plan mode · hooks · MCP · 多模型路由 · 成本</text>
+
+  <!-- 阶段 C -->
+  <rect x="152" y="234" width="520" height="66" rx="8" fill="#f0fdf4" stroke="#166534" stroke-width="2"/>
+  <text x="412" y="261" text-anchor="middle" font-size="16.5" font-weight="700" fill="#166534">阶段 C · 自主与韧性（实战 08–11）</text>
+  <text x="412" y="284" text-anchor="middle" font-size="13.5" fill="#15803d">错误重试 · compaction · 跨会话状态 · TodoWrite 清单</text>
+
+  <!-- 阶段 B -->
+  <rect x="152" y="308" width="520" height="66" rx="8" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+  <text x="412" y="335" text-anchor="middle" font-size="16.5" font-weight="700" fill="#1e40af">阶段 B · 工具与控制（实战 03–07）</text>
+  <text x="412" y="358" text-anchor="middle" font-size="13.5" fill="#1d4ed8">工具系统 · 权限闸门 · 流式渲染 · 上下文拼装</text>
+
+  <!-- 阶段 A · 地基 -->
+  <rect x="152" y="382" width="520" height="66" rx="8" fill="#f0fdf4" stroke="#166534" stroke-width="2.5"/>
+  <text x="412" y="409" text-anchor="middle" font-size="16.5" font-weight="700" fill="#166534">阶段 A · 地基，让循环转起来（实战 01–02）</text>
+  <text x="412" y="432" text-anchor="middle" font-size="13.5" fill="#15803d">可插拔的模型层 · agent loop 骨架</text>
+
+  <!-- 模型底座 -->
+  <rect x="152" y="472" width="520" height="60" rx="8" fill="#fef3c7" stroke="#b45309" stroke-width="2.5"/>
+  <text x="412" y="497" text-anchor="middle" font-size="15.5" font-weight="700" fill="#92400e">模型（会抖的芯片）</text>
+  <text x="412" y="519" text-anchor="middle" font-size="13" fill="#b45309">一次 chat() 调用就是它 · 会抖、会编、无状态</text>
+
+  <!-- 底注 -->
+  <text x="410" y="562" text-anchor="middle" font-size="13.5" fill="#475569">harness = 包在模型外的确定性脚手架。这一卷，我们亲手把它一层层焊出来。</text>
+</svg>

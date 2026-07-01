@@ -157,11 +157,11 @@ big-model-learning/
 
 ---
 
-## 7. 未决细节（须在写第一行代码前敲定）
+## 7. 未决细节（已于 2026-07-01 敲定）
 
-1. **运行时具体选型**：Bun vs tsx/ts-node（源码用 Bun；我们的简化版用 Bun 最贴近，还是用更通用的 tsx 降低读者门槛）。影响每篇运行命令与验证步骤，**写码前必须定**。
-2. **【已升级为实战01/03 核心设计，不再是"细节"】provider 工具调用归一**：Anthropic 的流式 `tool_use`（content_block_delta / input_json_delta 增量拼）与 OpenAI 的 `tool_calls`（choices[].delta.tool_calls[].function.arguments 分片）形态完全不同。**落实现计划前先做 spike**：用 GLM（OpenAI 兼容）与 Anthropic 各跑通一次「带工具调用的流式请求」，验证 `ModelProvider` 接口能否同时容纳两端的流式 tool-call 解析，再据此回填实战01/02/03 的接口设计——否则早期章节对 GLM 用户跑不通。
-3. **卷首语/免责声明篇**：是否需要一篇「卷首语」说明本卷定位、源码出处、还原源码免责、provider 可插拔是自创抽象。倾向需要。
+1. **运行时具体选型**：✅ **定为 Bun**（贴近源码；源码本身即 Bun 项目）。每篇运行命令统一用 `bun run`；读者需本地装 Bun，卷首语说明。
+2. **【已升级为实战01/03 核心设计，不再是"细节"】provider 工具调用归一**：Anthropic 的流式 `tool_use`（content_block_delta / input_json_delta 增量拼）与 OpenAI 的 `tool_calls`（choices[].delta.tool_calls[].function.arguments 分片）形态完全不同。✅ **用户两家 key 都有，spike 双端验证**：用 GLM（OpenAI 兼容）与 Anthropic 各跑通一次「带工具调用的流式请求」，验证 `ModelProvider` 接口能否同时容纳两端的流式 tool-call 解析，再据此回填实战01/02/03 的接口设计。spike 在写实战01 代码前执行。
+3. **卷首语/免责声明篇**：✅ **定为需要，先写**。一篇「卷首语」说明本卷定位、源码出处、还原源码免责、provider 可插拔是自创抽象、怎么读（每篇跑通再进下一篇 + git tag checkpoint）。文件名 `实战00-preface.md`。
 
 ---
 
