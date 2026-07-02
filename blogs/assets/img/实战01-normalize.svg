@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 440" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <title id="t">出口翻译：两套响应方言归一化成一个 ChatReply</title>
+  <desc id="d">Anthropic 响应的 content[].text 和 stop_reason，与 OpenAI/GLM 响应的 choices[].message.content 和 finish_reason，字段名结构都不同，出口翻译把两者都映射成同一个 ChatReply {text, stopReason}。</desc>
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+
+  <text x="410" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">出口翻译：两套响应方言 → 一个 ChatReply</text>
+  <text x="410" y="58" text-anchor="middle" font-size="13.5" fill="#475569">连字段名都不一样——归一化就发生在这里</text>
+
+  <!-- 左：Anthropic 响应 -->
+  <rect x="34" y="80" width="356" height="168" rx="8" fill="#f0fdf4" stroke="#166534" stroke-width="2"/>
+  <text x="212" y="102" text-anchor="middle" font-size="13" font-weight="700" fill="#166534">Anthropic 响应</text>
+  <text x="50" y="126" font-size="11.5" font-family="'SF Mono', Menlo, monospace" fill="#334155">{</text>
+  <text x="50" y="146" font-size="11.5" font-family="'SF Mono', Menlo, monospace" fill="#334155">　"content": [</text>
+  <text x="50" y="166" font-size="11.5" font-family="'SF Mono', Menlo, monospace" fill="#334155">　　{ "type":"text", "text":"…" }</text>
+  <text x="50" y="186" font-size="11.5" font-family="'SF Mono', Menlo, monospace" fill="#334155">　],</text>
+  <text x="50" y="206" font-size="11.5" font-family="'SF Mono', Menlo, monospace" fill="#334155">　"stop_reason": "end_turn"</text>
+  <text x="50" y="226" font-size="11.5" font-family="'SF Mono', Menlo, monospace" fill="#334155">}</text>
+  <text x="212" y="243" text-anchor="middle" font-size="10.5" fill="#15803d">content[].text → text　stop_reason → stopReason</text>
+
+  <!-- 右：OpenAI 响应 -->
+  <rect x="430" y="80" width="356" height="168" rx="8" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+  <text x="608" y="102" text-anchor="middle" font-size="13" font-weight="700" fill="#1e40af">OpenAI / GLM 响应</text>
+  <text x="446" y="126" font-size="11.5" font-family="'SF Mono', Menlo, monospace" fill="#334155">{</text>
+  <text x="446" y="146" font-size="11.5" font-family="'SF Mono', Menlo, monospace" fill="#334155">　"choices": [{</text>
+  <text x="446" y="166" font-size="11.5" font-family="'SF Mono', Menlo, monospace" fill="#334155">　　"message": { "content":"…" },</text>
+  <text x="446" y="186" font-size="11.5" font-family="'SF Mono', Menlo, monospace" fill="#334155">　　"finish_reason": "stop"</text>
+  <text x="446" y="206" font-size="11.5" font-family="'SF Mono', Menlo, monospace" fill="#334155">　}]</text>
+  <text x="446" y="226" font-size="11.5" font-family="'SF Mono', Menlo, monospace" fill="#334155">}</text>
+  <text x="608" y="243" text-anchor="middle" font-size="10.5" fill="#1d4ed8">message.content → text　finish_reason → stopReason</text>
+
+  <!-- 汇聚箭头 -->
+  <line x1="212" y1="252" x2="360" y2="312" stroke="#64748b" stroke-width="2"/>
+  <polygon points="366,316 352,308 356,320" fill="#64748b"/>
+  <line x1="608" y1="252" x2="460" y2="312" stroke="#64748b" stroke-width="2"/>
+  <polygon points="454,316 460,304 468,314" fill="#64748b"/>
+
+  <!-- ChatReply -->
+  <rect x="270" y="322" width="280" height="78" rx="8" fill="#fef3c7" stroke="#b45309" stroke-width="2.5"/>
+  <text x="410" y="348" text-anchor="middle" font-size="14" font-weight="700" fill="#92400e">归一化 ChatReply</text>
+  <text x="410" y="374" text-anchor="middle" font-size="12.5" font-family="'SF Mono', Menlo, monospace" fill="#b45309">{ text: string, stopReason: string }</text>
+  <text x="410" y="392" text-anchor="middle" font-size="11" fill="#92400e">调用方只认这个形状</text>
+</svg>

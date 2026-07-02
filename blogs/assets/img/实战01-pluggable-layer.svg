@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 480" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <title id="t">可插拔的模型层：一个接口收口两端差异</title>
+  <desc id="d">调用方对 provider 零分支，只调 ModelProvider 接口的 chat(messages) 拿回归一化 ChatReply；接口下挂 AnthropicProvider 与 OpenAICompatProvider 两个适配器，各自做入口翻译（messages→各家 body）和出口翻译（各家响应→ChatReply），两端方言差异全烂在适配器肚子里。</desc>
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+
+  <text x="410" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">可插拔的模型层：差异全烂在适配器肚子里</text>
+  <text x="410" y="58" text-anchor="middle" font-size="13.5" fill="#475569">换个 PROVIDER 环境变量就切后端，调用方一个字不改</text>
+
+  <!-- 调用方 -->
+  <rect x="260" y="80" width="300" height="62" rx="8" fill="#f0fdf4" stroke="#166534" stroke-width="2.5"/>
+  <text x="410" y="104" text-anchor="middle" font-size="14" font-weight="700" fill="#166534">调用方 src/index.ts</text>
+  <text x="410" y="126" text-anchor="middle" font-size="12" font-family="'SF Mono', Menlo, monospace" fill="#15803d">provider.chat(messages) · 对 provider 零分支</text>
+
+  <!-- 调用/回复 双箭头 -->
+  <line x1="360" y1="146" x2="360" y2="188" stroke="#64748b" stroke-width="2"/>
+  <polygon points="360,192 354,180 366,180" fill="#64748b"/>
+  <text x="300" y="172" text-anchor="middle" font-size="11.5" fill="#475569">chat(messages)</text>
+  <line x1="460" y1="188" x2="460" y2="146" stroke="#2563eb" stroke-width="2"/>
+  <polygon points="460,142 454,154 466,154" fill="#2563eb"/>
+  <text x="527" y="172" text-anchor="middle" font-size="11.5" fill="#1e40af">ChatReply</text>
+
+  <!-- 接口 -->
+  <rect x="230" y="192" width="360" height="70" rx="8" fill="#eff6ff" stroke="#2563eb" stroke-width="2.5"/>
+  <text x="410" y="216" text-anchor="middle" font-size="14" font-weight="700" fill="#1e40af">interface ModelProvider　←　归一化的那条缝</text>
+  <text x="410" y="238" text-anchor="middle" font-size="12" font-family="'SF Mono', Menlo, monospace" fill="#1d4ed8">chat(messages: Message[]) → Promise&lt;ChatReply&gt;</text>
+  <text x="410" y="255" text-anchor="middle" font-size="11" fill="#2563eb">ChatReply = { text, stopReason }</text>
+
+  <!-- implements 两箭头 -->
+  <line x1="300" y1="262" x2="220" y2="300" stroke="#64748b" stroke-width="2"/>
+  <polygon points="214,303 228,301 222,291" fill="#64748b"/>
+  <line x1="520" y1="262" x2="600" y2="300" stroke="#64748b" stroke-width="2"/>
+  <polygon points="606,303 592,291 598,301" fill="#64748b"/>
+  <text x="410" y="286" text-anchor="middle" font-size="11" fill="#64748b">implements（两个适配器各自实现契约）</text>
+
+  <!-- Anthropic 适配器 -->
+  <rect x="34" y="306" width="366" height="128" rx="8" fill="#f8fafc" stroke="#166534" stroke-width="2"/>
+  <text x="217" y="328" text-anchor="middle" font-size="13" font-weight="700" fill="#166534">AnthropicProvider</text>
+  <text x="50" y="352" font-size="11.5" fill="#334155"><tspan font-weight="700" fill="#166534">入口翻译</tspan> messages → POST /v1/messages</text>
+  <text x="50" y="374" font-size="11.5" fill="#334155"><tspan font-weight="700" fill="#b45309">出口翻译</tspan> content[] + stop_reason</text>
+  <text x="50" y="394" font-size="11.5" fill="#334155">　　　　　→ { text, stopReason }</text>
+  <text x="50" y="418" font-size="11" fill="#64748b">认证：x-api-key（直连）/ Bearer（聚合器）</text>
+
+  <!-- OpenAI 适配器 -->
+  <rect x="420" y="306" width="366" height="128" rx="8" fill="#f8fafc" stroke="#2563eb" stroke-width="2"/>
+  <text x="603" y="328" text-anchor="middle" font-size="13" font-weight="700" fill="#1e40af">OpenAICompatProvider</text>
+  <text x="436" y="352" font-size="11.5" fill="#334155"><tspan font-weight="700" fill="#1e40af">入口翻译</tspan> messages → POST /chat/completions</text>
+  <text x="436" y="374" font-size="11.5" fill="#334155"><tspan font-weight="700" fill="#b45309">出口翻译</tspan> choices[] + finish_reason</text>
+  <text x="436" y="394" font-size="11.5" fill="#334155">　　　　　→ { text, stopReason }</text>
+  <text x="436" y="418" font-size="11" fill="#64748b">GLM / OpenRouter / 任何 OpenAI 兼容端</text>
+
+  <!-- 底注 -->
+  <text x="410" y="460" text-anchor="middle" font-size="12.5" fill="#475569">两端方言天差地别（content[] vs choices[]、stop_reason vs finish_reason），差异全被适配器吃掉——调用方只认 ChatReply。</text>
+</svg>

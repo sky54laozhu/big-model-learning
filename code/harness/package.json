@@ -5,6 +5,8 @@
   "type": "module",
   "private": true,
   "scripts": {
+    "chat": "bun run src/index.ts",
+    "typecheck": "tsc --noEmit",
     "spike:glm": "bun run spike/spike.ts glm",
     "spike:anthropic": "bun run spike/spike.ts anthropic",
     "spike:both": "bun run spike/spike.ts both"
