@@ -81,7 +81,8 @@
 | 番外 | [先给 TypeScript 打地基（写给会 JS 的你）](实战00a-typescript-basics.md) | 会 JS，怎么最快迈到能读 TS？ | ✅ | |
 | 番外 | [读懂本卷代码要的 TypeScript](实战00b-typescript-for-harness.md) | 可辨识联合/async function* 到底怎么读？ | ✅ | |
 | 实战01 | [第一次对话：可插拔的模型层](实战01-first-call.md) | 怎么把一次 chat() 写成换环境变量就能切后端的层？ | ✅ | |
+| 实战02 | [agent loop 骨架：给芯片套上循环](实战02-agent-loop.md) | while 的括号里到底填什么？ | ✅ | |
 
 ---
 
-*进度：概念系列 32/32（完结 🎉）· 实战卷 4/20 · 视频 1/32*
+*进度：概念系列 32/32（完结 🎉）· 实战卷 5/20 · 视频 1/32*

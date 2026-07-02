@@ -2,7 +2,7 @@
 
 > 一个全栈开发者从零开始理解大模型原理的学习记录 · 从直觉到工程，每学一块写一篇博客
 >
-> **进度：概念系列 32 篇正文 + 2 番外 · 完结 🎉 ｜ 实战卷《从 0 写一个 Harness》进行中（3/20）**
+> **进度：概念系列 32 篇正文 + 2 番外 · 完结 🎉 ｜ 实战卷《从 0 写一个 Harness》进行中（5/20）**
 
 ## 学习理念
 
@@ -90,6 +90,7 @@
 | 番外 | [先给 TypeScript 打地基（写给会 JS 的你）](blogs/实战00a-typescript-basics.md) | ✅ |
 | 番外 | [读懂本卷代码要的 TypeScript](blogs/实战00b-typescript-for-harness.md) | ✅ |
 | 实战01 | [第一次对话：可插拔的模型层](blogs/实战01-first-call.md) | ✅ |
+| 实战02 | [agent loop 骨架：给芯片套上循环](blogs/实战02-agent-loop.md) | ✅ |
 
 ---
 

@@ -1,15 +1,15 @@
 import { makeProvider } from './provider'
-import type { Message } from './types'
+import { runAgent } from './loop'
+import { readFileTool } from './tools/read_file'
 
-// —— 调用方：对 provider 零分支 ——
-// 它不知道、也不关心底下接的是 Anthropic 还是 GLM，只跟 ModelProvider 契约打交道。
+// —— 调用方：对 provider 零分支，也对"转了几圈工具"零感知 ——
+// 它只管把工具清单和问题交给 runAgent，剩下的循环/分流/翻译全在 harness 里。
 const provider = makeProvider()
-const question = process.argv[2] ?? '用一句话解释什么是大语言模型。'
+const question = process.argv[2] ?? '读一下 package.json，告诉我这个项目叫什么、有哪些 npm 脚本。'
 
-const messages: Message[] = [{ role: 'user', content: question }]
-const reply = await provider.chat(messages)
+console.log(`\n[provider] ${provider.name}`)
+console.log(`[you]      ${question}\n`)
 
-console.log(`\n[provider]    ${provider.name}`)
-console.log(`[you]         ${question}`)
-console.log(`[assistant]   ${reply.text}`)
-console.log(`[stop_reason] ${reply.stopReason}`)
+const answer = await runAgent(provider, [readFileTool], question)
+
+console.log(`\n[assistant] ${answer}`)

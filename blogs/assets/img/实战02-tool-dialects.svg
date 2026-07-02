@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 470" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <title id="t">工具调用的三处折叠点：两端方言 → 一个中立形状</title>
+  <desc id="d">带工具后 Anthropic 与 OpenAI/GLM 在三处形态不同：循环信号（stop_reason:tool_use vs finish_reason:tool_calls，中立形状看 toolCalls.length）；工具请求（content[] 的 tool_use 块 vs tool_calls[]，中立形状 ToolCall{id,name,args}，注意 OpenAI 的 arguments 是 JSON 字符串）；结果塞回（Anthropic 用 user 消息装 tool_result vs OpenAI 用 role:tool 消息，中立形状 {role:tool, toolCallId, content}）。三处都在 provider 翻译里归一化。</desc>
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+
+  <text x="420" y="30" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">工具调用的三处折叠点：两端方言 → 一个中立形状</text>
+  <text x="420" y="54" text-anchor="middle" font-size="13" fill="#475569">同一个病发作三次——归一化全烂在 provider 的入口/出口翻译里</text>
+
+  <!-- 表头 -->
+  <text x="215" y="98" text-anchor="middle" font-size="13" font-weight="700" fill="#166534">Anthropic 方言</text>
+  <text x="414" y="98" text-anchor="middle" font-size="13" font-weight="700" fill="#92400e">中立形状（harness 只认）</text>
+  <text x="666" y="98" text-anchor="middle" font-size="13" font-weight="700" fill="#1e40af">OpenAI / GLM 方言</text>
+
+  <!-- ===== 行① 循环信号 ===== -->
+  <text x="60" y="152" text-anchor="middle" font-size="16" font-weight="700" fill="#334155">①</text>
+  <text x="60" y="172" text-anchor="middle" font-size="11" fill="#475569">循环信号</text>
+  <rect x="110" y="114" width="210" height="88" rx="7" fill="#f0fdf4" stroke="#166534" stroke-width="2"/>
+  <text x="122" y="150" font-size="11" font-family="'SF Mono', Menlo, monospace" fill="#334155">stop_reason:</text>
+  <text x="122" y="170" font-size="11" font-family="'SF Mono', Menlo, monospace" fill="#334155">  'tool_use'</text>
+  <rect x="330" y="114" width="168" height="88" rx="7" fill="#fef3c7" stroke="#b45309" stroke-width="2.5"/>
+  <text x="342" y="150" font-size="11" font-family="'SF Mono', Menlo, monospace" fill="#92400e">toolCalls</text>
+  <text x="342" y="170" font-size="11" font-family="'SF Mono', Menlo, monospace" fill="#92400e">.length &gt; 0</text>
+  <rect x="508" y="114" width="316" height="88" rx="7" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+  <text x="520" y="150" font-size="11" font-family="'SF Mono', Menlo, monospace" fill="#334155">finish_reason:</text>
+  <text x="520" y="170" font-size="11" font-family="'SF Mono', Menlo, monospace" fill="#334155">  'tool_calls'</text>
+
+  <!-- ===== 行② 工具请求 ===== -->
+  <text x="60" y="262" text-anchor="middle" font-size="16" font-weight="700" fill="#334155">②</text>
+  <text x="60" y="282" text-anchor="middle" font-size="11" fill="#475569">工具请求</text>
+  <rect x="110" y="220" width="210" height="96" rx="7" fill="#f0fdf4" stroke="#166534" stroke-width="2"/>
+  <text x="122" y="250" font-size="11" font-family="'SF Mono', Menlo, monospace" fill="#334155">content[] 的</text>
+  <text x="122" y="270" font-size="11" font-family="'SF Mono', Menlo, monospace" fill="#334155">tool_use 块</text>
+  <text x="122" y="290" font-size="11" font-family="'SF Mono', Menlo, monospace" fill="#334155">{id,name,input}</text>
+  <rect x="330" y="220" width="168" height="96" rx="7" fill="#fef3c7" stroke="#b45309" stroke-width="2.5"/>
+  <text x="342" y="260" font-size="11" font-family="'SF Mono', Menlo, monospace" fill="#92400e">ToolCall</text>
+  <text x="342" y="280" font-size="11" font-family="'SF Mono', Menlo, monospace" fill="#92400e">{id,name,args}</text>
+  <rect x="508" y="220" width="316" height="96" rx="7" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+  <text x="520" y="246" font-size="11" font-family="'SF Mono', Menlo, monospace" fill="#334155">tool_calls[]:</text>
+  <text x="520" y="266" font-size="11" font-family="'SF Mono', Menlo, monospace" fill="#334155">{id, function:</text>
+  <text x="520" y="286" font-size="11" font-family="'SF Mono', Menlo, monospace" fill="#334155"> {name, arguments}}</text>
+  <text x="520" y="306" font-size="10.5" fill="#b91c1c">⚠ arguments 是 JSON 字符串，要 parse</text>
+
+  <!-- ===== 行③ 结果塞回 ===== -->
+  <text x="60" y="370" text-anchor="middle" font-size="16" font-weight="700" fill="#334155">③</text>
+  <text x="60" y="390" text-anchor="middle" font-size="11" fill="#475569">结果塞回</text>
+  <rect x="110" y="330" width="210" height="90" rx="7" fill="#f0fdf4" stroke="#166534" stroke-width="2"/>
+  <text x="122" y="360" font-size="11" font-family="'SF Mono', Menlo, monospace" fill="#334155">user 消息装</text>
+  <text x="122" y="380" font-size="11" font-family="'SF Mono', Menlo, monospace" fill="#334155">tool_result</text>
+  <text x="122" y="400" font-size="11" font-family="'SF Mono', Menlo, monospace" fill="#334155">{tool_use_id}</text>
+  <rect x="330" y="330" width="168" height="90" rx="7" fill="#fef3c7" stroke="#b45309" stroke-width="2.5"/>
+  <text x="342" y="360" font-size="11" font-family="'SF Mono', Menlo, monospace" fill="#92400e">{role:'tool',</text>
+  <text x="342" y="380" font-size="11" font-family="'SF Mono', Menlo, monospace" fill="#92400e"> toolCallId,</text>
+  <text x="342" y="400" font-size="11" font-family="'SF Mono', Menlo, monospace" fill="#92400e"> content}</text>
+  <rect x="508" y="330" width="316" height="90" rx="7" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+  <text x="520" y="368" font-size="11" font-family="'SF Mono', Menlo, monospace" fill="#334155">role:'tool' 消息</text>
+  <text x="520" y="388" font-size="11" font-family="'SF Mono', Menlo, monospace" fill="#334155">{tool_call_id}</text>
+
+  <!-- 底注 -->
+  <text x="420" y="448" text-anchor="middle" font-size="11.5" fill="#475569">那根 id（tool_use_id / tool_call_id）是把「哪个请求」和「哪个结果」缝在一起的线</text>
+</svg>
