@@ -2,7 +2,7 @@
 
 > 一个全栈开发者从零开始理解大模型原理的学习记录 · 从直觉到工程，每学一块写一篇博客
 >
-> **进度：32 篇正文 + 2 篇番外 / 共 32 篇 · 概念系列完结 🎉**
+> **进度：概念系列 32 篇正文 + 2 番外 · 完结 🎉 ｜ 实战卷《从 0 写一个 Harness》进行中（3/20）**
 
 ## 学习理念
 
@@ -80,6 +80,15 @@
 | 30 | [安全与防护栏设计](blogs/30-security-guardrails.md) | ✅ |
 | 31 | [AI 系统的可观测性与监控](blogs/31-observability-monitoring.md) | ✅ |
 | 32 | [AI 平台战略：治理、多租户与演进](blogs/32-ai-platform-strategy.md) | ✅ |
+
+### 第六阶段：实战卷 · 从 0 写一个 Harness
+> 🏁 里程碑：亲手焊出一台能跑的 mini-claude-code（20 篇，代码累积进 `code/harness/`）
+
+| # | 标题 | 状态 |
+|---|------|:----:|
+| 卷首语 | [我们要亲手焊一台 harness](blogs/实战00-preface.md) | ✅ |
+| 番外 | [读懂本卷代码要的 TypeScript](blogs/实战00b-typescript-for-harness.md) | ✅ |
+| 实战01 | [第一次对话：可插拔的模型层](blogs/实战01-first-call.md) | ✅ |
 
 ---
 
