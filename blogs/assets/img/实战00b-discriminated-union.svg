@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 470" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <title id="t">可辨识联合与 switch 收窄</title>
+  <desc id="d">NormEvent 是五选一的联合类型，每个成员带一个字面量 type 字段当身份牌；switch(ev.type) 的每个分支里，编译器把 ev 自动收窄成对应成员，能点对应字段、点错的字段报错；漏处理某一支可用 never 做穷尽检查在编译期报错。</desc>
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+
+  <text x="410" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">可辨识联合 + switch 收窄 = "归一化"的类型层落地</text>
+  <text x="410" y="58" text-anchor="middle" font-size="13.5" fill="#475569">调用方只认这五种事件，对底下接的是哪家模型零分支</text>
+
+  <!-- 左：联合类型 -->
+  <text x="45" y="88" font-size="13.5" font-weight="700" fill="#1e40af">① 一个 type 字段区分成员</text>
+  <rect x="40" y="98" width="320" height="272" rx="8" fill="#f8fafc" stroke="#2563eb" stroke-width="2"/>
+  <text x="56" y="122" font-size="12.5" font-family="'SF Mono', Menlo, monospace" fill="#334155">type NormEvent =  <tspan fill="#64748b">// 五选一</tspan></text>
+
+  <rect x="56" y="134" width="288" height="30" rx="5" fill="#eff6ff" stroke="#93c5fd" stroke-width="1"/>
+  <text x="66" y="154" font-size="12" font-family="'SF Mono', Menlo, monospace" fill="#334155">{ <tspan fill="#2563eb" font-weight="700">type:'text'</tspan>, text }</text>
+
+  <rect x="56" y="170" width="288" height="30" rx="5" fill="#eff6ff" stroke="#93c5fd" stroke-width="1"/>
+  <text x="66" y="190" font-size="12" font-family="'SF Mono', Menlo, monospace" fill="#334155">{ <tspan fill="#2563eb" font-weight="700">type:'tool_start'</tspan>, id, name }</text>
+
+  <rect x="56" y="206" width="288" height="30" rx="5" fill="#eff6ff" stroke="#93c5fd" stroke-width="1"/>
+  <text x="66" y="226" font-size="12" font-family="'SF Mono', Menlo, monospace" fill="#334155">{ <tspan fill="#2563eb" font-weight="700">type:'tool_arg'</tspan>, id, deltaJson }</text>
+
+  <rect x="56" y="242" width="288" height="30" rx="5" fill="#eff6ff" stroke="#93c5fd" stroke-width="1"/>
+  <text x="66" y="262" font-size="12" font-family="'SF Mono', Menlo, monospace" fill="#334155">{ <tspan fill="#2563eb" font-weight="700">type:'tool_end'</tspan>, id }</text>
+
+  <rect x="56" y="278" width="288" height="30" rx="5" fill="#eff6ff" stroke="#93c5fd" stroke-width="1"/>
+  <text x="66" y="298" font-size="12" font-family="'SF Mono', Menlo, monospace" fill="#334155">{ <tspan fill="#2563eb" font-weight="700">type:'done'</tspan>, stopReason }</text>
+
+  <text x="200" y="336" text-anchor="middle" font-size="11.5" fill="#64748b">蓝色高亮 = 每支的"身份牌"</text>
+  <text x="200" y="356" text-anchor="middle" font-size="11.5" fill="#64748b">（Anthropic / GLM 两端都翻译成这套）</text>
+
+  <!-- 中：switch -->
+  <line x1="362" y1="222" x2="398" y2="222" stroke="#64748b" stroke-width="2"/>
+  <polygon points="408,222 394,216 394,228" fill="#64748b"/>
+  <rect x="410" y="180" width="132" height="84" rx="8" fill="#f1f5f9" stroke="#64748b" stroke-width="2"/>
+  <text x="476" y="212" text-anchor="middle" font-size="13" font-weight="700" fill="#334155">switch</text>
+  <text x="476" y="232" text-anchor="middle" font-size="12" font-family="'SF Mono', Menlo, monospace" fill="#334155">(ev.type)</text>
+  <text x="476" y="252" text-anchor="middle" font-size="11" fill="#475569">按身份牌分流</text>
+
+  <!-- 右：两个收窄分支 -->
+  <text x="565" y="88" font-size="13.5" font-weight="700" fill="#166534">② 每个分支里 ev 被自动收窄</text>
+
+  <line x1="542" y1="200" x2="562" y2="150" stroke="#64748b" stroke-width="2"/>
+  <polygon points="565,142 553,152 566,157" fill="#64748b"/>
+  <rect x="560" y="100" width="230" height="92" rx="8" fill="#f0fdf4" stroke="#166534" stroke-width="2"/>
+  <text x="574" y="122" font-size="12.5" font-family="'SF Mono', Menlo, monospace" fill="#166534">case 'text':</text>
+  <text x="574" y="144" font-size="11.5" fill="#15803d">ev 收窄成 { type, text }</text>
+  <text x="574" y="167" font-size="12" font-family="'SF Mono', Menlo, monospace" fill="#15803d">ev.text ✓</text>
+  <text x="676" y="167" font-size="12" font-family="'SF Mono', Menlo, monospace" fill="#b45309">ev.name ✗</text>
+  <text x="676" y="184" font-size="10.5" fill="#b45309">这支没 name</text>
+
+  <line x1="542" y1="244" x2="562" y2="284" stroke="#64748b" stroke-width="2"/>
+  <polygon points="565,292 553,282 566,277" fill="#64748b"/>
+  <rect x="560" y="250" width="230" height="80" rx="8" fill="#f0fdf4" stroke="#166534" stroke-width="2"/>
+  <text x="574" y="272" font-size="12.5" font-family="'SF Mono', Menlo, monospace" fill="#166534">case 'tool_start':</text>
+  <text x="574" y="294" font-size="11.5" fill="#15803d">ev 收窄成 { .., id, name }</text>
+  <text x="574" y="317" font-size="12" font-family="'SF Mono', Menlo, monospace" fill="#15803d">ev.name ✓  ev.id ✓</text>
+
+  <!-- 底：穷尽检查 -->
+  <rect x="40" y="392" width="750" height="58" rx="8" fill="#f0fdf4" stroke="#166534" stroke-width="1.5"/>
+  <text x="415" y="416" text-anchor="middle" font-size="13" font-weight="700" fill="#166534">③ 穷尽检查：以后加了第六种事件、switch 忘了处理？</text>
+  <text x="415" y="437" text-anchor="middle" font-size="12" fill="#15803d">default 里塞 const _: never = ev —— 漏一支就在编译期报错，把"忘处理新状态"从运行时 bug 变成编译红线</text>
+</svg>

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 430" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <title id="t">类型是编译期的脚手架，运行时被擦除</title>
+  <desc id="d">.ts 源码里的类型标注，经 Bun 转译或 tsc 编译后被整条剥掉，运行时只剩纯 JS 值；类型检查只发生在编译期，运行时的数据（如模型吐的 JSON）类型管不住。</desc>
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+
+  <text x="410" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">类型是"编译期的脚手架"——运行时被擦掉</text>
+  <text x="410" y="58" text-anchor="middle" font-size="13.5" fill="#475569">蓝色 = 类型标注；它们只在你按下运行之前存在</text>
+
+  <!-- 顶部：类型检查发生在编译期 -->
+  <rect x="40" y="80" width="470" height="30" rx="6" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="275" y="100" text-anchor="middle" font-size="12.5" fill="#1e40af">类型检查只发生在这一步之前：编辑器实时标红 / 手动 tsc --noEmit</text>
+
+  <!-- 列1：.ts 源码 -->
+  <rect x="40" y="128" width="240" height="182" rx="8" fill="#f8fafc" stroke="#2563eb" stroke-width="2"/>
+  <text x="160" y="152" text-anchor="middle" font-size="14" font-weight="700" fill="#1e40af">.ts 源码</text>
+  <text x="58" y="182" font-size="12.5" font-family="'SF Mono', Menlo, monospace" fill="#2563eb">type Msg = { role; content }</text>
+  <text x="58" y="212" font-size="12.5" font-family="'SF Mono', Menlo, monospace" fill="#334155">const m<tspan fill="#2563eb">: Msg</tspan> = {</text>
+  <text x="58" y="234" font-size="12.5" font-family="'SF Mono', Menlo, monospace" fill="#334155">  role: 'user',</text>
+  <text x="58" y="256" font-size="12.5" font-family="'SF Mono', Menlo, monospace" fill="#334155">  content: '你好'</text>
+  <text x="58" y="278" font-size="12.5" font-family="'SF Mono', Menlo, monospace" fill="#334155">}</text>
+  <text x="160" y="300" text-anchor="middle" font-size="11.5" fill="#64748b">JS 值 + 蓝色类型标注</text>
+
+  <!-- 箭头1 -->
+  <line x1="286" y1="219" x2="322" y2="219" stroke="#64748b" stroke-width="2"/>
+  <polygon points="332,219 318,213 318,225" fill="#64748b"/>
+
+  <!-- 中：转译擦除 -->
+  <rect x="336" y="150" width="150" height="138" rx="8" fill="#f1f5f9" stroke="#64748b" stroke-width="2"/>
+  <text x="411" y="192" text-anchor="middle" font-size="13.5" font-weight="700" fill="#334155">Bun 转译</text>
+  <text x="411" y="213" text-anchor="middle" font-size="12.5" fill="#475569">/ tsc 编译</text>
+  <text x="411" y="243" text-anchor="middle" font-size="12.5" fill="#b45309">剥掉所有</text>
+  <text x="411" y="261" text-anchor="middle" font-size="12.5" fill="#b45309">类型标注</text>
+
+  <!-- 箭头2 -->
+  <line x1="492" y1="219" x2="528" y2="219" stroke="#64748b" stroke-width="2"/>
+  <polygon points="538,219 524,213 524,225" fill="#64748b"/>
+
+  <!-- 列3：运行时 -->
+  <rect x="542" y="128" width="238" height="182" rx="8" fill="#fffbeb" stroke="#b45309" stroke-width="2"/>
+  <text x="661" y="152" text-anchor="middle" font-size="14" font-weight="700" fill="#92400e">运行时（纯 JS）</text>
+  <text x="560" y="188" font-size="12.5" font-family="'SF Mono', Menlo, monospace" fill="#334155">const m = {</text>
+  <text x="560" y="210" font-size="12.5" font-family="'SF Mono', Menlo, monospace" fill="#334155">  role: 'user',</text>
+  <text x="560" y="232" font-size="12.5" font-family="'SF Mono', Menlo, monospace" fill="#334155">  content: '你好'</text>
+  <text x="560" y="254" font-size="12.5" font-family="'SF Mono', Menlo, monospace" fill="#334155">}</text>
+  <text x="661" y="286" text-anchor="middle" font-size="11.5" fill="#92400e">type Msg、: Msg 全没了</text>
+
+  <!-- 底注 -->
+  <rect x="40" y="342" width="740" height="60" rx="8" fill="#fef3c7" stroke="#b45309" stroke-width="1.5"/>
+  <text x="410" y="368" text-anchor="middle" font-size="13.5" font-weight="700" fill="#92400e">运行时没有类型 → 模型吐回来的 JSON，TS 类型一个字都验证不了</text>
+  <text x="410" y="390" text-anchor="middle" font-size="12.5" fill="#b45309">所以该 parse 该校验一样不能少（回扣 Blog 18 结构化输出）——类型层的"结构" ≠ 运行时的"结构化输出"</text>
+</svg>
