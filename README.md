@@ -87,6 +87,7 @@
 | # | 标题 | 状态 |
 |---|------|:----:|
 | 卷首语 | [我们要亲手焊一台 harness](blogs/实战00-preface.md) | ✅ |
+| 番外 | [先给 TypeScript 打地基（写给会 JS 的你）](blogs/实战00a-typescript-basics.md) | ✅ |
 | 番外 | [读懂本卷代码要的 TypeScript](blogs/实战00b-typescript-for-harness.md) | ✅ |
 | 实战01 | [第一次对话：可插拔的模型层](blogs/实战01-first-call.md) | ✅ |
 

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 400" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <title id="t">从会 JS 到读懂 00b 的五级台阶</title>
+  <desc id="d">最左是你已经会的 JS，往右上依次登五级台阶：类型注解、基础类型与推断、联合与字面量联合、type 与 interface、泛型与 strict，登顶后接上 00b 的进阶 TS。</desc>
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+
+  <text x="30" y="34" font-size="18" font-weight="700" fill="#1e293b">五级台阶：从「会 JS」登到「读懂 00b」</text>
+  <text x="30" y="56" font-size="13" fill="#64748b">一级一级踩，别跳——每一级就是这篇的一节</text>
+
+  <!-- 台阶（从左下到右上） -->
+  <!-- 基座：JS -->
+  <rect x="30" y="318" width="150" height="50" rx="8" fill="#f1f5f9" stroke="#64748b" stroke-width="2"/>
+  <text x="105" y="341" text-anchor="middle" font-size="13.5" font-weight="700" fill="#334155">你已经会的</text>
+  <text x="105" y="360" text-anchor="middle" font-size="15" font-weight="700" fill="#0f172a">JavaScript</text>
+
+  <!-- 台阶 1 -->
+  <rect x="168" y="270" width="150" height="48" rx="8" fill="#eff6ff" stroke="#2563eb" stroke-width="1.8"/>
+  <text x="243" y="291" text-anchor="middle" font-size="13" font-weight="700" fill="#1e40af">① 类型注解</text>
+  <text x="243" y="309" text-anchor="middle" font-size="11.5" fill="#475569">给变量贴 : string</text>
+
+  <!-- 台阶 2 -->
+  <rect x="306" y="222" width="150" height="48" rx="8" fill="#eff6ff" stroke="#2563eb" stroke-width="1.8"/>
+  <text x="381" y="243" text-anchor="middle" font-size="13" font-weight="700" fill="#1e40af">② 基础类型</text>
+  <text x="381" y="261" text-anchor="middle" font-size="11.5" fill="#475569">&amp; 能推断就别写</text>
+
+  <!-- 台阶 3（高亮：00b 前置） -->
+  <rect x="444" y="174" width="150" height="48" rx="8" fill="#fef3c7" stroke="#b45309" stroke-width="2"/>
+  <text x="519" y="195" text-anchor="middle" font-size="13" font-weight="700" fill="#92400e">③ 字面量联合</text>
+  <text x="519" y="213" text-anchor="middle" font-size="11.5" fill="#b45309">00b 核心的台阶</text>
+
+  <!-- 台阶 4 -->
+  <rect x="582" y="126" width="150" height="48" rx="8" fill="#eff6ff" stroke="#2563eb" stroke-width="1.8"/>
+  <text x="657" y="147" text-anchor="middle" font-size="13" font-weight="700" fill="#1e40af">④ type / interface</text>
+  <text x="657" y="165" text-anchor="middle" font-size="11.5" fill="#475569">联合 vs 契约</text>
+
+  <!-- 台阶 5 -->
+  <rect x="700" y="78" width="150" height="48" rx="8" fill="#eff6ff" stroke="#2563eb" stroke-width="1.8"/>
+  <text x="775" y="99" text-anchor="middle" font-size="13" font-weight="700" fill="#1e40af">⑤ 泛型 &amp; strict</text>
+  <text x="775" y="117" text-anchor="middle" font-size="11.5" fill="#475569">会读 + ?. ?? !</text>
+
+  <!-- 登顶箭头 -->
+  <line x1="775" y1="78" x2="775" y2="58" stroke="#16a34a" stroke-width="2"/>
+  <polygon points="775,44 769,58 781,58" fill="#16a34a"/>
+  <rect x="690" y="18" width="170" height="26" rx="13" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/>
+  <text x="775" y="36" text-anchor="middle" font-size="12.5" font-weight="700" fill="#166534">接上 00b · 进阶 TS</text>
+</svg>
