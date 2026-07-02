@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 500" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+  <title id="t">三根柱子从特性尺度放大到组织尺度：平台 = 组织尺度的 harness</title>
+  <desc id="d">上半部一张对照表：工程三根柱子（约束下权衡、可复用纪律、驯服不确定性）各自从「特性尺度（前31篇）」放大到「组织尺度（本篇平台）」。柱一从每次技术选型放大到自建vs托管等平台决策；柱二从一个harness内零件复用放大到paved road把26–31固化成平台默认；柱三从18单次校验/29发布回归/31运行观测放大到平台替全公司兜住模型抖动。下半部一条放大阶梯：18单次调用→29一次改动→31每天运行→32整个公司，方块越来越大，同一个动作用确定手段兜住会抖的零件，只是尺度不同。结论：平台=harness放大到组织尺度，呼应Blog01那个会抖的f(x)，技术同一套工程同一套，变的只是尺度。</desc>
+  <style>
+    .h { font-weight: 700; fill: #1a1a1a; font-size: 18px; }
+  </style>
+  <defs>
+    <marker id="ab" markerWidth="11" markerHeight="11" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#2563eb"/></marker>
+  </defs>
+
+  <text x="34" y="32" class="h">三根柱子，从「一个功能」放大到「一个公司」</text>
+
+  <!-- column headers -->
+  <rect x="34" y="50" width="180" height="34" rx="7" fill="#f3f4f6" stroke="#d1d5db" stroke-width="1.2"/>
+  <text x="124" y="72" text-anchor="middle" font-weight="700" font-size="12.5" fill="#374151">工程三根柱子（17b）</text>
+  <rect x="222" y="50" width="300" height="34" rx="7" fill="#f3f4f6" stroke="#d1d5db" stroke-width="1.2"/>
+  <text x="372" y="72" text-anchor="middle" font-weight="700" font-size="12.5" fill="#6b7280">特性尺度（前 31 篇）</text>
+  <rect x="566" y="50" width="300" height="34" rx="7" fill="#dbeafe" stroke="#2563eb" stroke-width="1.4"/>
+  <text x="716" y="72" text-anchor="middle" font-weight="700" font-size="12.5" fill="#1e40af">组织尺度（本篇平台）</text>
+
+  <text x="536" y="72" text-anchor="middle" font-size="16" fill="#2563eb">→</text>
+
+  <!-- Row 1 -->
+  <rect x="34" y="92" width="180" height="56" rx="7" fill="#dcfce7" stroke="#16a34a" stroke-width="1.3"/>
+  <text x="124" y="116" text-anchor="middle" font-weight="700" font-size="12.5" fill="#166534">柱一 · 约束下权衡</text>
+  <text x="124" y="134" text-anchor="middle" font-size="10.5" fill="#166534">戴镣铐跳舞</text>
+  <rect x="222" y="92" width="300" height="56" rx="7" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.1"/>
+  <text x="372" y="124" text-anchor="middle" font-size="11.5" fill="#475569">每一次技术选型</text>
+  <rect x="566" y="92" width="300" height="56" rx="7" fill="#eff6ff" stroke="#93c5fd" stroke-width="1.1"/>
+  <text x="716" y="118" text-anchor="middle" font-size="11.5" fill="#1e3a8a">自建 vs 托管、共享 vs 隔离</text>
+  <text x="716" y="136" text-anchor="middle" font-size="11.5" fill="#1e3a8a">公摊 vs chargeback</text>
+
+  <!-- Row 2 -->
+  <rect x="34" y="156" width="180" height="56" rx="7" fill="#dcfce7" stroke="#16a34a" stroke-width="1.3"/>
+  <text x="124" y="180" text-anchor="middle" font-weight="700" font-size="12.5" fill="#166534">柱二 · 可复用纪律</text>
+  <text x="124" y="198" text-anchor="middle" font-size="10.5" fill="#166534">靠章法不靠手感</text>
+  <rect x="222" y="156" width="300" height="56" rx="7" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.1"/>
+  <text x="372" y="188" text-anchor="middle" font-size="11.5" fill="#475569">一个 harness 内的零件复用</text>
+  <rect x="566" y="156" width="300" height="56" rx="7" fill="#eff6ff" stroke="#93c5fd" stroke-width="1.1"/>
+  <text x="716" y="182" text-anchor="middle" font-size="11.5" fill="#1e3a8a">paved road：把 26–31 最佳实践</text>
+  <text x="716" y="200" text-anchor="middle" font-size="11.5" fill="#1e3a8a">固化成平台默认，团队默认做对</text>
+
+  <!-- Row 3 -->
+  <rect x="34" y="220" width="180" height="56" rx="7" fill="#dcfce7" stroke="#16a34a" stroke-width="1.3"/>
+  <text x="124" y="244" text-anchor="middle" font-weight="700" font-size="12.5" fill="#166534">柱三 · 驯服不确定性</text>
+  <text x="124" y="262" text-anchor="middle" font-size="10.5" fill="#166534">确定手段兜住会抖的零件</text>
+  <rect x="222" y="220" width="300" height="56" rx="7" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.1"/>
+  <text x="372" y="252" text-anchor="middle" font-size="11.5" fill="#475569">18 单次校验 / 29 回归 / 31 观测</text>
+  <rect x="566" y="220" width="300" height="56" rx="7" fill="#eff6ff" stroke="#93c5fd" stroke-width="1.1"/>
+  <text x="716" y="252" text-anchor="middle" font-size="11.5" fill="#1e3a8a">平台替全公司兜住「模型抖动」</text>
+
+  <!-- scale ladder -->
+  <text x="34" y="312" font-weight="700" font-size="13" fill="#1e40af">同一个动作，尺度一路放大：用确定的手段，兜住会抖的零件</text>
+
+  <rect x="70" y="330" width="120" height="46" rx="8" fill="#eef2f7" stroke="#94a3b8" stroke-width="1.2"/>
+  <text x="130" y="350" text-anchor="middle" font-weight="700" font-size="11.5" fill="#334155">18 篇</text>
+  <text x="130" y="367" text-anchor="middle" font-size="10.5" fill="#64748b">单次调用</text>
+
+  <rect x="248" y="322" width="140" height="60" rx="8" fill="#e0e7ff" stroke="#818cf8" stroke-width="1.3"/>
+  <text x="318" y="346" text-anchor="middle" font-weight="700" font-size="12" fill="#3730a3">29 篇</text>
+  <text x="318" y="365" text-anchor="middle" font-size="10.5" fill="#4338ca">一次改动</text>
+
+  <rect x="446" y="314" width="160" height="76" rx="9" fill="#c7d2fe" stroke="#6366f1" stroke-width="1.5"/>
+  <text x="526" y="342" text-anchor="middle" font-weight="700" font-size="12.5" fill="#312e81">31 篇</text>
+  <text x="526" y="362" text-anchor="middle" font-size="11" fill="#3730a3">每天运行</text>
+
+  <rect x="664" y="304" width="196" height="94" rx="10" fill="#a5b4fc" stroke="#4f46e5" stroke-width="1.8"/>
+  <text x="762" y="336" text-anchor="middle" font-weight="700" font-size="14" fill="#1e1b4b">32 篇 · 整个公司</text>
+  <text x="762" y="358" text-anchor="middle" font-size="11" fill="#312e81">平台 = 组织尺度的 harness</text>
+  <text x="762" y="378" text-anchor="middle" font-size="11" fill="#312e81">兜住全公司面对模型的抖动</text>
+
+  <line x1="192" y1="353" x2="244" y2="353" stroke="#2563eb" stroke-width="1.6" marker-end="url(#ab)"/>
+  <line x1="390" y1="352" x2="442" y2="352" stroke="#2563eb" stroke-width="1.6" marker-end="url(#ab)"/>
+  <line x1="608" y1="352" x2="660" y2="351" stroke="#2563eb" stroke-width="1.6" marker-end="url(#ab)"/>
+
+  <!-- finale takeaway -->
+  <line x1="34" y1="420" x2="866" y2="420" stroke="#e5e7eb" stroke-width="1.2"/>
+  <text x="450" y="446" text-anchor="middle" font-weight="700" font-size="13" fill="#1e40af">呼应 Blog 01 那个会抖的 f(x)：从一个 token，到一个平台</text>
+  <text x="450" y="470" text-anchor="middle" font-size="12" fill="#374151">技术是同一套技术，工程是同一套工程 —— 变的，只是尺度</text>
+</svg>

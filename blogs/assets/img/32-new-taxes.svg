@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 500" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+  <title id="t">AI 平台的两条新税：语义串味与成本纠缠</title>
+  <desc id="d">顶部一条灰带列出老问题（密钥/审计/IAM/基本租户隔离，后端原样搬）。下面两块高亮面板是 AI 独有的新税。左panel语义串味：租户A的私密答案进了共享语义缓存，租户B问语义相近的问题命中了A的缓存，私密数据串给了B；共享RAG库检索也会召回别的租户文档；tenant_id 的 metadata 过滤从性能优化升级成安全边界。右panel成本纠缠：token成本是行为依赖非资源依赖，同一句话走Opus还是Haiku差5倍；共享prompt-cache的账互相纠缠该算谁；坏邻居失控循环烧公共预算，要按租户配额加按来源熔断。底部结论：经典SaaS只共享算力，AI平台还共享语义状态，而语义模糊会串。</desc>
+  <style>
+    .h { font-weight: 700; fill: #1a1a1a; font-size: 18px; }
+  </style>
+  <defs>
+    <marker id="arr" markerWidth="10" markerHeight="10" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#b45309"/></marker>
+  </defs>
+
+  <text x="34" y="32" class="h">老问题原样搬，火力压在两条 AI 新税上</text>
+
+  <!-- old problems strip -->
+  <rect x="34" y="48" width="832" height="46" rx="8" fill="#f3f4f6" stroke="#d1d5db" stroke-width="1.2"/>
+  <text x="50" y="68" font-weight="700" font-size="12.5" fill="#6b7280">✅ 老问题（后端闭眼解，原样搬）：</text>
+  <text x="50" y="86" font-size="12" fill="#6b7280">密钥管理（secrets manager）　·　审计（audit log）　·　权限（IAM / RBAC）　·　基本租户隔离（tenant_id + 行级权限 + 限流）</text>
+
+  <!-- ===== Panel A: semantic bleed ===== -->
+  <rect x="34" y="110" width="406" height="330" rx="10" fill="#fffbeb" stroke="#f59e0b" stroke-width="1.6"/>
+  <text x="52" y="136" font-weight="700" font-size="15" fill="#92400e">⚠️ 新税一 · 语义「串味」</text>
+  <text x="52" y="158" font-size="11.5" fill="#92400e">经典 SaaS 只共享算力；AI 平台还共享「语义状态」</text>
+
+  <!-- shared semantic cache leak -->
+  <rect x="54" y="176" width="120" height="46" rx="8" fill="#eef2f7" stroke="#94a3b8" stroke-width="1.3"/>
+  <text x="114" y="195" text-anchor="middle" font-weight="700" fill="#334155">租户 A</text>
+  <text x="114" y="212" text-anchor="middle" font-size="10.5" fill="#64748b">问 Q3 财报数字</text>
+
+  <rect x="300" y="176" width="120" height="46" rx="8" fill="#eef2f7" stroke="#94a3b8" stroke-width="1.3"/>
+  <text x="360" y="195" text-anchor="middle" font-weight="700" fill="#334155">租户 B</text>
+  <text x="360" y="212" text-anchor="middle" font-size="10.5" fill="#64748b">问「意思相近」</text>
+
+  <rect x="180" y="232" width="114" height="40" rx="8" fill="#fee2e2" stroke="#ef4444" stroke-width="1.4"/>
+  <text x="237" y="251" text-anchor="middle" font-weight="700" font-size="11.5" fill="#b91c1c">共享语义缓存</text>
+  <text x="237" y="266" text-anchor="middle" font-size="10" fill="#b91c1c">模糊匹配</text>
+
+  <line x1="114" y1="222" x2="200" y2="248" stroke="#b45309" stroke-width="1.4" marker-end="url(#arr)"/>
+  <line x1="294" y1="252" x2="352" y2="222" stroke="#ef4444" stroke-width="1.6" marker-end="url(#arr)"/>
+  <text x="237" y="294" text-anchor="middle" font-size="11" fill="#b91c1c">A 的私密答案 → 串给了 B（key 前缀救不了模糊匹配）</text>
+
+  <line x1="54" y1="312" x2="420" y2="312" stroke="#fcd34d" stroke-width="1" stroke-dasharray="3 3"/>
+  <text x="52" y="332" font-size="11.5" fill="#92400e">② 共享 RAG 库：检索召回别的租户文档（回扣 20/21）</text>
+
+  <rect x="52" y="346" width="372" height="76" rx="8" fill="#fef3c7" stroke="#d97706" stroke-width="1.2"/>
+  <text x="238" y="368" text-anchor="middle" font-weight="700" font-size="11.5" fill="#92400e">认知翻转</text>
+  <text x="238" y="388" text-anchor="middle" font-size="11" fill="#92400e">tenant_id 的 metadata 过滤（回扣 21）</text>
+  <text x="238" y="408" text-anchor="middle" font-size="11" fill="#b91c1c">从「性能优化」→ 升级成「安全边界」（漏一条 = 事故）</text>
+
+  <!-- ===== Panel B: cost entanglement ===== -->
+  <rect x="460" y="110" width="406" height="330" rx="10" fill="#fffbeb" stroke="#f59e0b" stroke-width="1.6"/>
+  <text x="478" y="136" font-weight="700" font-size="15" fill="#92400e">⚠️ 新税二 · 成本「纠缠」</text>
+  <text x="478" y="158" font-size="11.5" fill="#92400e">计量单位换 token 还好，麻烦在「行为依赖 + 共享」</text>
+
+  <rect x="478" y="172" width="370" height="66" rx="8" fill="#ffffff" stroke="#d97706" stroke-width="1.2"/>
+  <text x="493" y="192" font-weight="700" font-size="11.5" fill="#92400e">① 行为依赖，不是资源依赖</text>
+  <text x="493" y="211" font-size="11" fill="#374151">同一句问话：走 Opus 还是 Haiku 差 5 倍（回扣 26）</text>
+  <text x="493" y="229" font-size="11" fill="#374151">走没走缓存、级联试几次（28）→ 只能事后按量计</text>
+
+  <rect x="478" y="248" width="370" height="66" rx="8" fill="#ffffff" stroke="#d97706" stroke-width="1.2"/>
+  <text x="493" y="268" font-weight="700" font-size="11.5" fill="#92400e">② 共享的东西，账互相纠缠</text>
+  <text x="493" y="287" font-size="11" fill="#374151">共享 prompt-cache 前缀（回扣 28）省的钱 / 养的成本</text>
+  <text x="493" y="305" font-size="11" fill="#374151">算平台公摊，还是 chargeback 摊给各租户？</text>
+
+  <rect x="478" y="324" width="370" height="66" rx="8" fill="#fee2e2" stroke="#ef4444" stroke-width="1.3"/>
+  <text x="493" y="344" font-weight="700" font-size="11.5" fill="#b91c1c">③ 坏邻居烧公共预算（回扣 24 炸）</text>
+  <text x="493" y="363" font-size="11" fill="#374151">一个租户失控循环 → 拖垮其他 7 个团队</text>
+  <text x="493" y="381" font-size="11" fill="#b91c1c">药：按租户配额 + 按来源熔断（回扣 28）</text>
+
+  <text x="478" y="416" font-size="11" fill="#92400e">云资源不共享「前缀」，AI 成本却互相纠缠 → 得设计账本</text>
+
+  <!-- bottom takeaway -->
+  <text x="450" y="466" text-anchor="middle" font-size="12.5" font-weight="700" fill="#92400e">两条新税，同一个根：AI 平台共享的不只是算力，还有「语义」——而语义是模糊的、会串的</text>
+  <text x="450" y="488" text-anchor="middle" font-size="11.5" fill="#6b7280">隔离要从「按 key / 行」升级成「按语义空间」；成本要从「按配额预估」降级成「按行为事后计量」</text>
+</svg>

@@ -2,7 +2,7 @@
 
 > 一个全栈开发者从零开始理解大模型原理的学习记录 · 从直觉到工程，每学一块写一篇博客
 >
-> **进度：31 篇正文 + 2 篇番外 / 共 32 篇**
+> **进度：32 篇正文 + 2 篇番外 / 共 32 篇 · 概念系列完结 🎉**
 
 ## 学习理念
 
@@ -79,7 +79,7 @@
 | 29 | [AI 系统的测试与持续交付](blogs/29-testing-continuous-delivery.md) | ✅ |
 | 30 | [安全与防护栏设计](blogs/30-security-guardrails.md) | ✅ |
 | 31 | [AI 系统的可观测性与监控](blogs/31-observability-monitoring.md) | ✅ |
-| 32 | AI 平台战略：治理、多租户与演进 | 🚧 |
+| 32 | [AI 平台战略：治理、多租户与演进](blogs/32-ai-platform-strategy.md) | ✅ |
 
 ---
 
