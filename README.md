@@ -2,7 +2,7 @@
 
 > 一个全栈开发者从零开始理解大模型原理的学习记录 · 从直觉到工程，每学一块写一篇博客
 >
-> **进度：22 篇正文 + 2 篇番外 / 共 31 篇**
+> **进度：31 篇正文 + 2 篇番外 / 共 32 篇**
 
 ## 学习理念
 
@@ -64,21 +64,22 @@
 | 20 | [RAG 原理：给模型外挂知识库](blogs/20-rag-principle.md) | ✅ |
 | 21 | [RAG 工程：向量库、分块与重排序](blogs/21-rag-engineering.md) | ✅ |
 | 22 | [评估与质量度量](blogs/22-evaluation.md) | ✅ |
-| 23 | 对话记忆与状态管理 | 🚧 |
-| 24 | Agent：让模型自主行动 | 🚧 |
-| 25 | Multi-Agent 与工作流编排 | 🚧 |
+| 23 | [对话记忆与状态管理](blogs/23-conversation-memory-state.md) | ✅ |
+| 24 | [Agent：让模型自主行动](blogs/24-agent-autonomous-action.md) | ✅ |
+| 25 | [Multi-Agent 与工作流编排](blogs/25-multi-agent-orchestration.md) | ✅ |
 
 ### 第五阶段：AI 架构设计
 > 🏁 里程碑：能设计完整的 AI 平台架构
 
 | # | 标题 | 状态 |
 |---|------|:----:|
-| 26 | 模型选型与智能路由 | 🚧 |
-| 27 | LLM 网关：统一接入层设计 | 🚧 |
-| 28 | 韧性设计与成本工程 | 🚧 |
-| 29 | AI 系统的测试与持续交付 | 🚧 |
-| 30 | 安全与防护栏设计 | 🚧 |
-| 31 | AI 平台战略：治理、多租户与演进 | 🚧 |
+| 26 | [模型选型与智能路由](blogs/26-model-selection-routing.md) | ✅ |
+| 27 | [LLM 网关：统一接入层设计](blogs/27-llm-gateway.md) | ✅ |
+| 28 | [韧性设计与成本工程](blogs/28-resilience-cost.md) | ✅ |
+| 29 | [AI 系统的测试与持续交付](blogs/29-testing-continuous-delivery.md) | ✅ |
+| 30 | [安全与防护栏设计](blogs/30-security-guardrails.md) | ✅ |
+| 31 | [AI 系统的可观测性与监控](blogs/31-observability-monitoring.md) | ✅ |
+| 32 | AI 平台战略：治理、多租户与演进 | 🚧 |
 
 ---
 

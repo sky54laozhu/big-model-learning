@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 500" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+  <title id="t">大盘全绿，系统却在胡说：技术指标看不见质量</title>
+  <desc id="d">机器视角看，这次调用毫无问题：延迟低、token 省、错误率 0、缓存命中、模型占比正常，五个指标全绿，HTTP 返回 200 OK、合法 JSON、低延迟。但中间一道裂缝写着 200 不等于对。人的视角看，模型一整天都在胡说：编造订单号、答非所问、被套话。后端铁律 HTTP 200 等于成功在 LLM 系统里塌了，因为模型能成功地生成一段胡话。右侧一根灰色虚线框代表缺失的轴：质量与正确性，这是大盘上根本没有的那根轴，也是 LLM 可观测性和传统监控的根本分野。回扣 29 assertEquals 失效、22 那堵墙。</desc>
+  <style>
+    .h    { font-weight: 700; fill: #1a1a1a; font-size: 17px; }
+    .tag  { font-weight: 700; font-size: 13px; }
+    .sub  { font-size: 11px; fill: #6b7280; }
+    .chip { font-weight: 700; font-size: 12px; fill: #166534; }
+  </style>
+
+  <text x="30" y="34" class="h">大盘全绿，系统却在胡说：技术指标看不见「质量」</text>
+
+  <!-- machine view label -->
+  <text x="30" y="66" class="tag" fill="#166534">机器视角：这次调用毫无问题（机器自己能算的，全绿）</text>
+
+  <!-- five green chips -->
+  <g>
+    <rect x="30" y="80" width="150" height="46" rx="8" fill="#dcfce7" stroke="#166534" stroke-width="1.5"/>
+    <circle cx="52" cy="103" r="7" fill="#22c55e"/><text x="52" y="107" text-anchor="middle" font-size="10" fill="#ffffff" font-weight="700">✓</text>
+    <text x="70" y="99" class="chip">延迟</text><text x="70" y="115" class="sub">低</text>
+
+    <rect x="196" y="80" width="150" height="46" rx="8" fill="#dcfce7" stroke="#166534" stroke-width="1.5"/>
+    <circle cx="218" cy="103" r="7" fill="#22c55e"/><text x="218" y="107" text-anchor="middle" font-size="10" fill="#ffffff" font-weight="700">✓</text>
+    <text x="236" y="99" class="chip">token</text><text x="236" y="115" class="sub">省</text>
+
+    <rect x="362" y="80" width="150" height="46" rx="8" fill="#dcfce7" stroke="#166534" stroke-width="1.5"/>
+    <circle cx="384" cy="103" r="7" fill="#22c55e"/><text x="384" y="107" text-anchor="middle" font-size="10" fill="#ffffff" font-weight="700">✓</text>
+    <text x="402" y="99" class="chip">错误率</text><text x="402" y="115" class="sub">0</text>
+
+    <rect x="528" y="80" width="150" height="46" rx="8" fill="#dcfce7" stroke="#166534" stroke-width="1.5"/>
+    <circle cx="550" cy="103" r="7" fill="#22c55e"/><text x="550" y="107" text-anchor="middle" font-size="10" fill="#ffffff" font-weight="700">✓</text>
+    <text x="568" y="99" class="chip">缓存</text><text x="568" y="115" class="sub">命中</text>
+
+    <rect x="694" y="80" width="176" height="46" rx="8" fill="#dcfce7" stroke="#166534" stroke-width="1.5"/>
+    <circle cx="716" cy="103" r="7" fill="#22c55e"/><text x="716" y="107" text-anchor="middle" font-size="10" fill="#ffffff" font-weight="700">✓</text>
+    <text x="734" y="99" class="chip">模型占比</text><text x="734" y="115" class="sub">正常</text>
+  </g>
+
+  <!-- HTTP response -->
+  <rect x="250" y="142" width="400" height="40" rx="8" fill="#f0fdf4" stroke="#86efac" stroke-width="1.4"/>
+  <text x="450" y="167" text-anchor="middle" class="chip">HTTP 200 OK · 合法 JSON · 低延迟 · 省 token</text>
+
+  <!-- crack + 200≠对 -->
+  <line x1="30" y1="212" x2="360" y2="212" stroke="#dc2626" stroke-width="2" stroke-dasharray="7 5"/>
+  <line x1="540" y1="212" x2="870" y2="212" stroke="#dc2626" stroke-width="2" stroke-dasharray="7 5"/>
+  <rect x="368" y="190" width="164" height="44" rx="22" fill="#fef2f2" stroke="#dc2626" stroke-width="2"/>
+  <text x="450" y="219" text-anchor="middle" font-weight="700" font-size="22" fill="#dc2626">200 ≠ 对</text>
+
+  <!-- human view label -->
+  <text x="30" y="266" class="tag" fill="#b45309">人的视角：模型一整天都在一本正经地胡说</text>
+
+  <!-- speech bubble -->
+  <rect x="30" y="282" width="440" height="74" rx="10" fill="#fffbeb" stroke="#b45309" stroke-width="1.5"/>
+  <text x="48" y="312" font-size="13.5" font-weight="700" fill="#92400e">「您的订单号是 #8848-XY，已退款 ¥299。」</text>
+  <text x="48" y="336" class="sub" fill="#92400e">——订单号纯属编造，用户根本没问退款</text>
+
+  <!-- red tag -->
+  <rect x="490" y="292" width="176" height="54" rx="8" fill="#fef2f2" stroke="#dc2626" stroke-width="1.5"/>
+  <text x="578" y="316" text-anchor="middle" class="tag" fill="#b91c1c">✗ 编造</text>
+  <text x="578" y="336" text-anchor="middle" class="sub" fill="#b91c1c">答非所问 · 被套话</text>
+
+  <!-- missing axis box -->
+  <rect x="686" y="282" width="184" height="74" rx="10" fill="#ffffff" stroke="#9ca3af" stroke-width="1.6" stroke-dasharray="6 4"/>
+  <text x="778" y="308" text-anchor="middle" font-weight="700" font-size="13" fill="#6b7280">质量 / 正确性 ⚠</text>
+  <text x="778" y="330" text-anchor="middle" class="sub">大盘上没有的那根轴</text>
+  <text x="778" y="346" text-anchor="middle" class="sub">（机器算不出来）</text>
+
+  <!-- bottom conclusion -->
+  <rect x="30" y="378" width="840" height="96" rx="9" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="48" y="408" font-weight="700" font-size="13.5" fill="#1a1a1a">后端铁律「HTTP 200 = 成功」在 LLM 系统里塌了：模型能「成功地」生成一段胡话。</text>
+  <text x="48" y="434" font-weight="700" font-size="13.5" fill="#1e40af">技术指标全绿 ≠ 答得对（回扣 29 assertEquals 失效 / 22 那堵墙）。</text>
+  <text x="48" y="460" class="sub" fill="#1e40af">「跑通了」和「答对了」，在 AI 系统里是两件事——缺的就是「质量 / 正确性」这根轴。</text>
+</svg>

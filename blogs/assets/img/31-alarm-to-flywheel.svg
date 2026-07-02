@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 520" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+  <title id="t">可观测性闭环：从看见问题，到反哺改进</title>
+  <desc id="d">上半是看见问题的闭环：① 烟雾报警器 Metrics 发现异常（转人工率翘尾、错误率飙），只报警不说为什么；② 案发现场 Traces，下钻到单条、翻门口两侧，缩小范围；③ 根因 Logs 与进出快照，还原真相（检索捞歪？被注入？回扣 20/30）。报警到下钻到取证到根因。下半是反哺改进的评估飞轮：被点踩、被转人工的翻车实录捞出来，收进黄金评估集（回扣 22），变成 CI 回归闸门用例（回扣 29），挡住同类问题再上线，从而减少下一轮翻车，循环转起来。生产环境的翻车变成了明天的测试用例，可观测性是评估飞轮的进料口。</desc>
+  <style>
+    .h    { font-weight: 700; fill: #1a1a1a; font-size: 17px; }
+    .band { font-weight: 700; font-size: 13px; }
+    .bt   { font-weight: 700; font-size: 13px; }
+    .sub  { font-size: 10.5px; fill: #6b7280; }
+  </style>
+  <defs>
+    <marker id="a2" markerWidth="10" markerHeight="10" refX="7.5" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#475569"/>
+    </marker>
+    <marker id="a3" markerWidth="10" markerHeight="10" refX="7.5" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#166534"/>
+    </marker>
+  </defs>
+
+  <text x="30" y="34" class="h">可观测性闭环：从「看见问题」到「反哺改进」</text>
+
+  <!-- ===== band 1: see the problem ===== -->
+  <text x="30" y="66" class="band" fill="#334155">看见问题：报警 → 下钻 → 取证 → 根因</text>
+
+  <rect x="30" y="80" width="256" height="82" rx="8" fill="#eff6ff" stroke="#2563eb" stroke-width="1.7"/>
+  <text x="46" y="106" class="bt" fill="#1e40af">① 烟雾报警器 · Metrics</text>
+  <text x="46" y="128" class="sub" fill="#1e40af">转人工率翘尾、错误率飙、成本异常</text>
+  <text x="46" y="148" class="sub">发现异常——但不告诉你哪儿烧的</text>
+
+  <rect x="322" y="80" width="256" height="82" rx="8" fill="#fffbeb" stroke="#b45309" stroke-width="1.7"/>
+  <text x="338" y="106" class="bt" fill="#b45309">② 案发现场 · Traces</text>
+  <text x="338" y="128" class="sub" fill="#92400e">下钻到单条，翻开门口两侧进出</text>
+  <text x="338" y="148" class="sub">缩小范围</text>
+
+  <rect x="614" y="80" width="256" height="82" rx="8" fill="#f1f5f9" stroke="#64748b" stroke-width="1.7"/>
+  <text x="630" y="106" class="bt" fill="#334155">③ 根因 · Logs / 快照</text>
+  <text x="630" y="128" class="sub">检索捞歪？记忆丢了？被注入？</text>
+  <text x="630" y="148" class="sub">还原真相（回扣 20 / 30）</text>
+
+  <line x1="286" y1="121" x2="320" y2="121" stroke="#475569" stroke-width="2" marker-end="url(#a2)"/>
+  <line x1="578" y1="121" x2="612" y2="121" stroke="#475569" stroke-width="2" marker-end="url(#a2)"/>
+
+  <!-- connector down to flywheel -->
+  <path d="M 158 162 L 158 210" fill="none" stroke="#166534" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#a3)"/>
+  <text x="172" y="192" class="sub" fill="#166534">被点踩 / 转人工的对话，捞出来 ↓</text>
+
+  <!-- ===== band 2: flywheel ===== -->
+  <text x="30" y="238" class="band" fill="#166534">反哺改进：评估飞轮（生产翻车 = 明天的测试用例）</text>
+
+  <!-- 4 nodes in a loop -->
+  <rect x="80" y="252" width="220" height="60" rx="8" fill="#dcfce7" stroke="#166534" stroke-width="1.7"/>
+  <text x="190" y="278" text-anchor="middle" class="bt" fill="#166534">翻车实录</text>
+  <text x="190" y="298" text-anchor="middle" class="sub" fill="#166534">点踩 / 转人工（真实分布的野样本）</text>
+
+  <rect x="600" y="252" width="220" height="60" rx="8" fill="#dcfce7" stroke="#166534" stroke-width="1.7"/>
+  <text x="710" y="278" text-anchor="middle" class="bt" fill="#166534">黄金评估集</text>
+  <text x="710" y="298" text-anchor="middle" class="sub" fill="#166534">清洗后收进（回扣 22）</text>
+
+  <rect x="600" y="392" width="220" height="60" rx="8" fill="#dcfce7" stroke="#166534" stroke-width="1.7"/>
+  <text x="710" y="418" text-anchor="middle" class="bt" fill="#166534">CI 回归闸门</text>
+  <text x="710" y="438" text-anchor="middle" class="sub" fill="#166534">变成回归用例（回扣 29）</text>
+
+  <rect x="80" y="392" width="220" height="60" rx="8" fill="#dcfce7" stroke="#166534" stroke-width="1.7"/>
+  <text x="190" y="418" text-anchor="middle" class="bt" fill="#166534">挡住同类再上线</text>
+  <text x="190" y="438" text-anchor="middle" class="sub" fill="#166534">→ 下一轮翻车更少</text>
+
+  <!-- loop arrows (clockwise) -->
+  <line x1="300" y1="282" x2="598" y2="282" stroke="#166534" stroke-width="2" marker-end="url(#a3)"/>
+  <line x1="710" y1="312" x2="710" y2="390" stroke="#166534" stroke-width="2" marker-end="url(#a3)"/>
+  <line x1="600" y1="422" x2="302" y2="422" stroke="#166534" stroke-width="2" marker-end="url(#a3)"/>
+  <line x1="190" y1="392" x2="190" y2="314" stroke="#166534" stroke-width="2" marker-end="url(#a3)"/>
+
+  <!-- center label -->
+  <text x="450" y="345" text-anchor="middle" font-weight="700" font-size="15" fill="#166534">评 估 飞 轮</text>
+  <text x="450" y="368" text-anchor="middle" class="sub" fill="#166534">可观测性 = 飞轮的进料口</text>
+
+  <!-- bottom line -->
+  <text x="30" y="496" class="band" fill="#1a1a1a">先能度量，才谈改进——你没法凭空改进一个你看不见的系统。</text>
+</svg>
