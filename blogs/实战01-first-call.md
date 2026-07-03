@@ -46,6 +46,10 @@ type ChatReply = { text: string; stopReason: string }
 - **[Blog 17 金鱼](17-context-engineering.md)**：模型无状态，记忆不在它脑里、在你传的 `messages` 数组里，每轮原样重放。所以我们的入口是 `Message[]`，不是一句 string。
 - **[Blog 18 结构化输出](18-structured-output-tool-calling.md)**：出口要 parse 厂商回的 JSON。而 JSON 是模型/接口在运行时给的，**类型管不住**（回扣 [实战00b §1](实战00b-typescript-for-harness.md)）——所以出口翻译要容错，字段可能缺。
 
+先看这一层在整个 harness 里的**全局坐标**：调用方只对着 `ModelProvider` 接口说话，两个适配器把两端方言全烂在自己肚子里。往后 19 篇要盖的循环、工具、权限，都挂在"调用方"这一格里，永远不碰底下接的是哪家。
+
+![可插拔模型层的骨架定位图：中间是调用方 src/index.ts 只调 ModelProvider 接口的 chat(messages) 拿回归一化 ChatReply；接口下挂 AnthropicProvider 与 OpenAICompatProvider 两个适配器，各自做入口翻译（messages→各家 body）和出口翻译（各家响应→ChatReply），两端方言差异全被适配器吃掉，换个 PROVIDER 环境变量就切后端、调用方一个字不改](assets/img/实战01-pluggable-layer.svg)
+
 ---
 
 ## 二、代码落地
@@ -130,6 +134,10 @@ export class OpenAICompatProvider implements ModelProvider {
 
 > **一个 TS 细节**（回扣实战00b）：`res.json()` 在 strict 下返回 **`unknown`**，不是 `any`。所以我们用 `as {...}` 给它一个**最小形状**再取字段。这不是走过场——它逼你把「厂商回的 JSON 里哪些字段可能缺」写进类型（`text?`、`stop_reason?`），也呼应 Blog 18：**运行时数据不可信，字段用 `?.`/`??` 兜底。**
 
+上面两个适配器的**出口翻译**具体在干什么，放大看这一步：两套结构、字段名都不一样的响应，被映射进同一个 `ChatReply`——这就是「这一刀必须归一化」的字面落地。
+
+![出口翻译放大图：左边 Anthropic 响应的 content[].text 和 stop_reason，右边 OpenAI/GLM 响应的 choices[].message.content 和 finish_reason，字段名与结构都不同，两条箭头汇聚到中间同一个归一化 ChatReply {text, stopReason}，调用方只认这个形状](assets/img/实战01-normalize.svg)
+
 **可插拔的落点** `src/provider.ts`——按环境变量装配，这就是「换个环境变量（`PROVIDER` + 对应那端的 key）就能切」的那颗开关：
 
 ```ts
@@ -150,6 +158,10 @@ const reply = await provider.chat(messages)   // ← 它不知道底下是哪家
 console.log(`[assistant]   ${reply.text}`)
 console.log(`[stop_reason] ${reply.stopReason}`)
 ```
+
+把整条路串起来看一次 `chat()` 怎么跑：**装配时**按 `PROVIDER` 选好适配器，**之后每次调用**都走同一条四步流水——入口翻译、`fetch`、判 `res.ok`（失败就 `throw` 逃逸）、出口翻译归一化。两个适配器共用这套骨架，只有翻译节点里的方言不同。
+
+![一次 chat() 调用的控制流程图：chat(messages) 进来后①入口翻译把 messages 拼成各家 body（Anthropic 走 /v1/messages 且 max_tokens 必填，OpenAI/GLM 走 /chat/completions）②fetch POST 等响应③判 res.ok，否则 throw Error 逃逸不返回④出口翻译解析响应（Anthropic content[].text/stop_reason，OpenAI choices[].content/finish_reason）归一化成 ChatReply{text, stopReason}，主路径高亮，调用方只认这个形状](assets/img/实战01-call-flow.svg)
 
 ### 验证
 
@@ -178,6 +190,10 @@ PROVIDER=glm       bun run src/index.ts "用一句话解释什么是 harness。"
 **通过标准**：换 `PROVIDER` 就切了后端，`src/index.ts` **一个字没改**；两端的停止信号从不同字段名（`stop_reason` / `finish_reason`）收敛进了同一个 `reply.stopReason`。这一层的活儿干完了。
 
 > ⚠️ 一处别误会：归一化的是**字段位置**，不是**取值词表**。`stopReason` 的类型是裸 `string`，我们只是把厂商原值透传进同一个字段——一端是 `end_turn`、一端是 `stop`，两套值并没有被映射成一套统一枚举。所以实战02 要跨端判断「该不该停」时，**不能直接 `switch('end_turn')`**（那会在 GLM 端漏判），得自己再做一层值映射。这也预告了下一节要讲的坑。
+
+最后用一张时序图收尾，把这次调用的**往返**看清：翻译不是发生在某一处，而是**出、入两侧各一次**——去程 provider 把中立 `messages` 译成方言 body，回程再把方言响应译回归一化 `ChatReply`。调用方从头到尾只跟接口打交道。
+
+![一次 chat() 调用的序列图：三条泳道（调用方 index.ts、provider 适配器、模型 API）。调用方发 chat(messages) 给适配器；适配器做入口翻译把 messages 拼成 body，POST 给模型 API；API 返回 content[]/choices[] 与 stop_reason/finish_reason；适配器做出口归一成 ChatReply，return {text, stopReason} 回调用方。底注说明装配 makeProvider 按 PROVIDER 选适配器发生在 chat 之前一次性，调用方全程只认 chat/ChatReply](assets/img/实战01-sequence.svg)
 
 当篇 checkpoint：`git tag harness-ch01-pluggable-model`。想跑本章末状态：`git checkout harness-ch01-pluggable-model`。
 

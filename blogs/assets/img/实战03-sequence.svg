@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 560" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <title id="t">序列图：模型自己排出 读→改→再读 三步改一个文件</title>
+  <desc id="d">改一个文件时，模型自主排出三步。turn1 请求 read_file 拿到全文（先读才能拼出唯一 old_string）；turn2 请求 edit_file 把 status: draft 改成 published，工具返回替换 1 处；turn3 再请求 read_file 确认已是 published；随后模型吐 text、toolCalls 为空，runAgent return 收工。每步都是模型请求、harness 执行、结果回灌。</desc>
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+
+  <text x="410" y="30" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">读→改→再读：三步是模型自己排的</text>
+
+  <!-- 泳道头 -->
+  <rect x="40" y="50" width="200" height="38" rx="8" fill="#eff6ff" stroke="#1e293b" stroke-width="2.5"/>
+  <text x="140" y="74" text-anchor="middle" font-size="13" font-weight="700" fill="#1e293b">runAgent 循环</text>
+  <rect x="330" y="50" width="200" height="38" rx="8" fill="#f0fdf4" stroke="#166534" stroke-width="2.5"/>
+  <text x="430" y="74" text-anchor="middle" font-size="13" font-weight="700" fill="#166534">模型（provider）</text>
+  <rect x="600" y="50" width="180" height="38" rx="8" fill="#fef3c7" stroke="#b45309" stroke-width="2.5"/>
+  <text x="690" y="74" text-anchor="middle" font-size="13" font-weight="700" fill="#92400e">工具集 allTools</text>
+
+  <!-- 生命线 -->
+  <line x1="140" y1="88" x2="140" y2="524" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4 4"/>
+  <line x1="430" y1="88" x2="430" y2="524" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4 4"/>
+  <line x1="690" y1="88" x2="690" y2="524" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4 4"/>
+  <rect x="134" y="104" width="12" height="404" fill="#dbeafe" stroke="#2563eb" stroke-width="1"/>
+
+  <!-- turn1 read -->
+  <text x="46" y="120" font-size="11" font-weight="700" fill="#2563eb">turn 1 · read</text>
+  <text x="285" y="118" text-anchor="middle" font-size="11" font-weight="700" fill="#1e40af">chat(messages, tools)</text>
+  <line x1="146" y1="124" x2="424" y2="124" stroke="#334155" stroke-width="2"/>
+  <polygon points="428,124 416,118 416,130" fill="#334155"/>
+  <text x="288" y="146" text-anchor="middle" font-size="11" fill="#15803d">toolCalls=[read_file(note.txt)]</text>
+  <line x1="424" y1="150" x2="162" y2="150" stroke="#64748b" stroke-width="2" stroke-dasharray="6 4"/>
+  <polygon points="156,150 168,144 168,156" fill="#64748b"/>
+  <text x="560" y="172" text-anchor="middle" font-size="11" font-weight="700" fill="#92400e">execute read_file</text>
+  <line x1="146" y1="176" x2="684" y2="176" stroke="#334155" stroke-width="2"/>
+  <polygon points="688,176 676,170 676,182" fill="#334155"/>
+  <text x="560" y="198" text-anchor="middle" font-size="11" fill="#92400e">全文 · status: draft</text>
+  <line x1="684" y1="202" x2="162" y2="202" stroke="#64748b" stroke-width="2" stroke-dasharray="6 4"/>
+  <polygon points="156,202 168,196 168,208" fill="#64748b"/>
+  <rect x="176" y="216" width="382" height="26" rx="6" fill="#eff6ff" stroke="#2563eb" stroke-width="1.4"/>
+  <text x="367" y="233" text-anchor="middle" font-size="11" fill="#1e40af">先 read：拿到全文才能拼出唯一 old_string</text>
+
+  <!-- turn2 edit -->
+  <line x1="30" y1="256" x2="790" y2="256" stroke="#e2e8f0" stroke-width="1.5" stroke-dasharray="8 5"/>
+  <text x="46" y="276" font-size="11" font-weight="700" fill="#2563eb">turn 2 · edit</text>
+  <text x="285" y="274" text-anchor="middle" font-size="11" font-weight="700" fill="#1e40af">chat(messages, tools)</text>
+  <line x1="146" y1="280" x2="424" y2="280" stroke="#334155" stroke-width="2"/>
+  <polygon points="428,280 416,274 416,286" fill="#334155"/>
+  <text x="288" y="302" text-anchor="middle" font-size="11" fill="#15803d">toolCalls=[edit_file(draft→published)]</text>
+  <line x1="424" y1="306" x2="162" y2="306" stroke="#64748b" stroke-width="2" stroke-dasharray="6 4"/>
+  <polygon points="156,306 168,300 168,312" fill="#64748b"/>
+  <text x="560" y="328" text-anchor="middle" font-size="11" font-weight="700" fill="#92400e">execute edit_file</text>
+  <line x1="146" y1="332" x2="684" y2="332" stroke="#334155" stroke-width="2"/>
+  <polygon points="688,332 676,326 676,338" fill="#334155"/>
+  <text x="560" y="354" text-anchor="middle" font-size="11" fill="#92400e">ok: 已修改（替换 1 处）</text>
+  <line x1="684" y1="358" x2="162" y2="358" stroke="#64748b" stroke-width="2" stroke-dasharray="6 4"/>
+  <polygon points="156,358 168,352 168,364" fill="#64748b"/>
+
+  <!-- turn3 read confirm -->
+  <line x1="30" y1="376" x2="790" y2="376" stroke="#e2e8f0" stroke-width="1.5" stroke-dasharray="8 5"/>
+  <text x="46" y="396" font-size="11" font-weight="700" fill="#2563eb">turn 3 · 确认</text>
+  <text x="285" y="394" text-anchor="middle" font-size="11" font-weight="700" fill="#1e40af">chat(messages, tools)</text>
+  <line x1="146" y1="400" x2="424" y2="400" stroke="#334155" stroke-width="2"/>
+  <polygon points="428,400 416,394 416,406" fill="#334155"/>
+  <text x="288" y="422" text-anchor="middle" font-size="11" fill="#15803d">toolCalls=[read_file(note.txt)]</text>
+  <line x1="424" y1="426" x2="162" y2="426" stroke="#64748b" stroke-width="2" stroke-dasharray="6 4"/>
+  <polygon points="156,426 168,420 168,432" fill="#64748b"/>
+  <text x="560" y="448" text-anchor="middle" font-size="11" font-weight="700" fill="#92400e">execute read_file</text>
+  <line x1="146" y1="452" x2="684" y2="452" stroke="#334155" stroke-width="2"/>
+  <polygon points="688,452 676,446 676,458" fill="#334155"/>
+  <text x="560" y="474" text-anchor="middle" font-size="11" fill="#92400e">全文 · status: published ✓</text>
+  <line x1="684" y1="478" x2="162" y2="478" stroke="#64748b" stroke-width="2" stroke-dasharray="6 4"/>
+  <polygon points="156,478 168,472 168,484" fill="#64748b"/>
+
+  <!-- 收尾 -->
+  <text x="150" y="502" text-anchor="middle" font-size="11" font-weight="700" fill="#166534">turn 4：模型吐 text · toolCalls=[] → return 收工</text>
+  <line x1="134" y1="512" x2="46" y2="512" stroke="#166534" stroke-width="2" stroke-dasharray="6 4"/>
+  <polygon points="42,512 54,506 54,518" fill="#166534"/>
+
+  <!-- 底注 -->
+  <text x="410" y="544" text-anchor="middle" font-size="11.5" fill="#475569">三步顺序是模型自排的；harness 只负责执行与回灌，一行强制顺序的逻辑都没写。</text>
+</svg>

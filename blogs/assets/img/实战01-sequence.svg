@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 450" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <title id="t">一次 chat() 调用的时序：调用方、provider 适配器、模型 API 之间的往返</title>
+  <desc id="d">调用方发 chat(messages) 给 provider 适配器；适配器先做入口翻译把 messages 拼成 body，POST 给模型 API；API 返回 content[]/choices[] 与 stop_reason/finish_reason；适配器做出口归一成 ChatReply，return {text, stopReason} 回调用方。装配 makeProvider 按 PROVIDER 选适配器发生在 chat 之前一次性，调用方全程只认 chat/ChatReply。</desc>
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+
+  <text x="410" y="32" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">一次调用的往返：翻译发生在出入两侧</text>
+
+  <!-- 泳道头 -->
+  <rect x="40" y="54" width="200" height="40" rx="8" fill="#f0fdf4" stroke="#166534" stroke-width="2.5"/>
+  <text x="140" y="79" text-anchor="middle" font-size="13" font-weight="700" fill="#166534">调用方 index.ts</text>
+  <rect x="300" y="54" width="220" height="40" rx="8" fill="#eff6ff" stroke="#2563eb" stroke-width="2.5"/>
+  <text x="410" y="79" text-anchor="middle" font-size="13" font-weight="700" fill="#1e40af">provider 适配器</text>
+  <rect x="580" y="54" width="200" height="40" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="2.5"/>
+  <text x="680" y="79" text-anchor="middle" font-size="13" font-weight="700" fill="#334155">模型 API</text>
+
+  <!-- 生命线 -->
+  <line x1="140" y1="94" x2="140" y2="352" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4 4"/>
+  <line x1="410" y1="94" x2="410" y2="352" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4 4"/>
+  <line x1="680" y1="94" x2="680" y2="352" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4 4"/>
+
+  <!-- provider 活动条 -->
+  <rect x="404" y="120" width="12" height="212" fill="#dbeafe" stroke="#2563eb" stroke-width="1"/>
+  <!-- API 活动条 -->
+  <rect x="674" y="186" width="12" height="56" fill="#e2e8f0" stroke="#64748b" stroke-width="1"/>
+
+  <!-- m1 chat -->
+  <text x="272" y="114" text-anchor="middle" font-size="12" font-weight="700" fill="#166534">chat(messages)</text>
+  <line x1="146" y1="120" x2="400" y2="120" stroke="#166534" stroke-width="2"/>
+  <polygon points="404,120 392,114 392,126" fill="#166534"/>
+
+  <!-- note 入口翻译 -->
+  <rect x="428" y="132" width="232" height="30" rx="6" fill="#f0fdf4" stroke="#166534" stroke-width="1.5"/>
+  <text x="544" y="151" text-anchor="middle" font-size="11.5" fill="#15803d">入口翻译　messages → 请求 body</text>
+
+  <!-- m2 POST -->
+  <text x="548" y="180" text-anchor="middle" font-size="12" font-weight="700" fill="#334155">POST /v1/messages · /chat/completions</text>
+  <line x1="416" y1="186" x2="670" y2="186" stroke="#334155" stroke-width="2"/>
+  <polygon points="674,186 662,180 662,192" fill="#334155"/>
+
+  <!-- m3 return 200 -->
+  <text x="548" y="236" text-anchor="middle" font-size="12" fill="#475569">200 · content[] | choices[] · stop | finish</text>
+  <line x1="674" y1="242" x2="420" y2="242" stroke="#64748b" stroke-width="2" stroke-dasharray="6 4"/>
+  <polygon points="416,242 428,236 428,248" fill="#64748b"/>
+
+  <!-- note 出口归一 -->
+  <rect x="428" y="256" width="232" height="30" rx="6" fill="#fef3c7" stroke="#b45309" stroke-width="1.5"/>
+  <text x="544" y="275" text-anchor="middle" font-size="11.5" fill="#92400e">出口归一　→ ChatReply { text, stopReason }</text>
+
+  <!-- m4 return -->
+  <text x="272" y="316" text-anchor="middle" font-size="12" font-weight="700" fill="#1e40af">return { text, stopReason }</text>
+  <line x1="404" y1="322" x2="150" y2="322" stroke="#2563eb" stroke-width="2" stroke-dasharray="6 4"/>
+  <polygon points="146,322 158,316 158,328" fill="#2563eb"/>
+
+  <!-- 底注 -->
+  <rect x="60" y="372" width="700" height="56" rx="8" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.5"/>
+  <text x="410" y="394" text-anchor="middle" font-size="12" fill="#475569">装配 <tspan font-family="'SF Mono', Menlo, monospace" fill="#334155">makeProvider()</tspan> 按 PROVIDER 选好适配器——发生在 chat() 之前、一次性。</text>
+  <text x="410" y="414" text-anchor="middle" font-size="12" fill="#475569">此后调用方全程只认 chat / ChatReply，永远不知道生命线中间那根接的是哪家。</text>
+</svg>

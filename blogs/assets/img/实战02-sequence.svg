@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 500" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <title id="t">agent loop 一圈往返的时序：turn1 要工具、执行、塞回，turn2 收工</title>
+  <desc id="d">runAgent 循环与模型、工具 read_file 之间的时序。turn1：runAgent 调 chat(messages, tools)，模型返回 toolCalls=[read_file]；runAgent 执行工具拿到文件内容，把 assistant 轮和 tool 结果塞回 messages。turn2：再调 chat，模型这次返回 text、toolCalls 为空，runAgent return text 给调用方。循环条件看 reply.toolCalls.length，非空则继续、空则收工，maxTurns 兜底。</desc>
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+
+  <text x="410" y="30" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">一圈往返：谁决定停，看这轮吐不吐工具</text>
+
+  <!-- 泳道头 -->
+  <rect x="50" y="52" width="200" height="40" rx="8" fill="#eff6ff" stroke="#1e293b" stroke-width="2.5"/>
+  <text x="150" y="77" text-anchor="middle" font-size="13" font-weight="700" fill="#1e293b">runAgent 循环</text>
+  <rect x="330" y="52" width="200" height="40" rx="8" fill="#f0fdf4" stroke="#166534" stroke-width="2.5"/>
+  <text x="430" y="77" text-anchor="middle" font-size="13" font-weight="700" fill="#166534">模型（provider）</text>
+  <rect x="590" y="52" width="180" height="40" rx="8" fill="#fef3c7" stroke="#b45309" stroke-width="2.5"/>
+  <text x="680" y="77" text-anchor="middle" font-size="13" font-weight="700" fill="#92400e">工具 read_file</text>
+
+  <!-- 生命线 -->
+  <line x1="150" y1="92" x2="150" y2="462" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4 4"/>
+  <line x1="430" y1="92" x2="430" y2="462" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4 4"/>
+  <line x1="680" y1="92" x2="680" y2="462" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4 4"/>
+  <!-- runAgent 活动条 -->
+  <rect x="144" y="112" width="12" height="330" fill="#dbeafe" stroke="#2563eb" stroke-width="1"/>
+
+  <!-- turn 1 标 -->
+  <text x="44" y="128" font-size="11" font-weight="700" fill="#2563eb">turn 1</text>
+
+  <!-- m1 chat -->
+  <text x="292" y="126" text-anchor="middle" font-size="11.5" font-weight="700" fill="#1e40af">chat(messages, tools)</text>
+  <line x1="156" y1="132" x2="424" y2="132" stroke="#334155" stroke-width="2"/>
+  <polygon points="428,132 416,126 416,138" fill="#334155"/>
+  <rect x="424" y="132" width="12" height="34" fill="#dcfce7" stroke="#166534" stroke-width="1"/>
+
+  <!-- m2 reply toolCalls -->
+  <text x="296" y="160" text-anchor="middle" font-size="11.5" fill="#15803d">reply · toolCalls=[read_file(path)]</text>
+  <line x1="424" y1="166" x2="162" y2="166" stroke="#64748b" stroke-width="2" stroke-dasharray="6 4"/>
+  <polygon points="156,166 168,160 168,172" fill="#64748b"/>
+
+  <!-- m3 execute -->
+  <text x="415" y="196" text-anchor="middle" font-size="11.5" font-weight="700" fill="#92400e">execute({ path })</text>
+  <line x1="156" y1="202" x2="674" y2="202" stroke="#334155" stroke-width="2"/>
+  <polygon points="678,202 666,196 666,208" fill="#334155"/>
+  <rect x="674" y="202" width="12" height="34" fill="#fde68a" stroke="#b45309" stroke-width="1"/>
+
+  <!-- m4 file content -->
+  <text x="415" y="230" text-anchor="middle" font-size="11.5" fill="#92400e">文件内容（字符串）</text>
+  <line x1="674" y1="236" x2="162" y2="236" stroke="#64748b" stroke-width="2" stroke-dasharray="6 4"/>
+  <polygon points="156,236 168,230 168,242" fill="#64748b"/>
+
+  <!-- note push -->
+  <rect x="176" y="252" width="360" height="30" rx="6" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="356" y="271" text-anchor="middle" font-size="11.5" fill="#1e40af">push assistant 轮 + tool 结果 → messages</text>
+
+  <!-- turn 分隔 -->
+  <line x1="30" y1="300" x2="790" y2="300" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="8 5"/>
+  <text x="44" y="322" font-size="11" font-weight="700" fill="#2563eb">turn 2</text>
+
+  <!-- m5 chat again -->
+  <text x="292" y="320" text-anchor="middle" font-size="11.5" font-weight="700" fill="#1e40af">chat(messages, tools)</text>
+  <line x1="156" y1="326" x2="424" y2="326" stroke="#334155" stroke-width="2"/>
+  <polygon points="428,326 416,320 416,332" fill="#334155"/>
+  <rect x="424" y="326" width="12" height="34" fill="#dcfce7" stroke="#166534" stroke-width="1"/>
+
+  <!-- m6 reply text empty -->
+  <text x="296" y="354" text-anchor="middle" font-size="11.5" fill="#15803d">reply · text · toolCalls=[]（说完了）</text>
+  <line x1="424" y1="360" x2="162" y2="360" stroke="#64748b" stroke-width="2" stroke-dasharray="6 4"/>
+  <polygon points="156,360 168,354 168,366" fill="#64748b"/>
+
+  <!-- m7 return -->
+  <text x="150" y="392" text-anchor="middle" font-size="11.5" font-weight="700" fill="#166534">toolCalls.length === 0 → return text</text>
+  <line x1="144" y1="410" x2="46" y2="410" stroke="#166534" stroke-width="2" stroke-dasharray="6 4"/>
+  <polygon points="42,410 54,404 54,416" fill="#166534"/>
+  <text x="80" y="428" text-anchor="middle" font-size="10.5" fill="#15803d">→ 调用方</text>
+
+  <!-- 底注 -->
+  <rect x="60" y="446" width="700" height="46" rx="8" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.5"/>
+  <text x="410" y="468" text-anchor="middle" font-size="12" fill="#475569">循环条件看 <tspan font-family="'SF Mono', Menlo, monospace" fill="#1e40af">reply.toolCalls.length</tspan>：非空就执行工具、转下一轮；空就 return 收工。</text>
+  <text x="410" y="486" text-anchor="middle" font-size="12" fill="#475569">两端方言（tool_use / tool_calls）在 provider 里翻译好，这条时序对模型是哪家全不知情。</text>
+</svg>

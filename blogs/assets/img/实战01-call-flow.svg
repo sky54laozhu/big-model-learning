@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 650" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <title id="t">一次 chat() 调用的控制流：两个适配器同一套流程，只是方言不同</title>
+  <desc id="d">chat(messages) 进来后走同一条路：①入口翻译 messages 拼成各家请求 body（Anthropic 走 /v1/messages 且 max_tokens 必填，OpenAI/GLM 走 /chat/completions）②fetch POST 等响应③判 res.ok，失败就 throw Error 逃逸④出口翻译解析响应（Anthropic content[].text/stop_reason，OpenAI choices[].content/finish_reason）归一化成 ChatReply{text, stopReason}，调用方只认这个形状。</desc>
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+
+  <text x="410" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">一次 chat() 调用怎么跑：两端同一套流程</text>
+  <text x="410" y="58" text-anchor="middle" font-size="13.5" fill="#475569">装配时选好适配器，之后每次调用都走这条路——方言差异被四步翻译吃掉</text>
+
+  <!-- 入口 -->
+  <rect x="255" y="78" width="310" height="46" rx="8" fill="#f0fdf4" stroke="#166534" stroke-width="2.5"/>
+  <text x="410" y="100" text-anchor="middle" font-size="13.5" font-weight="700" fill="#166534">chat(messages)</text>
+  <text x="410" y="117" text-anchor="middle" font-size="11" fill="#15803d">调用方零分支，进来的是中立 Message[]</text>
+
+  <line x1="410" y1="124" x2="410" y2="150" stroke="#334155" stroke-width="2.5"/>
+  <polygon points="410,154 404,142 416,142" fill="#334155"/>
+
+  <!-- ① 入口翻译 -->
+  <rect x="210" y="154" width="400" height="74" rx="8" fill="#f8fafc" stroke="#166534" stroke-width="2"/>
+  <text x="225" y="176" font-size="13" font-weight="700" fill="#166534">① 入口翻译　messages → 请求 body</text>
+  <text x="225" y="197" font-size="11.5" font-family="'SF Mono', Menlo, monospace" fill="#15803d">Anthropic　/v1/messages · max_tokens 必填</text>
+  <text x="225" y="216" font-size="11.5" font-family="'SF Mono', Menlo, monospace" fill="#1d4ed8">OpenAI/GLM　/chat/completions</text>
+
+  <line x1="410" y1="228" x2="410" y2="254" stroke="#334155" stroke-width="2.5"/>
+  <polygon points="410,258 404,246 416,246" fill="#334155"/>
+
+  <!-- ② fetch -->
+  <rect x="255" y="258" width="310" height="44" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="2"/>
+  <text x="410" y="285" text-anchor="middle" font-size="13" font-weight="700" fill="#334155">② fetch POST，await 响应</text>
+
+  <line x1="410" y1="302" x2="410" y2="322" stroke="#334155" stroke-width="2.5"/>
+  <polygon points="410,326 404,314 416,314" fill="#334155"/>
+
+  <!-- 判定 res.ok -->
+  <polygon points="410,326 500,368 410,410 320,368" fill="#fef3c7" stroke="#b45309" stroke-width="2"/>
+  <text x="410" y="373" text-anchor="middle" font-size="13" font-weight="700" fill="#92400e">res.ok?</text>
+
+  <!-- 否 → 逃逸 -->
+  <line x1="500" y1="368" x2="588" y2="368" stroke="#b91c1c" stroke-width="2"/>
+  <polygon points="592,368 580,362 580,374" fill="#b91c1c"/>
+  <text x="544" y="360" text-anchor="middle" font-size="11" font-weight="700" fill="#b91c1c">否</text>
+  <rect x="592" y="345" width="196" height="46" rx="8" fill="#fef2f2" stroke="#b91c1c" stroke-width="2"/>
+  <text x="690" y="366" text-anchor="middle" font-size="12" font-weight="700" fill="#b91c1c">throw Error(status)</text>
+  <text x="690" y="383" text-anchor="middle" font-size="10.5" fill="#b91c1c">调用链逃逸，不返回</text>
+
+  <!-- 是 → 主路径 -->
+  <line x1="410" y1="410" x2="410" y2="436" stroke="#334155" stroke-width="3"/>
+  <polygon points="410,440 403,427 417,427" fill="#334155"/>
+  <text x="426" y="428" font-size="11" font-weight="700" fill="#15803d">是</text>
+
+  <!-- ③ 解析 JSON -->
+  <rect x="210" y="440" width="400" height="46" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="2"/>
+  <text x="410" y="462" text-anchor="middle" font-size="13" font-weight="700" fill="#334155">③ res.json() as {…}</text>
+  <text x="410" y="479" text-anchor="middle" font-size="11" fill="#64748b">strict 下是 unknown，套最小形状再取字段</text>
+
+  <line x1="410" y1="486" x2="410" y2="512" stroke="#334155" stroke-width="3"/>
+  <polygon points="410,516 404,504 416,504" fill="#334155"/>
+
+  <!-- ④ 出口翻译 -->
+  <rect x="210" y="516" width="400" height="74" rx="8" fill="#f8fafc" stroke="#b45309" stroke-width="2"/>
+  <text x="225" y="538" font-size="13" font-weight="700" fill="#92400e">④ 出口翻译　解析响应 → 归一化</text>
+  <text x="225" y="559" font-size="11.5" font-family="'SF Mono', Menlo, monospace" fill="#15803d">Anthropic　content[].text · stop_reason</text>
+  <text x="225" y="578" font-size="11.5" font-family="'SF Mono', Menlo, monospace" fill="#1d4ed8">OpenAI/GLM　choices[].content · finish_reason</text>
+
+  <line x1="410" y1="590" x2="410" y2="612" stroke="#334155" stroke-width="3"/>
+  <polygon points="410,616 404,604 416,604" fill="#334155"/>
+
+  <!-- ChatReply 汇合 -->
+  <rect x="255" y="612" width="310" height="30" rx="8" fill="#fef3c7" stroke="#b45309" stroke-width="2.5"/>
+  <text x="410" y="632" text-anchor="middle" font-size="12.5" font-weight="700" fill="#92400e">ChatReply { text, stopReason }　调用方只认这个</text>
+</svg>

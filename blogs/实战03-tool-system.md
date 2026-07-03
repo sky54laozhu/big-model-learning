@@ -34,6 +34,10 @@ export const allTools: Tool[] = [readFileTool, writeFileTool, editFileTool, list
 
 `index.ts` 从此不再手拼数组，整份取 `allTools`。**加工具 = 往这个数组塞一个自包含对象，loop 和调用方一个字都不改**——实战02 那句话，字面兑现。
 
+先给一张全局地图看本章动了哪：循环、provider 层全沿用实战02（灰），本章新增的只是把工具从**一只手**扩成注册进一处的**一套家伙**——四个新窄工具加一个逃生舱 `bash`。
+
+![实战03 骨架定位图：调用方 index.ts 进入 runAgent 循环（灰色虚线框，实战02 已有：①chat ②模型点名工具 execute ③空则 return），循环经 provider 层连到双端 API（灰色，实战01/02）；底部深色高亮框是本章新增的 allTools[] 注册表，五个工具横排——read_file（灰=已有）、write_file/edit_file/list_dir（绿=新增窄工具）、bash（红=逃生舱，锁留04）；模型点名哪个工具 loop 就 execute 哪个，加工具只是往清单塞一个对象、loop 与调用方零改动](assets/img/实战03-skeleton.svg)
+
 那这一篇的脑力花在哪？花在三个**别当成机械劳动**的地方。
 
 ### 折叠点①：为什么不干脆只给一个 `bash`？
@@ -192,6 +196,10 @@ PROVIDER=glm bun run src/index.ts '把 /tmp/note.txt 里的 status 从 draft 改
 ```
 
 注意模型的动作顺序：它**先 `read`**——因为要先看到全文，才能拼出一个够唯一的 `old_string`（`status: draft` 在文件里独一份）。折叠点②推的「读取侧喂上下文帮模型构造唯一串」，在这里自然发生了，我们一行强制逻辑都没写。
+
+把这三步用时序看一遍——**顺序全是模型自己排的**，harness 只负责执行与回灌：
+
+![实战03 序列图：runAgent 循环、模型、工具集三条泳道，模型自主排出改一个文件的三步。turn1 请求 read_file 拿到全文（旁注：先 read 才能拼出唯一 old_string）；turn2 请求 edit_file 把 draft 改成 published，工具返回「已修改（替换 1 处）」；turn3 再请求 read_file 确认已是 published；turn4 模型吐 text、toolCalls 为空，runAgent return 收工。每步都是模型请求、harness 执行、结果回灌，底注强调三步顺序是模型自排的、一行强制顺序逻辑都没写](assets/img/实战03-sequence.svg)
 
 再看唯一性报错真的会触发——换个三行都含 `= 0` 的文件，直接对 `edit_file` 喂那个撞多处的串（这里绕开模型、直接调工具，好把三条分支一次跑全）：
 

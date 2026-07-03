@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 470" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <title id="t">骨架定位图：循环与 provider 层沿用实战02，本章把一只手扩成一套家伙</title>
+  <desc id="d">runAgent 循环和 provider 层沿用实战02（灰色）。本章新增：把工具从单个 read_file 扩成注册进一处的 allTools[]——read_file（灰=已有）、write_file/edit_file/list_dir（新增窄工具）、bash（红=逃生舱）。loop 里 chat 连 provider 层到双端 API，模型点名哪个工具就 execute 哪个，加工具只是往清单塞一个对象、loop 与调用方零改动。</desc>
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+
+  <text x="410" y="32" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">骨架定位：一只手 → 一套家伙</text>
+  <text x="410" y="56" text-anchor="middle" font-size="13.5" fill="#475569">循环与 provider 层沿用实战02（灰）；本章新增四个工具 + 注册表收口</text>
+
+  <!-- 调用方 -->
+  <rect x="40" y="78" width="180" height="40" rx="8" fill="#f1f5f9" stroke="#94a3b8" stroke-width="2"/>
+  <text x="130" y="103" text-anchor="middle" font-size="12.5" font-weight="700" fill="#475569">调用方 index.ts</text>
+  <line x1="130" y1="118" x2="130" y2="146" stroke="#94a3b8" stroke-width="2"/>
+  <polygon points="130,150 124,138 136,138" fill="#94a3b8"/>
+
+  <!-- runAgent loop 灰=已有 -->
+  <rect x="40" y="150" width="360" height="196" rx="10" fill="#f8fafc" stroke="#94a3b8" stroke-width="2.4" stroke-dasharray="6 4"/>
+  <text x="56" y="173" font-size="13" font-weight="700" fill="#475569">agent loop · runAgent()　实战02 已有</text>
+  <rect x="60" y="186" width="320" height="30" rx="6" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.4"/>
+  <text x="220" y="206" text-anchor="middle" font-size="11.5" fill="#475569">① chat(messages, tools)</text>
+  <rect x="60" y="224" width="320" height="30" rx="6" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.4"/>
+  <text x="220" y="244" text-anchor="middle" font-size="11.5" fill="#475569">② 模型点名工具 → toolByName.get(name).execute</text>
+  <rect x="60" y="262" width="320" height="30" rx="6" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.4"/>
+  <text x="220" y="282" text-anchor="middle" font-size="11.5" fill="#475569">③ 空 → return text</text>
+  <text x="220" y="322" text-anchor="middle" font-size="11" fill="#64748b">机制没变：吃 Tool[]、按名字建 Map、分流执行</text>
+
+  <!-- provider 层 灰 -->
+  <rect x="470" y="150" width="310" height="48" rx="8" fill="#f8fafc" stroke="#94a3b8" stroke-width="2" stroke-dasharray="6 4"/>
+  <text x="625" y="179" text-anchor="middle" font-size="12" font-weight="700" fill="#475569">provider 层 → 双端 API（实战01/02）</text>
+
+  <!-- chat 连线 -->
+  <line x1="400" y1="200" x2="466" y2="182" stroke="#94a3b8" stroke-width="2"/>
+  <polygon points="470,181 457,180 461,191" fill="#94a3b8"/>
+  <text x="435" y="190" text-anchor="middle" font-size="10" fill="#64748b">chat</text>
+
+  <!-- execute 连线 到注册表 -->
+  <line x1="410" y1="239" x2="620" y2="239" stroke="#b45309" stroke-width="2"/>
+  <line x1="620" y1="239" x2="620" y2="356" stroke="#b45309" stroke-width="2"/>
+  <polygon points="620,360 614,348 626,348" fill="#b45309"/>
+  <text x="512" y="231" text-anchor="middle" font-size="10.5" font-weight="700" fill="#92400e">execute(name, args)</text>
+
+  <!-- 侧注 -->
+  <text x="625" y="228" text-anchor="middle" font-size="11" fill="#64748b">对循环零分支</text>
+
+  <!-- allTools 注册表 本章新增 -->
+  <rect x="40" y="362" width="740" height="90" rx="10" fill="#fffbeb" stroke="#1e293b" stroke-width="2.6"/>
+  <text x="56" y="384" font-size="13" font-weight="700" fill="#1e293b">allTools[] · 五个工具注册进一处（本章收口）</text>
+
+  <rect x="56" y="394" width="128" height="30" rx="6" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.6" stroke-dasharray="5 3"/>
+  <text x="120" y="414" text-anchor="middle" font-size="11.5" fill="#475569">read_file</text>
+  <rect x="196" y="394" width="128" height="30" rx="6" fill="#f0fdf4" stroke="#166534" stroke-width="1.6"/>
+  <text x="260" y="414" text-anchor="middle" font-size="11.5" font-weight="700" fill="#166534">write_file</text>
+  <rect x="336" y="394" width="128" height="30" rx="6" fill="#f0fdf4" stroke="#166534" stroke-width="1.6"/>
+  <text x="400" y="414" text-anchor="middle" font-size="11.5" font-weight="700" fill="#166534">edit_file</text>
+  <rect x="476" y="394" width="128" height="30" rx="6" fill="#f0fdf4" stroke="#166534" stroke-width="1.6"/>
+  <text x="540" y="414" text-anchor="middle" font-size="11.5" font-weight="700" fill="#166534">list_dir</text>
+  <rect x="616" y="394" width="128" height="30" rx="6" fill="#fef2f2" stroke="#b91c1c" stroke-width="2"/>
+  <text x="680" y="414" text-anchor="middle" font-size="11.5" font-weight="700" fill="#b91c1c">bash 逃生舱</text>
+
+  <text x="410" y="442" text-anchor="middle" font-size="11" fill="#92400e">加工具 = 往清单塞一个对象，loop 与调用方零改动　·　灰=实战02已有　绿=新增窄工具　红=逃生舱（锁留04）</text>
+</svg>

@@ -10,6 +10,10 @@
 
 **卷级铁律先亮明**：概念系列已经把「**为什么** agent 是 while + 停止条件、谁决定停、为什么只能走一步看一步」讲透了（[Blog 24](24-agent-autonomous-action.md)）。实战卷**不重推这些为什么**，只回扣。这一篇只干两件事：**把它写成代码**、**翻开真源码看它多做了什么**。
 
+先给一张全局地图定位本章在整个 harness 的位置：新增的其实只有中间那个 `while` 循环和第一个工具 `read_file`，实战01 的 provider 层原样挂在右边、对循环零分支。下面三个折叠点，都是在把这张图里的连线一根根接通。
+
+![实战02 骨架定位图：调用方 index.ts 调 runAgent 进入本章新增的 agent loop（深色高亮），循环里①chat(messages, tools) 连到实战01 已有的 provider 层（灰色虚线框）再到双端 API；②模型要工具时执行本章新增的工具 read_file（橙色高亮），结果塞回 messages 转下一轮；③模型不再要工具就 return text 收工。图例标明灰=实战01已有、深框=本章新增的循环与第一个工具](assets/img/实战02-skeleton.svg)
+
 ---
 
 ## 一、引导式设计：`while` 的括号里填什么
@@ -230,6 +234,10 @@ PROVIDER=anthropic bun run src/index.ts "读一下 package.json，告诉我这�
 ```
 
 **通过标准**：模型自己**决定**要读文件、harness 执行并把内容回灌、模型据此答题——循环转了一圈。GLM 端走 `tool_calls`→`role:'tool'`、Anthropic 端走 `tool_use`→`tool_result`，两套方言收敛进同一条中立 loop。
+
+把这一圈用时序看一遍：`turn1` 模型要工具、harness 执行并把结果塞回，`turn2` 模型说完了、循环收工——**谁决定停，全看每轮吐不吐 `toolCalls`**。
+
+![实战02 序列图：runAgent 循环、模型（provider）、工具 read_file 三条泳道。turn1——runAgent 调 chat(messages, tools)，模型返回 reply·toolCalls=[read_file(path)]；runAgent 执行 execute({path}) 拿到文件内容，把 assistant 轮和 tool 结果塞回 messages。turn2——runAgent 再调 chat，模型返回 reply·text·toolCalls=[]（说完了），runAgent 判 toolCalls.length===0 → return text 给调用方。底注说明循环条件看 reply.toolCalls.length、两端方言在 provider 里翻译好](assets/img/实战02-sequence.svg)
 
 当篇 checkpoint：`git tag harness-ch02-agent-loop`。
 
