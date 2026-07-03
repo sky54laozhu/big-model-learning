@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 566" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <title id="t">edit 的唯一性抉择：响亮失败 vs 无声失败</title>
+  <desc id="d">模型挑 old_string，因为它看 token 流、不数数，天生可能撞多处。edit 工具数出现次数 matches = 文件按 old_string 切段数减一，三分支：等于0没找到就报错、等于1唯一就替换那一处、大于1撞多处就报错并把多带上下文回灌重试。两条路对照：字符串匹配是响亮失败、可检测、能拒绝回灌；位置对位是无声失败、检测不到、会静默改错。位置信息没白费，被挪到读取侧 addLineNumbers 帮模型拼出唯一串。</desc>
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+
+  <text x="430" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">edit 的唯一性：让失败「响亮」，别让它「无声」</text>
+  <text x="430" y="58" text-anchor="middle" font-size="13.5" fill="#475569">old_string 由会抖的模型挑，天生可能撞多处</text>
+
+  <defs>
+    <marker id="ah" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto"><polygon points="0,0 8,3 0,6" fill="#64748b"/></marker>
+    <marker id="ahr" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto"><polygon points="0,0 8,3 0,6" fill="#b45309"/></marker>
+  </defs>
+
+  <!-- 模型挑 old_string -->
+  <rect x="300" y="80" width="260" height="52" rx="8" fill="#fef3c7" stroke="#b45309" stroke-width="2.2"/>
+  <text x="430" y="102" text-anchor="middle" font-size="12.5" font-weight="700" fill="#92400e">模型挑 old_string</text>
+  <text x="430" y="120" text-anchor="middle" font-size="10.5" fill="#a16207">看的是 token 流、不数数 → 可能撞多处</text>
+
+  <!-- 数次数 -->
+  <rect x="290" y="164" width="280" height="46" rx="8" fill="#f1f5f9" stroke="#475569" stroke-width="2"/>
+  <text x="430" y="185" text-anchor="middle" font-size="12" font-weight="600" fill="#334155">数出现次数</text>
+  <text x="430" y="202" text-anchor="middle" font-size="11" font-family="'SF Mono', Menlo, monospace" fill="#475569">matches = split(old).length − 1</text>
+
+  <line x1="430" y1="132" x2="430" y2="160" stroke="#64748b" stroke-width="2" marker-end="url(#ah)"/>
+
+  <!-- 三分支 -->
+  <rect x="48" y="256" width="212" height="58" rx="8" fill="#fef2f2" stroke="#b91c1c" stroke-width="2"/>
+  <text x="154" y="280" text-anchor="middle" font-size="12" font-weight="700" fill="#b91c1c">matches = 0</text>
+  <text x="154" y="299" text-anchor="middle" font-size="11" fill="#dc2626">没找到 → 报错</text>
+
+  <rect x="324" y="256" width="212" height="58" rx="8" fill="#f0fdf4" stroke="#166534" stroke-width="2.4"/>
+  <text x="430" y="280" text-anchor="middle" font-size="12" font-weight="700" fill="#166534">matches = 1</text>
+  <text x="430" y="299" text-anchor="middle" font-size="11" fill="#15803d">唯一 → 替换那一处 ✓</text>
+
+  <rect x="600" y="256" width="212" height="58" rx="8" fill="#fff7ed" stroke="#b45309" stroke-width="2.4"/>
+  <text x="706" y="280" text-anchor="middle" font-size="12" font-weight="700" fill="#92400e">matches &gt; 1</text>
+  <text x="706" y="299" text-anchor="middle" font-size="11" fill="#b45309">撞多处 → 报错回灌</text>
+
+  <line x1="360" y1="210" x2="180" y2="252" stroke="#64748b" stroke-width="1.8" marker-end="url(#ah)"/>
+  <line x1="430" y1="210" x2="430" y2="252" stroke="#64748b" stroke-width="1.8" marker-end="url(#ah)"/>
+  <line x1="500" y1="210" x2="686" y2="252" stroke="#64748b" stroke-width="1.8" marker-end="url(#ah)"/>
+
+  <!-- 回灌重试 -->
+  <path d="M706,256 C 706,150 640,120 562,110" fill="none" stroke="#b45309" stroke-width="1.8" stroke-dasharray="5,4" marker-end="url(#ahr)"/>
+  <text x="688" y="180" text-anchor="middle" font-size="10.5" font-weight="700" fill="#b45309">多带上下文</text>
+  <text x="688" y="195" text-anchor="middle" font-size="10.5" font-weight="700" fill="#b45309">重试</text>
+
+  <!-- 两条路对照 -->
+  <text x="430" y="356" text-anchor="middle" font-size="12.5" font-weight="700" fill="#334155">为什么选字符串匹配、不选位置对位</text>
+  <rect x="48" y="372" width="380" height="88" rx="9" fill="#f0fdf4" stroke="#166534" stroke-width="2.2"/>
+  <text x="238" y="396" text-anchor="middle" font-size="12.5" font-weight="700" fill="#166534">字符串匹配</text>
+  <text x="238" y="418" text-anchor="middle" font-size="11" fill="#15803d">响亮失败 · 撞多处可被检测</text>
+  <text x="238" y="438" text-anchor="middle" font-size="11" fill="#15803d">→ 工具能停下、拒绝、回灌重试</text>
+  <text x="238" y="454" text-anchor="middle" font-size="10" fill="#166534">柱三：用确定手段兜住会抖的零件</text>
+
+  <rect x="452" y="372" width="360" height="88" rx="9" fill="#fef2f2" stroke="#b91c1c" stroke-width="2.2"/>
+  <text x="632" y="396" text-anchor="middle" font-size="12.5" font-weight="700" fill="#b91c1c">位置对位替换</text>
+  <text x="632" y="418" text-anchor="middle" font-size="11" fill="#dc2626">无声失败 · 模型数错行号也照怼</text>
+  <text x="632" y="438" text-anchor="middle" font-size="11" fill="#dc2626">第 5 行永远存在 → 检测不到</text>
+  <text x="632" y="454" text-anchor="middle" font-size="10" fill="#b91c1c">静默改错，跟「换第一个」一个下场</text>
+
+  <!-- 读取侧 -->
+  <rect x="48" y="484" width="764" height="60" rx="9" fill="#eff6ff" stroke="#2563eb" stroke-width="1.8"/>
+  <text x="430" y="508" text-anchor="middle" font-size="12" font-weight="700" fill="#1e40af">你的「位置」直觉没白费 —— 被挪到了读取侧</text>
+  <text x="430" y="530" text-anchor="middle" font-size="11" fill="#2563eb">read 返回时给每行标行号（addLineNumbers），帮模型拼出唯一 old_string；替换仍走字符串匹配</text>
+</svg>

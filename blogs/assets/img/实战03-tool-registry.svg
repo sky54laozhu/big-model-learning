@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 540" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <title id="t">工具注册表与权限梯度</title>
+  <desc id="d">五个自包含的工具对象——read_file/write_file/edit_file/list_dir 是窄工具、边界清楚，bash 是万能逃生舱、等于发 root——汇进一份清单 allTools[]；清单交给 runAgent，loop 按名字建 Map、模型点名谁就 execute 谁。加工具只是往数组塞一个对象，loop 与调用方零改动。底部一条从只读到无界的权限梯度轴，bash 顶格、锁留实战04。</desc>
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+
+  <text x="430" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">工具注册表：加工具 = 往清单塞一个对象</text>
+  <text x="430" y="58" text-anchor="middle" font-size="13.5" fill="#475569">窄工具是有边界的权限，bash 是一个上了锁的逃生舱</text>
+
+  <defs>
+    <marker id="ah" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto"><polygon points="0,0 8,3 0,6" fill="#64748b"/></marker>
+  </defs>
+
+  <!-- 窄工具组 -->
+  <text x="126" y="92" text-anchor="middle" font-size="11.5" font-weight="700" fill="#1e40af">窄工具 · 有边界的权限</text>
+  <rect x="42" y="102" width="168" height="34" rx="7" fill="#eff6ff" stroke="#2563eb" stroke-width="1.8"/>
+  <text x="126" y="123" text-anchor="middle" font-size="12" font-family="'SF Mono', Menlo, monospace" fill="#1e40af">read_file · 只读</text>
+  <rect x="42" y="142" width="168" height="34" rx="7" fill="#eff6ff" stroke="#2563eb" stroke-width="1.8"/>
+  <text x="126" y="163" text-anchor="middle" font-size="12" font-family="'SF Mono', Menlo, monospace" fill="#1e40af">write_file · 覆盖写</text>
+  <rect x="42" y="182" width="168" height="34" rx="7" fill="#eff6ff" stroke="#2563eb" stroke-width="1.8"/>
+  <text x="126" y="203" text-anchor="middle" font-size="12" font-family="'SF Mono', Menlo, monospace" fill="#1e40af">edit_file · 局部改</text>
+  <rect x="42" y="222" width="168" height="34" rx="7" fill="#eff6ff" stroke="#2563eb" stroke-width="1.8"/>
+  <text x="126" y="243" text-anchor="middle" font-size="12" font-family="'SF Mono', Menlo, monospace" fill="#1e40af">list_dir · 列目录</text>
+
+  <!-- 逃生舱 bash -->
+  <text x="126" y="286" text-anchor="middle" font-size="11.5" font-weight="700" fill="#b91c1c">逃生舱 · 万能 = 发 root</text>
+  <rect x="42" y="296" width="168" height="38" rx="7" fill="#fef2f2" stroke="#b91c1c" stroke-width="2.2"/>
+  <text x="126" y="314" text-anchor="middle" font-size="12" font-family="'SF Mono', Menlo, monospace" fill="#b91c1c">bash · 跑任意命令</text>
+  <text x="126" y="329" text-anchor="middle" font-size="10" fill="#dc2626">rm -rf / · curl | sh</text>
+
+  <!-- 清单 allTools -->
+  <rect x="286" y="150" width="150" height="128" rx="9" fill="#f8fafc" stroke="#475569" stroke-width="2.2"/>
+  <text x="361" y="178" text-anchor="middle" font-size="12.5" font-weight="700" fill="#334155">注册表</text>
+  <text x="361" y="200" text-anchor="middle" font-size="12" font-family="'SF Mono', Menlo, monospace" fill="#475569">allTools:</text>
+  <text x="361" y="217" text-anchor="middle" font-size="12" font-family="'SF Mono', Menlo, monospace" fill="#475569">Tool[]</text>
+  <text x="361" y="246" text-anchor="middle" font-size="10.5" fill="#64748b">唯一一份清单</text>
+  <text x="361" y="263" text-anchor="middle" font-size="10.5" fill="#64748b">收口自调用点</text>
+
+  <!-- runAgent / loop -->
+  <rect x="512" y="150" width="196" height="128" rx="9" fill="#fef3c7" stroke="#b45309" stroke-width="2.2"/>
+  <text x="610" y="178" text-anchor="middle" font-size="12.5" font-weight="700" fill="#92400e">runAgent(…, allTools)</text>
+  <text x="610" y="202" text-anchor="middle" font-size="11" fill="#92400e">按名字建 Map&lt;name, Tool&gt;</text>
+  <text x="610" y="224" text-anchor="middle" font-size="11" fill="#92400e">模型点名 call.name</text>
+  <text x="610" y="246" text-anchor="middle" font-size="11" font-weight="700" fill="#b45309">→ execute(args)</text>
+  <text x="610" y="266" text-anchor="middle" font-size="10" fill="#a16207">（loop 实战02 已成型）</text>
+
+  <!-- 箭头 -->
+  <line x1="212" y1="180" x2="282" y2="196" stroke="#64748b" stroke-width="2" marker-end="url(#ah)"/>
+  <line x1="212" y1="312" x2="282" y2="240" stroke="#64748b" stroke-width="2" marker-end="url(#ah)"/>
+  <line x1="436" y1="214" x2="508" y2="214" stroke="#64748b" stroke-width="2" marker-end="url(#ah)"/>
+
+  <!-- 零改动横幅 -->
+  <rect x="286" y="298" width="422" height="36" rx="8" fill="#f0fdf4" stroke="#166534" stroke-width="1.6"/>
+  <text x="497" y="321" text-anchor="middle" font-size="11.5" fill="#166534">加工具 = 只往数组塞一个对象；loop 与调用方一个字都不改</text>
+
+  <!-- 权限梯度轴 -->
+  <text x="60" y="392" font-size="11.5" font-weight="700" fill="#334155">权限梯度</text>
+  <line x1="60" y1="430" x2="792" y2="430" stroke="#94a3b8" stroke-width="2" marker-end="url(#ah)"/>
+  <text x="120" y="452" text-anchor="middle" font-size="11" font-weight="600" fill="#166534">只读</text>
+  <text x="120" y="468" text-anchor="middle" font-size="10" fill="#15803d">read · list</text>
+  <circle cx="120" cy="430" r="4" fill="#166534"/>
+  <text x="380" y="452" text-anchor="middle" font-size="11" font-weight="600" fill="#1e40af">能改 · 有界</text>
+  <text x="380" y="468" text-anchor="middle" font-size="10" fill="#2563eb">write · edit</text>
+  <circle cx="380" cy="430" r="4" fill="#2563eb"/>
+  <text x="700" y="452" text-anchor="middle" font-size="11" font-weight="600" fill="#b91c1c">无界</text>
+  <text x="700" y="468" text-anchor="middle" font-size="10" fill="#dc2626">bash</text>
+  <circle cx="700" cy="430" r="4" fill="#b91c1c"/>
+  <rect x="628" y="486" width="164" height="34" rx="8" fill="#fef2f2" stroke="#b91c1c" stroke-width="1.8"/>
+  <text x="710" y="508" text-anchor="middle" font-size="11.5" font-weight="700" fill="#b91c1c">这把锁留实战04</text>
+</svg>
