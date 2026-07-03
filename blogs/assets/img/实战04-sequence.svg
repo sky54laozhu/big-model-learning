@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 600" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <title id="t">序列图：rm -rf 被 deny，模型换 find -delete 绕过黑名单，落 ask 被人接住</title>
+  <desc id="d">三条泳道：模型、runAgent 闸门、人/文件系统。beat1 模型请求 bash rm -rf dir → 闸门命中黑名单直接 deny（不问人）→ 回灌请改道。beat2 模型换一个完全不同的命令 bash find dir -delete（同样递归删除、黑名单里没这条）→ 落 ask → 弹给人 → 人批准 → execute 删除成功（退出码 0）。beat3 模型请求 bash ls dir 核对 → 同样落 ask → 人批准 → 目录已删除。结论：黑名单拦住钝器 rm -rf，模型用 find -delete 这条语义等价、字面全不同的命令绕过 → 落 ask → 人接住，人是最后一道闸。</desc>
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+
+  <text x="440" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">真跑一遍：钝器被拦，马甲被人接住</text>
+  <text x="440" y="58" text-anchor="middle" font-size="13" fill="#475569">rm -rf → deny（不问人）；换 find -delete → 黑名单没这条 → ask → 人拍板</text>
+
+  <!-- 泳道头 -->
+  <rect x="80" y="82" width="140" height="34" rx="8" fill="#eef2ff" stroke="#6366f1" stroke-width="1.8"/>
+  <text x="150" y="104" text-anchor="middle" font-size="12" font-weight="700" fill="#4338ca">模型</text>
+  <rect x="360" y="82" width="160" height="34" rx="8" fill="#fffbeb" stroke="#b45309" stroke-width="1.8"/>
+  <text x="440" y="104" text-anchor="middle" font-size="12" font-weight="700" fill="#92400e">runAgent · 闸门</text>
+  <rect x="660" y="82" width="160" height="34" rx="8" fill="#eff6ff" stroke="#1d4ed8" stroke-width="1.8"/>
+  <text x="740" y="104" text-anchor="middle" font-size="12" font-weight="700" fill="#1e40af">人 / 文件系统</text>
+
+  <!-- 生命线 -->
+  <line x1="150" y1="116" x2="150" y2="470" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="4 4"/>
+  <line x1="440" y1="116" x2="440" y2="470" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="4 4"/>
+  <line x1="740" y1="116" x2="740" y2="470" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="4 4"/>
+
+  <!-- beat1: rm -rf → deny -->
+  <text x="295" y="138" text-anchor="middle" font-size="10.5" font-family="'SF Mono', Menlo, monospace" fill="#334155">bash("rm -rf dir")</text>
+  <line x1="150" y1="144" x2="436" y2="144" stroke="#475569" stroke-width="1.8"/><polygon points="440,144 428,138 428,150" fill="#475569"/>
+  <rect x="346" y="152" width="188" height="26" rx="6" fill="#fef2f2" stroke="#b91c1c" stroke-width="1.5"/>
+  <text x="440" y="169" text-anchor="middle" font-size="10.5" font-weight="700" fill="#b91c1c">命中黑名单 → deny（不问人）</text>
+  <text x="295" y="192" text-anchor="middle" font-size="10.5" fill="#b91c1c">回灌 error：权限被拒，请改道</text>
+  <line x1="440" y1="198" x2="154" y2="198" stroke="#b91c1c" stroke-width="1.8"/><polygon points="150,198 162,192 162,204" fill="#b91c1c"/>
+
+  <!-- beat2: find -delete → ask → 人 → 成功 -->
+  <text x="295" y="228" text-anchor="middle" font-size="10.5" font-family="'SF Mono', Menlo, monospace" fill="#334155">bash("find dir -delete")　← 换个命令</text>
+  <line x1="150" y1="234" x2="436" y2="234" stroke="#475569" stroke-width="1.8"/><polygon points="440,234 428,228 428,240" fill="#475569"/>
+  <rect x="332" y="242" width="216" height="26" rx="6" fill="#fffbeb" stroke="#b45309" stroke-width="1.5"/>
+  <text x="440" y="259" text-anchor="middle" font-size="10.5" font-weight="700" fill="#92400e">黑名单没这条·非只读 → ask（马甲漏过）</text>
+  <text x="590" y="282" text-anchor="middle" font-size="10.5" fill="#1d4ed8">需要授权</text>
+  <line x1="440" y1="288" x2="736" y2="288" stroke="#1d4ed8" stroke-width="1.8"/><polygon points="740,288 728,282 728,294" fill="#1d4ed8"/>
+  <text x="590" y="308" text-anchor="middle" font-size="10.5" fill="#166534">批准 [y]</text>
+  <line x1="740" y1="314" x2="444" y2="314" stroke="#166534" stroke-width="1.8"/><polygon points="440,314 452,308 452,320" fill="#166534"/>
+  <rect x="352" y="322" width="176" height="24" rx="6" fill="#f0fdf4" stroke="#166534" stroke-width="1.5"/>
+  <text x="440" y="338" text-anchor="middle" font-size="10.5" font-weight="700" fill="#166534">execute → 删除成功（退出码 0）</text>
+
+  <!-- beat3: ls 核对 → ask -->
+  <text x="295" y="368" text-anchor="middle" font-size="10.5" font-family="'SF Mono', Menlo, monospace" fill="#334155">bash("ls dir …") 核对</text>
+  <line x1="150" y1="374" x2="436" y2="374" stroke="#475569" stroke-width="1.8"/><polygon points="440,374 428,368 428,380" fill="#475569"/>
+  <rect x="372" y="382" width="136" height="24" rx="6" fill="#fffbeb" stroke="#b45309" stroke-width="1.5"/>
+  <text x="440" y="398" text-anchor="middle" font-size="10.5" font-weight="700" fill="#92400e">同样 → ask</text>
+  <line x1="440" y1="418" x2="736" y2="418" stroke="#1d4ed8" stroke-width="1.8"/><polygon points="740,418 728,412 728,424" fill="#1d4ed8"/>
+  <text x="590" y="412" text-anchor="middle" font-size="10" fill="#1d4ed8">需要授权 → 批准</text>
+  <line x1="740" y1="444" x2="154" y2="444" stroke="#166534" stroke-width="1.8"/><polygon points="150,444 162,438 162,450" fill="#166534"/>
+  <text x="380" y="438" text-anchor="middle" font-size="10" fill="#166534">→ 目录已删除</text>
+
+  <!-- 收口 -->
+  <rect x="40" y="484" width="800" height="102" rx="10" fill="#fffbeb" stroke="#b45309" stroke-width="2"/>
+  <text x="440" y="510" text-anchor="middle" font-size="13.5" font-weight="700" fill="#92400e">黑名单拦住钝器，人接住马甲</text>
+  <text x="440" y="534" text-anchor="middle" font-size="11.5" fill="#b45309">rm -rf 命中黑名单 → deny（连问都不问）；模型换 find -delete 这条语义等价、字面全不同的命令绕过</text>
+  <rect x="150" y="548" width="580" height="26" rx="7" fill="#fff7ed" stroke="#b45309" stroke-width="1.4"/>
+  <text x="440" y="566" text-anchor="middle" font-size="11.5" font-weight="700" fill="#92400e">黑名单没它 → 只能落 ask → 人接住：人是最后一道闸</text>
+</svg>

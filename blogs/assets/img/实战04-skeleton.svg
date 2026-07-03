@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 520" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <title id="t">骨架定位图：本章只在 execute 前新增一道权限闸门</title>
+  <desc id="d">循环、provider 层、五个工具全沿用实战02/03（灰）。本章唯一新增：在「模型点名工具」和真正 execute 之间插入权限闸门 permission.ts——所有工具调用的唯一收口，吐三态 allow/ask/deny，allow 直接执行、ask 弹给人拍板、deny 不执行把拒绝回灌给模型。</desc>
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+
+  <text x="420" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">骨架定位：给 execute 前插一道闸门</text>
+  <text x="420" y="58" text-anchor="middle" font-size="13" fill="#475569">循环 / provider / 五个工具全沿用实战02·03（灰）；本章只新增闸门一处收口</text>
+
+  <!-- 调用方 -->
+  <rect x="40" y="80" width="200" height="38" rx="8" fill="#f1f5f9" stroke="#94a3b8" stroke-width="2"/>
+  <text x="140" y="104" text-anchor="middle" font-size="12.5" font-weight="700" fill="#475569">调用方 index.ts</text>
+  <line x1="140" y1="118" x2="140" y2="148" stroke="#94a3b8" stroke-width="2"/>
+  <polygon points="140,152 134,140 146,140" fill="#94a3b8"/>
+
+  <!-- runAgent loop 灰=已有 -->
+  <rect x="40" y="152" width="392" height="188" rx="10" fill="#f8fafc" stroke="#94a3b8" stroke-width="2.4" stroke-dasharray="6 4"/>
+  <text x="56" y="174" font-size="12.5" font-weight="700" fill="#475569">agent loop · runAgent()　实战02/03 已有</text>
+  <rect x="58" y="184" width="356" height="30" rx="6" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.4"/>
+  <text x="236" y="204" text-anchor="middle" font-size="11.5" fill="#475569">① chat(messages, tools)</text>
+  <rect x="58" y="220" width="356" height="30" rx="6" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.4"/>
+  <text x="236" y="240" text-anchor="middle" font-size="11.5" fill="#475569">② 模型点名工具 → 拿到一次 call</text>
+  <rect x="58" y="300" width="356" height="30" rx="6" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.4"/>
+  <text x="236" y="320" text-anchor="middle" font-size="11.5" fill="#475569">③ toolCalls 为空 → return text</text>
+
+  <!-- provider 层 灰 -->
+  <rect x="470" y="182" width="330" height="46" rx="8" fill="#f8fafc" stroke="#94a3b8" stroke-width="2" stroke-dasharray="6 4"/>
+  <text x="635" y="210" text-anchor="middle" font-size="12" font-weight="700" fill="#475569">provider 层 → 双端 API（实战01/02）</text>
+  <line x1="414" y1="199" x2="466" y2="203" stroke="#94a3b8" stroke-width="2"/>
+  <polygon points="470,204 457,199 458,210" fill="#94a3b8"/>
+  <text x="440" y="194" text-anchor="middle" font-size="10" fill="#64748b">chat</text>
+
+  <!-- execute 路径：② 出来先进闸门（本章新增） -->
+  <line x1="236" y1="250" x2="236" y2="356" stroke="#b45309" stroke-width="2.4"/>
+  <polygon points="236,360 230,348 242,348" fill="#b45309"/>
+  <text x="330" y="278" text-anchor="middle" font-size="10.5" font-weight="700" fill="#92400e">要执行这次 call</text>
+
+  <!-- 权限闸门 本章新增 高亮 -->
+  <rect x="470" y="256" width="330" height="80" rx="10" fill="#fffbeb" stroke="#1e293b" stroke-width="2.6"/>
+  <text x="635" y="280" text-anchor="middle" font-size="13" font-weight="700" fill="#1e293b">权限闸门 permission.ts（本章新增）</text>
+  <text x="635" y="302" text-anchor="middle" font-size="11.5" fill="#92400e">checkPermission → allow / ask / deny 三态</text>
+  <text x="635" y="322" text-anchor="middle" font-size="11" fill="#64748b">所有工具调用的唯一收口，一处覆盖全部工具</text>
+  <!-- 闸门横向连到 loop 的 execute 竖线 -->
+  <line x1="236" y1="296" x2="466" y2="296" stroke="#b45309" stroke-width="2.4" stroke-dasharray="4 3"/>
+  <polygon points="470,296 457,291 458,301" fill="#b45309"/>
+
+  <!-- 闸门 → allTools 执行 -->
+  <line x1="236" y1="360" x2="236" y2="392" stroke="#166534" stroke-width="2"/>
+  <polygon points="236,396 230,384 242,384" fill="#166534"/>
+  <text x="330" y="380" text-anchor="middle" font-size="10.5" font-weight="700" fill="#166534">放行才 execute</text>
+
+  <!-- allTools 注册表 灰=实战03已有 -->
+  <rect x="40" y="398" width="760" height="96" rx="10" fill="#f8fafc" stroke="#94a3b8" stroke-width="2" stroke-dasharray="6 4"/>
+  <text x="56" y="420" font-size="12.5" font-weight="700" fill="#475569">allTools[] · 五个工具　实战03 已有（本章一个字不改）</text>
+  <rect x="56" y="432" width="132" height="30" rx="6" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.4"/>
+  <text x="122" y="452" text-anchor="middle" font-size="11.5" fill="#475569">read_file</text>
+  <rect x="200" y="432" width="132" height="30" rx="6" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.4"/>
+  <text x="266" y="452" text-anchor="middle" font-size="11.5" fill="#475569">write_file</text>
+  <rect x="344" y="432" width="132" height="30" rx="6" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.4"/>
+  <text x="410" y="452" text-anchor="middle" font-size="11.5" fill="#475569">edit_file</text>
+  <rect x="488" y="432" width="132" height="30" rx="6" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.4"/>
+  <text x="554" y="452" text-anchor="middle" font-size="11.5" fill="#475569">list_dir</text>
+  <rect x="632" y="432" width="132" height="30" rx="6" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.4"/>
+  <text x="698" y="452" text-anchor="middle" font-size="11.5" fill="#475569">bash</text>
+  <text x="410" y="482" text-anchor="middle" font-size="11" fill="#64748b">工具管「能力」，闸门管「权限」——关注点分离，加工具不用再写一遍安全</text>
+
+  <text x="420" y="510" text-anchor="middle" font-size="10.5" fill="#92400e">灰 = 实战02·03 已有　·　琥珀 = 本章新增闸门　·　闸门放在 execute 前，实战03 的裸奔 = 关掉闸门（bypass 模式）</text>
+</svg>

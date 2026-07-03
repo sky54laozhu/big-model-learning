@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 560" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <title id="t">折叠点③：黑名单只防呆，人才是安全网——锁永远关不严</title>
+  <desc id="d">黑名单只拦一眼致命的钝器（rm -rf、curl|sh、chmod -R 777、dd/mkfs）。模型会想办法换马甲（rm a b &amp;&amp; rmdir、unlink、find -delete、变量拼 $X -rf），同效果不同字面，黑名单漏过——落到 ask 交人，人才是真正的安全网。层层设防：正则黑名单→AI 分类器→人工审批，最右永远是人。真源码铁证：bashCommandIsSafe_DEPRECATED、splitCommand_DEPRECATED、CC-643 注释承认复合命令会误解析，改用 AI 分类器；判一条任意命令安不安全是打地鼠，永远关不严。</desc>
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+
+  <text x="440" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">黑名单只防呆，人才是安全网</text>
+  <text x="440" y="58" text-anchor="middle" font-size="13" fill="#475569">模型总能换个马甲绕过规则——这把锁永远关不严</text>
+
+  <!-- 黑名单 -->
+  <rect x="40" y="86" width="250" height="148" rx="9" fill="#fef2f2" stroke="#b91c1c" stroke-width="2"/>
+  <text x="165" y="108" text-anchor="middle" font-size="12.5" font-weight="700" fill="#b91c1c">黑名单（防呆层）</text>
+  <text x="165" y="132" text-anchor="middle" font-size="11" font-family="'SF Mono', Menlo, monospace" fill="#7f1d1d">rm -rf /</text>
+  <text x="165" y="152" text-anchor="middle" font-size="11" font-family="'SF Mono', Menlo, monospace" fill="#7f1d1d">curl x | sh</text>
+  <text x="165" y="172" text-anchor="middle" font-size="11" font-family="'SF Mono', Menlo, monospace" fill="#7f1d1d">chmod -R 777</text>
+  <text x="165" y="192" text-anchor="middle" font-size="11" font-family="'SF Mono', Menlo, monospace" fill="#7f1d1d">dd of=/dev · mkfs</text>
+  <text x="165" y="220" text-anchor="middle" font-size="11" font-weight="700" fill="#166534">命中 → deny 拦钝器 ✓</text>
+
+  <!-- 模型换马甲 -->
+  <rect x="310" y="86" width="256" height="148" rx="9" fill="#fffbeb" stroke="#b45309" stroke-width="2"/>
+  <text x="438" y="108" text-anchor="middle" font-size="12.5" font-weight="700" fill="#92400e">模型「会想办法」换马甲</text>
+  <text x="438" y="132" text-anchor="middle" font-size="10.5" font-family="'SF Mono', Menlo, monospace" fill="#a16207">rm a.txt b.txt &amp;&amp; rmdir</text>
+  <text x="438" y="152" text-anchor="middle" font-size="10.5" font-family="'SF Mono', Menlo, monospace" fill="#a16207">unlink file</text>
+  <text x="438" y="172" text-anchor="middle" font-size="10.5" font-family="'SF Mono', Menlo, monospace" fill="#a16207">find dir -delete</text>
+  <text x="438" y="192" text-anchor="middle" font-size="10.5" font-family="'SF Mono', Menlo, monospace" fill="#a16207">X=rm; $X -rf dir</text>
+  <text x="438" y="220" text-anchor="middle" font-size="11" font-weight="700" fill="#b45309">同效果·不同字面 → 黑名单漏</text>
+
+  <!-- 漏过箭头 → 人 -->
+  <line x1="566" y1="150" x2="602" y2="150" stroke="#1d4ed8" stroke-width="2.4"/>
+  <polygon points="606,150 594,144 594,156" fill="#1d4ed8"/>
+  <text x="584" y="142" text-anchor="middle" font-size="9" fill="#1d4ed8">漏过→问人</text>
+
+  <!-- 人 兜底 -->
+  <rect x="608" y="110" width="232" height="82" rx="9" fill="#eff6ff" stroke="#1d4ed8" stroke-width="2.2"/>
+  <text x="724" y="136" text-anchor="middle" font-size="12.5" font-weight="700" fill="#1d4ed8">ask → 人工审批</text>
+  <text x="724" y="158" text-anchor="middle" font-size="11" fill="#1e40af">真正的安全网（兜底）</text>
+  <text x="724" y="178" text-anchor="middle" font-size="10.5" fill="#1e40af">黑名单漏的，都落这儿</text>
+
+  <!-- 层层设防 -->
+  <text x="440" y="270" text-anchor="middle" font-size="13" font-weight="700" fill="#334155">层层设防：拿不准就往右传，最右永远是人</text>
+  <rect x="60" y="284" width="212" height="56" rx="8" fill="#fef2f2" stroke="#b91c1c" stroke-width="1.8"/>
+  <text x="166" y="308" text-anchor="middle" font-size="11.5" font-weight="700" fill="#b91c1c">① 正则黑名单</text>
+  <text x="166" y="328" text-anchor="middle" font-size="10.5" fill="#7f1d1d">拦一眼致命（我们做了）</text>
+  <rect x="334" y="284" width="212" height="56" rx="8" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.8" stroke-dasharray="6 4"/>
+  <text x="440" y="308" text-anchor="middle" font-size="11.5" font-weight="700" fill="#475569">② AI 分类器</text>
+  <text x="440" y="328" text-anchor="middle" font-size="10.5" fill="#64748b">判语义意图（真源码有·我们没做）</text>
+  <rect x="608" y="284" width="212" height="56" rx="8" fill="#eff6ff" stroke="#1d4ed8" stroke-width="1.8"/>
+  <text x="714" y="308" text-anchor="middle" font-size="11.5" font-weight="700" fill="#1d4ed8">③ 人工审批</text>
+  <text x="714" y="328" text-anchor="middle" font-size="10.5" fill="#1e40af">兜底（我们做了）</text>
+  <line x1="272" y1="312" x2="330" y2="312" stroke="#94a3b8" stroke-width="2"/><polygon points="334,312 322,306 322,318" fill="#94a3b8"/>
+  <line x1="546" y1="312" x2="604" y2="312" stroke="#94a3b8" stroke-width="2"/><polygon points="608,312 596,306 596,318" fill="#94a3b8"/>
+
+  <!-- 真源码铁证 -->
+  <rect x="40" y="366" width="800" height="168" rx="10" fill="#fffbeb" stroke="#b45309" stroke-width="2"/>
+  <text x="440" y="392" text-anchor="middle" font-size="13.5" font-weight="700" fill="#92400e">🔬 真源码铁证：连 Claude Code 都放弃了「纯正则」</text>
+  <text x="440" y="420" text-anchor="middle" font-size="11.5" fill="#b45309">bashCommandIsSafe_DEPRECATED（bashSecurity.ts:2257）—— 正则判安全，函数名已带 _DEPRECATED</text>
+  <text x="440" y="442" text-anchor="middle" font-size="11.5" fill="#b45309">splitCommand_DEPRECATED ＋ 注释 CC-643：「复杂复合命令会误解析」（他们自己承认判不准）</text>
+  <text x="440" y="464" text-anchor="middle" font-size="11.5" fill="#b45309">→ 改上 AI 分类器（ClassifierResult / auto 模式），判不了照样落到人工审批</text>
+  <rect x="150" y="482" width="580" height="38" rx="8" fill="#fff7ed" stroke="#b45309" stroke-width="1.6"/>
+  <text x="440" y="506" text-anchor="middle" font-size="11.5" font-weight="700" fill="#92400e">判一条任意 shell 命令安不安全 = 打地鼠，永远关不严（回扣 Blog30）</text>
+</svg>

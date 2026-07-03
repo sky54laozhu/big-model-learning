@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 600" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <title id="t">折叠点②（主控制流程图）：三态决策 allow / ask / deny</title>
+  <desc id="d">一次工具调用进闸门 checkPermission，顺 4 道守卫往下：①会话已总是允许？→allow；②只读工具？→allow；③bash 命中致命黑名单？→deny；④其余（改动类/判不出好坏）→ask。三态出口：allow 直接 execute；deny 不执行、回灌拒绝让模型改道；ask 弹给人 [y]允许一次/[a]本会话总是允许/[其它]拒绝。精度顺序 deny＞ask＞allow，默认落 ask（fail toward asking，判不出绝不默认放行），无人值守当拒绝（fail closed）。</desc>
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+
+  <text x="440" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">三态决策：放行 / 问人 / 拦死</text>
+  <text x="440" y="58" text-anchor="middle" font-size="13" fill="#475569">闸门不判「安全/危险」，而是把拿不准的中间地带路由给人</text>
+
+  <!-- 入口 -->
+  <rect x="150" y="74" width="200" height="34" rx="8" fill="#f1f5f9" stroke="#475569" stroke-width="1.8"/>
+  <text x="250" y="96" text-anchor="middle" font-size="12" font-weight="700" fill="#334155">工具调用：tool + args</text>
+  <line x1="250" y1="108" x2="250" y2="120" stroke="#94a3b8" stroke-width="2"/>
+  <polygon points="250,124 244,112 256,112" fill="#94a3b8"/>
+
+  <!-- 守卫链 -->
+  <rect x="108" y="124" width="284" height="38" rx="7" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.6"/>
+  <text x="250" y="148" text-anchor="middle" font-size="11.5" fill="#334155">① 会话已「总是允许」此工具？</text>
+  <rect x="108" y="180" width="284" height="38" rx="7" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.6"/>
+  <text x="250" y="204" text-anchor="middle" font-size="11.5" fill="#334155">② 只读工具？(read_file / list_dir)</text>
+  <rect x="108" y="236" width="284" height="38" rx="7" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.6"/>
+  <text x="250" y="260" text-anchor="middle" font-size="11.5" fill="#334155">③ bash 命中致命黑名单？</text>
+  <rect x="108" y="292" width="284" height="38" rx="7" fill="#eff6ff" stroke="#1d4ed8" stroke-width="1.8"/>
+  <text x="250" y="316" text-anchor="middle" font-size="11.5" font-weight="700" fill="#1e40af">④ 其余：改动类 / 判不出好坏</text>
+
+  <!-- 否 ↓ -->
+  <line x1="250" y1="162" x2="250" y2="180" stroke="#94a3b8" stroke-width="2"/><polygon points="250,180 244,170 256,170" fill="#94a3b8"/>
+  <line x1="250" y1="218" x2="250" y2="236" stroke="#94a3b8" stroke-width="2"/><polygon points="250,236 244,226 256,226" fill="#94a3b8"/>
+  <line x1="250" y1="274" x2="250" y2="292" stroke="#94a3b8" stroke-width="2"/><polygon points="250,292 244,282 256,282" fill="#94a3b8"/>
+  <text x="266" y="176" font-size="9.5" fill="#94a3b8">否</text>
+  <text x="266" y="232" font-size="9.5" fill="#94a3b8">否</text>
+  <text x="266" y="288" font-size="9.5" fill="#94a3b8">否</text>
+
+  <!-- 是 → 出口 -->
+  <line x1="392" y1="143" x2="466" y2="143" stroke="#166534" stroke-width="2"/><polygon points="470,143 458,137 458,149" fill="#166534"/>
+  <line x1="392" y1="199" x2="450" y2="199" stroke="#166534" stroke-width="2"/><line x1="450" y1="199" x2="450" y2="156" stroke="#166534" stroke-width="2"/><polygon points="450,152 444,164 456,164" fill="#166534"/>
+  <line x1="392" y1="255" x2="466" y2="255" stroke="#b91c1c" stroke-width="2"/><polygon points="470,255 458,249 458,261" fill="#b91c1c"/>
+  <line x1="392" y1="311" x2="466" y2="311" stroke="#1d4ed8" stroke-width="2"/><polygon points="470,311 458,305 458,317" fill="#1d4ed8"/>
+  <text x="428" y="138" text-anchor="middle" font-size="9.5" font-weight="700" fill="#166534">是</text>
+  <text x="428" y="250" text-anchor="middle" font-size="9.5" font-weight="700" fill="#b91c1c">是</text>
+
+  <!-- ALLOW -->
+  <rect x="470" y="124" width="220" height="46" rx="9" fill="#f0fdf4" stroke="#166534" stroke-width="2.2"/>
+  <text x="512" y="153" text-anchor="middle" font-size="14" font-weight="800" fill="#166534">allow</text>
+  <text x="600" y="148" text-anchor="middle" font-size="11" fill="#166534">直接 execute</text>
+  <text x="600" y="163" text-anchor="middle" font-size="10" fill="#15803d">不打扰人</text>
+  <!-- DENY -->
+  <rect x="470" y="232" width="220" height="46" rx="9" fill="#fef2f2" stroke="#b91c1c" stroke-width="2.2"/>
+  <text x="512" y="261" text-anchor="middle" font-size="14" font-weight="800" fill="#b91c1c">deny</text>
+  <text x="600" y="256" text-anchor="middle" font-size="11" fill="#b91c1c">不执行 · 回灌拒绝</text>
+  <text x="600" y="271" text-anchor="middle" font-size="10" fill="#7f1d1d">模型改道（响亮失败）</text>
+  <!-- ASK -->
+  <rect x="470" y="288" width="220" height="46" rx="9" fill="#eff6ff" stroke="#1d4ed8" stroke-width="2.2"/>
+  <text x="512" y="317" text-anchor="middle" font-size="14" font-weight="800" fill="#1d4ed8">ask</text>
+  <text x="600" y="317" text-anchor="middle" font-size="11" fill="#1e40af">→ 弹给人拍板</text>
+
+  <!-- ask → 人 -->
+  <line x1="580" y1="334" x2="580" y2="356" stroke="#1d4ed8" stroke-width="2.2"/><polygon points="580,360 574,348 586,348" fill="#1d4ed8"/>
+
+  <!-- 人工审批面板 -->
+  <rect x="150" y="360" width="580" height="128" rx="10" fill="#eff6ff" stroke="#1d4ed8" stroke-width="2"/>
+  <text x="440" y="384" text-anchor="middle" font-size="12.5" font-weight="700" fill="#1e40af">⛔ 需要授权：人在环内（human in the loop）</text>
+  <rect x="168" y="398" width="176" height="54" rx="8" fill="#ffffff" stroke="#1d4ed8" stroke-width="1.5"/>
+  <text x="256" y="420" text-anchor="middle" font-size="11" font-weight="700" fill="#1e40af">[y] 允许一次</text>
+  <text x="256" y="440" text-anchor="middle" font-size="10.5" fill="#166534">→ execute</text>
+  <rect x="352" y="398" width="176" height="54" rx="8" fill="#ffffff" stroke="#1d4ed8" stroke-width="1.5"/>
+  <text x="440" y="420" text-anchor="middle" font-size="11" font-weight="700" fill="#1e40af">[a] 本会话总是允许</text>
+  <text x="440" y="440" text-anchor="middle" font-size="10.5" fill="#166534">→ 记会话规则 + execute</text>
+  <rect x="536" y="398" width="176" height="54" rx="8" fill="#ffffff" stroke="#1d4ed8" stroke-width="1.5"/>
+  <text x="624" y="420" text-anchor="middle" font-size="11" font-weight="700" fill="#1e40af">[其它] 拒绝</text>
+  <text x="624" y="440" text-anchor="middle" font-size="10.5" fill="#b91c1c">→ 回灌『用户拒绝』</text>
+  <text x="440" y="474" text-anchor="middle" font-size="10.5" fill="#64748b">无人值守（非 TTY）读不到输入 → 一律当拒绝（fail closed，宁可不做不误做）</text>
+
+  <!-- 原则带 -->
+  <rect x="40" y="500" width="800" height="84" rx="10" fill="#fffbeb" stroke="#b45309" stroke-width="2"/>
+  <text x="440" y="528" text-anchor="middle" font-size="13.5" font-weight="700" fill="#92400e">精度顺序：deny ＞ ask ＞ allow —— 冲突一律往更保守侧收</text>
+  <text x="440" y="554" text-anchor="middle" font-size="11.5" fill="#b45309">默认落 ask（fail toward asking）：判不出好坏的，绝不默认放行</text>
+  <text x="440" y="573" text-anchor="middle" font-size="10.5" fill="#a16207">留给人的那道 ask，才是真正的安全网——黑名单只负责拦掉一眼可见的蠢事</text>
+</svg>

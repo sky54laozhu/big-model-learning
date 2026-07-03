@@ -1,18 +1,23 @@
 import type { ModelProvider, Tool, Message } from './types'
+import { checkPermission, askHuman, grantAlways, newSession } from './permission'
 
 /**
  * agent loop 骨架 = 把 实战01 的单圈 chat() 套进 while（回扣概念 24：agent 就这么点骨架，无黑魔法）。
  * 循环条件不看 stopReason 字符串，看 reply.toolCalls.length——模型这轮还要不要工具（回扣源码 query.ts §554）。
  * maxTurns 是"炸"的护栏：死循环时强制刹车（回扣概念 24 三祸之一）。
+ *
+ * 实战04 新增：execute 前插一道权限闸门（gate=false 退回实战03 的"裸奔"= bypassPermissions mode）。
  */
 export async function runAgent(
   provider: ModelProvider,
   tools: Tool[],
   userInput: string,
   maxTurns = 10,
+  gate = true,
 ): Promise<string> {
   const messages: Message[] = [{ role: 'user', content: userInput }]
   const toolByName = new Map(tools.map(t => [t.name, t]))
+  const session = newSession()   // 会话级"总是允许"规则，只活在这一次运行里
 
   for (let turn = 1; turn <= maxTurns; turn++) {
     const reply = await provider.chat(messages, tools)
@@ -29,7 +34,7 @@ export async function runAgent(
     for (const call of reply.toolCalls) {
       const tool = toolByName.get(call.name)
       const result = tool
-        ? await tool.execute(call.args)
+        ? await runWithGate(tool, call.args, session, gate)
         : `error: 未知工具 ${call.name}`
       const preview = result.slice(0, 60).replace(/\s+/g, ' ')
       console.log(`  [turn ${turn}] ${call.name}(${JSON.stringify(call.args)}) -> ${preview}…`)
@@ -37,4 +42,30 @@ export async function runAgent(
     }
   }
   return `（达到最大轮数 ${maxTurns}，强制停止）`
+}
+
+/**
+ * 闸门 + 执行：唯一的收口。三态各走一条路——
+ * deny → 不执行，把拒绝回灌给模型（响亮失败，让它换个安全做法，回扣实战03）；
+ * ask  → 问人：拒就回灌"用户拒绝"，允许（或本会话总是允许）才真执行；
+ * allow→ 直接执行。
+ */
+async function runWithGate(
+  tool: Tool,
+  args: any,
+  session: ReturnType<typeof newSession>,
+  gate: boolean,
+): Promise<string> {
+  if (!gate) return tool.execute(args)   // bypass mode：退回实战03 裸奔版
+
+  const decision = checkPermission(tool, args, session)
+  if (decision.behavior === 'deny') {
+    return `error: 权限被拒——${decision.reason}。请换一个更安全的做法。`
+  }
+  if (decision.behavior === 'ask') {
+    const approval = await askHuman(decision.reason)
+    if (approval === 'no') return `error: 用户拒绝了这次 ${tool.name} 调用。`
+    if (approval === 'always') grantAlways(session, tool.name, args)
+  }
+  return tool.execute(args)
 }
