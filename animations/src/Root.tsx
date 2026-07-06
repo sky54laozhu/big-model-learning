@@ -11,6 +11,7 @@ import { LearningRateCompare } from "./03-gradient/LearningRateCompare";
 import { TrainingLoop } from "./03-gradient/TrainingLoop";
 import { AttentionWeights } from "./04-attention/AttentionWeights";
 import { QKVFlow } from "./04-attention/QKVFlow";
+import { Trailer, TRAILER_DURATION } from "./trailer/Trailer";
 
 const WIDTH = 1920;
 const HEIGHT = 1080;
@@ -105,6 +106,15 @@ export const RemotionRoot: React.FC = () => {
         fps={FPS}
         width={WIDTH}
         height={HEIGHT}
+      />
+      {/* 预告片 (3:4 竖屏) */}
+      <Composition
+        id="Trailer"
+        component={Trailer}
+        durationInFrames={TRAILER_DURATION}
+        fps={FPS}
+        width={1080}
+        height={1920}
       />
     </>
   );

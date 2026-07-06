@@ -3,3 +3,7 @@
 .playwright-mcp/
 node_modules/
 *.png
+
+# Rendered video/animation build artifacts (regenerable)
+animations/out/
+videos/output/
