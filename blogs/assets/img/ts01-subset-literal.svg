@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 520" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <title id="t">从大集合里圈出子集：字面量 + 并集</title>
+  <desc id="d">字面量值升格成单元素集合，用竖线并集把它们并起来，从 string 大集合里圈出 Color 三元素子集；紫在 string 里但不在 Color。纯 JS 只能运行时用数组检查，TS 写进类型层编译期检查、查完擦掉。</desc>
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+
+  <text x="420" y="36" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">从大集合里圈出子集：字面量 + 并集</text>
+  <text x="420" y="60" text-anchor="middle" font-size="13.5" fill="#475569">字面量值升格成单元素集合，竖线 | 求并集，圈出任意有限子集</text>
+
+  <!-- 并集构造行 -->
+  <rect x="176" y="82" width="72" height="38" rx="8" fill="#dcfce7" stroke="#166534" stroke-width="2"/>
+  <text x="212" y="106" text-anchor="middle" font-size="13.5" fill="#166534">{'红'}</text>
+  <text x="264" y="107" text-anchor="middle" font-size="17" fill="#475569">∪</text>
+  <rect x="282" y="82" width="72" height="38" rx="8" fill="#dcfce7" stroke="#166534" stroke-width="2"/>
+  <text x="318" y="106" text-anchor="middle" font-size="13.5" fill="#166534">{'绿'}</text>
+  <text x="370" y="107" text-anchor="middle" font-size="17" fill="#475569">∪</text>
+  <rect x="388" y="82" width="72" height="38" rx="8" fill="#dcfce7" stroke="#166534" stroke-width="2"/>
+  <text x="424" y="106" text-anchor="middle" font-size="13.5" fill="#166534">{'蓝'}</text>
+  <text x="482" y="107" text-anchor="middle" font-size="17" fill="#475569">=</text>
+  <rect x="500" y="80" width="164" height="42" rx="8" fill="#166534"/>
+  <text x="582" y="106" text-anchor="middle" font-size="13.5" font-weight="700" fill="#ffffff">Color = '红'|'绿'|'蓝'</text>
+
+  <!-- 集合示意：string 全集里圈出 Color 子集 -->
+  <ellipse cx="300" cy="290" rx="250" ry="105" fill="#fffbeb" stroke="#b45309" stroke-width="2"/>
+  <text x="300" y="220" text-anchor="middle" font-size="13.5" font-weight="700" fill="#b45309">string = 所有合法字符串</text>
+  <ellipse cx="245" cy="300" rx="120" ry="62" fill="#dcfce7" stroke="#166534" stroke-width="2.5"/>
+  <text x="245" y="283" text-anchor="middle" font-size="14" font-weight="700" fill="#166534">Color</text>
+  <text x="245" y="312" text-anchor="middle" font-size="13" fill="#15803d">'红'  '绿'  '蓝'</text>
+  <circle cx="470" cy="295" r="6" fill="#b91c1c"/>
+  <text x="470" y="283" text-anchor="middle" font-size="12.5" fill="#b91c1c">'紫'</text>
+  <text x="470" y="325" text-anchor="middle" font-size="11.5" fill="#b91c1c">在 string，不在 Color</text>
+
+  <!-- 对比：JS 运行时 vs TS 编译期 -->
+  <text x="700" y="205" text-anchor="middle" font-size="13.5" font-weight="700" fill="#b45309">纯 JS · 运行时挡</text>
+  <rect x="588" y="218" width="224" height="72" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+  <text x="600" y="245" font-size="12.5" fill="#334155" font-family="ui-monospace, Menlo, monospace">['红','绿','蓝']</text>
+  <text x="600" y="266" font-size="12.5" fill="#334155" font-family="ui-monospace, Menlo, monospace">  .includes(x)</text>
+  <text x="600" y="284" font-size="11.5" fill="#64748b">→ 你自己在运行时查</text>
+
+  <text x="700" y="325" text-anchor="middle" font-size="13.5" font-weight="700" fill="#166534">TS · 编译期挡</text>
+  <rect x="588" y="338" width="224" height="72" rx="8" fill="#f0fdf4" stroke="#86efac" stroke-width="1.5"/>
+  <text x="600" y="365" font-size="12.5" fill="#166534" font-family="ui-monospace, Menlo, monospace">type Color =</text>
+  <text x="600" y="386" font-size="12.5" fill="#166534" font-family="ui-monospace, Menlo, monospace">  '红'|'绿'|'蓝'</text>
+  <text x="600" y="404" font-size="11.5" fill="#15803d">→ 编译器查，查完擦掉</text>
+
+  <text x="420" y="470" text-anchor="middle" font-size="13.5" fill="#475569">'红' 本身就是类型 = 只装一个值的集合；| = 求并集。</text>
+  <text x="420" y="494" text-anchor="middle" font-size="13.5" fill="#475569">有限子集能当类型，不是人为约定，是"类型=集合"顺下去的延伸。</text>
+</svg>

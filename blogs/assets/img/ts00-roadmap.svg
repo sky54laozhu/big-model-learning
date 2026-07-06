@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 624" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <title id="t">从 0 到精通 TypeScript 的六阶段路线图</title>
+  <desc id="d">暗线"类型=一组允许的值（集合）"贯穿始终，从地基往上爬六阶段：一 第一性原理、二 拼形状、三 收窄与控制流、四 泛型、五 类型体操、六 工程与生态，共 21 篇。</desc>
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+
+  <!-- 标题 -->
+  <text x="420" y="38" text-anchor="middle" font-size="21" font-weight="700" fill="#1e293b">从 0 到精通 TypeScript</text>
+  <text x="420" y="64" text-anchor="middle" font-size="14" fill="#475569">一条暗线贯穿六阶段：类型 = 一组允许的值（集合）</text>
+
+  <!-- 左侧生长箭头 -->
+  <line x1="118" y1="520" x2="118" y2="100" stroke="#64748b" stroke-width="2"/>
+  <polygon points="118,90 112,104 124,104" fill="#64748b"/>
+  <text x="100" y="300" text-anchor="middle" font-size="13" fill="#64748b" transform="rotate(-90 100 300)">六阶段层层往上盖</text>
+
+  <!-- 阶段六 · 封顶 -->
+  <rect x="150" y="86" width="560" height="66" rx="8" fill="#dcfce7" stroke="#166534" stroke-width="2.5"/>
+  <text x="430" y="113" text-anchor="middle" font-size="16.5" font-weight="700" fill="#166534">阶段六 · 工程与生态（精通封顶）</text>
+  <text x="430" y="136" text-anchor="middle" font-size="13" fill="#15803d">内置工具类型 · 模块 .d.ts · 声明合并 · 何时该收手</text>
+
+  <!-- 阶段五 · 类型体操 -->
+  <rect x="150" y="160" width="560" height="66" rx="8" fill="#fef3c7" stroke="#b45309" stroke-width="2"/>
+  <text x="430" y="187" text-anchor="middle" font-size="16.5" font-weight="700" fill="#b45309">阶段五 · 类型体操：类型即程序</text>
+  <text x="430" y="210" text-anchor="middle" font-size="13" fill="#92400e">keyof · 映射类型 · 条件类型 + infer · 模板字面量 · 递归</text>
+
+  <!-- 阶段四 · 泛型 -->
+  <rect x="150" y="234" width="560" height="66" rx="8" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+  <text x="430" y="261" text-anchor="middle" font-size="16.5" font-weight="700" fill="#1e40af">阶段四 · 泛型：复用的引擎</text>
+  <text x="430" y="284" text-anchor="middle" font-size="13" fill="#1d4ed8">类型参数 = 类型的变量 · 约束 extends · Promise / async*</text>
+
+  <!-- 阶段三 · 收窄（高光） -->
+  <rect x="150" y="308" width="560" height="66" rx="8" fill="#f0fdf4" stroke="#166534" stroke-width="2"/>
+  <text x="430" y="335" text-anchor="middle" font-size="16.5" font-weight="700" fill="#166534">阶段三 · 收窄与控制流　★ 全卷第一个高光</text>
+  <text x="430" y="358" text-anchor="middle" font-size="13" fill="#15803d">可辨识联合 + 穷尽检查 never（= 取子集 / 空集）</text>
+
+  <!-- 阶段二 · 拼形状 -->
+  <rect x="150" y="382" width="560" height="66" rx="8" fill="#fffbeb" stroke="#b45309" stroke-width="2"/>
+  <text x="430" y="409" text-anchor="middle" font-size="16.5" font-weight="700" fill="#b45309">阶段二 · 把类型拼成形状</text>
+  <text x="430" y="432" text-anchor="middle" font-size="13" fill="#92400e">对象 · 函数 · 元组 · 结构化类型系统（长得像就算）</text>
+
+  <!-- 阶段一 · 地基 -->
+  <rect x="150" y="456" width="560" height="66" rx="8" fill="#eff6ff" stroke="#1e40af" stroke-width="2.5"/>
+  <text x="430" y="483" text-anchor="middle" font-size="16.5" font-weight="700" fill="#1e40af">阶段一 · 类型的第一性原理（地基）</text>
+  <text x="430" y="506" text-anchor="middle" font-size="13" fill="#1d4ed8">类型 = 一组允许的值（集合）· 联合 = 并集，never = 空集</text>
+
+  <!-- 起点说明 -->
+  <text x="430" y="556" text-anchor="middle" font-size="13" fill="#475569">起点：你已经会写 JS —— 缺的不是语法，是把类型看成集合的心智模型</text>
+  <text x="430" y="586" text-anchor="middle" font-size="12.5" fill="#94a3b8">共 21 篇 · 顺序阅读 · 每篇配填空练习，跑通再进下一篇</text>
+</svg>

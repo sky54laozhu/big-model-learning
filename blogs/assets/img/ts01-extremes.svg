@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 440" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <title id="t">集合的两个极端：never（空集）与 unknown（全集）</title>
+  <desc id="d">从空到满的值域光谱：never 是空集一个值都装不进，中间是 boolean/Color/string 等普通集合，unknown 是全集装得进一切但用前必须收窄。any 是退出集合模型的作弊货，啥都装且不检查。</desc>
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+
+  <text x="420" y="36" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">集合的两个极端：never（空集）与 unknown（全集）</text>
+  <text x="420" y="61" text-anchor="middle" font-size="13.5" fill="#475569">从空到满——never 一个值都装不进，unknown 装得下一切</text>
+
+  <!-- 光谱箭头 -->
+  <line x1="70" y1="118" x2="770" y2="118" stroke="#cbd5e1" stroke-width="2"/>
+  <polygon points="780,118 766,112 766,124" fill="#cbd5e1"/>
+  <text x="90" y="110" text-anchor="middle" font-size="12" fill="#94a3b8">空</text>
+  <text x="760" y="110" text-anchor="middle" font-size="12" fill="#94a3b8">满</text>
+
+  <!-- never 空集 -->
+  <circle cx="150" cy="245" r="72" fill="#f8fafc" stroke="#94a3b8" stroke-width="2" stroke-dasharray="6 5"/>
+  <text x="150" y="212" text-anchor="middle" font-size="16" font-weight="700" fill="#475569">never</text>
+  <text x="150" y="252" text-anchor="middle" font-size="13" fill="#94a3b8">（空 · 无值）</text>
+  <text x="150" y="345" text-anchor="middle" font-size="12.5" font-weight="700" fill="#64748b">空集 · 一个值都装不进</text>
+
+  <!-- 普通集合 -->
+  <ellipse cx="420" cy="245" rx="130" ry="80" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+  <text x="420" y="218" text-anchor="middle" font-size="14.5" font-weight="700" fill="#1e40af">普通集合</text>
+  <text x="420" y="245" text-anchor="middle" font-size="13" fill="#2563eb">boolean · Color · string</text>
+  <text x="420" y="268" text-anchor="middle" font-size="12" fill="#2563eb">有限或无限，边界明确</text>
+  <text x="420" y="345" text-anchor="middle" font-size="12.5" font-weight="700" fill="#1d4ed8">日常用的那些类型</text>
+
+  <!-- unknown 全集 -->
+  <ellipse cx="695" cy="245" rx="105" ry="92" fill="#f0fdf4" stroke="#166534" stroke-width="2.5"/>
+  <text x="695" y="210" text-anchor="middle" font-size="16" font-weight="700" fill="#166534">unknown</text>
+  <text x="695" y="240" text-anchor="middle" font-size="12.5" fill="#15803d">装得进一切</text>
+  <text x="695" y="262" text-anchor="middle" font-size="12" fill="#15803d">用前必须收窄</text>
+  <text x="695" y="352" text-anchor="middle" font-size="12.5" font-weight="700" fill="#15803d">全集 · 比 any 安全</text>
+
+  <!-- any 作弊货标注 -->
+  <rect x="250" y="378" width="340" height="30" rx="8" fill="#fef2f2" stroke="#b91c1c" stroke-width="1.5"/>
+  <text x="420" y="398" text-anchor="middle" font-size="12.5" fill="#b91c1c">any = 作弊货：啥都装 + 不检查 → 退出集合模型</text>
+</svg>
