@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 560" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <title id="t">骨架定位图：本章只新增 sse.ts 与 provider 的流式解析、loop 的 onToken 回调</title>
+  <desc id="d">调用方 index.ts、runAgent 循环骨架（chat/模型点名工具/toolCalls 为空则 return）、权限闸门、五个工具与消息历史结构全部沿用实战02-04（灰，不改）。本章唯一新增/改动（琥珀高亮）：provider 层内部新增 src/sse.ts 的 SSE 行读取生成器（两端共用）；anthropic.ts/openai.ts 的 chat() 从整段等完改成边读 SSE 边喂 onToken；loop.ts 把 onToken 接到 process.stdout.write，文本边到边刷屏；工具调用仍收完整参数字符串、流结束后一次性 parse，走权限闸门顺序执行，这条路径不变。</desc>
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+
+  <text x="420" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">骨架定位：给 chat() 接上 SSE，让文本边到边喂出来</text>
+  <text x="420" y="58" text-anchor="middle" font-size="13" fill="#475569">loop 骨架 / 权限闸门 / 五个工具全沿用实战02-04（灰）；本章只新增 sse.ts 这一条管子</text>
+
+  <!-- 调用方 -->
+  <rect x="40" y="80" width="200" height="38" rx="8" fill="#f1f5f9" stroke="#94a3b8" stroke-width="2"/>
+  <text x="140" y="104" text-anchor="middle" font-size="12.5" font-weight="700" fill="#475569">调用方 index.ts</text>
+  <line x1="140" y1="118" x2="140" y2="148" stroke="#94a3b8" stroke-width="2"/>
+  <polygon points="140,152 134,140 146,140" fill="#94a3b8"/>
+
+  <!-- runAgent loop 灰=已有，row1/row3 局部高亮 -->
+  <rect x="40" y="152" width="392" height="196" rx="10" fill="#f8fafc" stroke="#94a3b8" stroke-width="2.4" stroke-dasharray="6 4"/>
+  <text x="56" y="174" font-size="12.5" font-weight="700" fill="#475569">agent loop · runAgent()　实战02-04 已有</text>
+
+  <rect x="58" y="184" width="356" height="30" rx="6" fill="#fffbeb" stroke="#b45309" stroke-width="1.8"/>
+  <text x="236" y="204" text-anchor="middle" font-size="11" fill="#92400e">① chat(messages, tools, onToken) ← 本章加第 3 参</text>
+
+  <rect x="58" y="220" width="356" height="30" rx="6" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.4"/>
+  <text x="236" y="240" text-anchor="middle" font-size="11.5" fill="#475569">② 模型点名工具 → 拿到一次 call（不变）</text>
+
+  <rect x="58" y="256" width="356" height="30" rx="6" fill="#fffbeb" stroke="#b45309" stroke-width="1.8"/>
+  <text x="236" y="276" text-anchor="middle" font-size="11" fill="#92400e">process.stdout.write(chunk) ← loop.ts 新增</text>
+
+  <rect x="58" y="292" width="356" height="30" rx="6" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.4"/>
+  <text x="236" y="312" text-anchor="middle" font-size="11.5" fill="#475569">③ toolCalls 为空 → return text（不变）</text>
+
+  <!-- provider 层：本章新增/改动，高亮 -->
+  <rect x="470" y="182" width="330" height="110" rx="10" fill="#fffbeb" stroke="#1e293b" stroke-width="2.6"/>
+  <text x="635" y="204" text-anchor="middle" font-size="12.5" font-weight="700" fill="#1e293b">provider 层 · chat()（本章新增流式解析）</text>
+  <text x="635" y="224" text-anchor="middle" font-size="11" fill="#92400e">text_delta → 边到边喂 onToken(chunk)</text>
+  <text x="635" y="242" text-anchor="middle" font-size="11" fill="#64748b">input_json_delta → 仍只攒字符串（不变，同实战04）</text>
+  <rect x="486" y="252" width="298" height="28" rx="6" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
+  <text x="635" y="270" text-anchor="middle" font-size="10.5" fill="#4338ca">src/sse.ts（新增，两端共用的行读取生成器）</text>
+
+  <line x1="414" y1="199" x2="466" y2="203" stroke="#94a3b8" stroke-width="2"/>
+  <polygon points="470,204 457,199 458,210" fill="#94a3b8"/>
+  <text x="443" y="192" text-anchor="middle" font-size="10" fill="#64748b">chat</text>
+
+  <!-- onToken 回调：provider → loop，边到边喂 -->
+  <line x1="466" y1="271" x2="418" y2="271" stroke="#b45309" stroke-width="2" stroke-dasharray="3 3"/>
+  <polygon points="414,271 424,266 424,276" fill="#b45309"/>
+  <text x="443" y="262" text-anchor="middle" font-size="9.5" font-weight="700" fill="#92400e">onToken(chunk)</text>
+
+  <!-- provider → 双端 API -->
+  <line x1="635" y1="292" x2="635" y2="300" stroke="#94a3b8" stroke-width="2"/>
+  <polygon points="635,304 629,294 641,294" fill="#94a3b8"/>
+  <rect x="470" y="304" width="330" height="46" rx="8" fill="#f8fafc" stroke="#94a3b8" stroke-width="2" stroke-dasharray="6 4"/>
+  <text x="635" y="326" text-anchor="middle" font-size="10.5" font-weight="700" fill="#475569">Anthropic /v1/messages</text>
+  <text x="635" y="342" text-anchor="middle" font-size="10.5" font-weight="700" fill="#475569">OpenAI 兼容 /chat/completions（均 stream:true）</text>
+
+  <!-- execute 路径：不变，灰 -->
+  <line x1="236" y1="322" x2="236" y2="396" stroke="#94a3b8" stroke-width="2.2"/>
+  <polygon points="236,400 230,388 242,388" fill="#94a3b8"/>
+  <text x="330" y="366" text-anchor="middle" font-size="10.5" fill="#64748b">要执行这次 call（路径不变）</text>
+
+  <line x1="236" y1="374" x2="466" y2="374" stroke="#94a3b8" stroke-width="2.2" stroke-dasharray="4 3"/>
+  <polygon points="470,374 457,369 458,379" fill="#94a3b8"/>
+  <rect x="470" y="370" width="330" height="70" rx="10" fill="#f8fafc" stroke="#94a3b8" stroke-width="2" stroke-dasharray="6 4"/>
+  <text x="635" y="392" text-anchor="middle" font-size="12" font-weight="700" fill="#475569">权限闸门 permission.ts　实战04 已有</text>
+  <text x="635" y="412" text-anchor="middle" font-size="11" fill="#64748b">allow / ask / deny 三态——本章不改</text>
+
+  <line x1="236" y1="404" x2="236" y2="430" stroke="#94a3b8" stroke-width="2"/>
+  <polygon points="236,434 230,422 242,422" fill="#94a3b8"/>
+
+  <!-- allTools 注册表 灰=不变 -->
+  <rect x="40" y="440" width="760" height="76" rx="10" fill="#f8fafc" stroke="#94a3b8" stroke-width="2" stroke-dasharray="6 4"/>
+  <text x="56" y="462" font-size="12.5" font-weight="700" fill="#475569">allTools[] · 五个工具 + 消息历史结构　实战02-04 已有（本章一个字不改）</text>
+  <text x="420" y="486" text-anchor="middle" font-size="11.5" fill="#64748b">read_file · write_file · edit_file · list_dir · bash</text>
+  <text x="420" y="506" text-anchor="middle" font-size="10.5" fill="#94a3b8">收完整参数字符串 → parse 一次 → 顺序执行——跟实战04 完全一样</text>
+
+  <text x="420" y="546" text-anchor="middle" font-size="10.5" fill="#92400e">灰 = 实战02-04 已有，未改动　·　琥珀 = 本章新增/改动（sse.ts + chat() 流式解析 + loop.ts 的 onToken 回调）</text>
+</svg>

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 620" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <title id="t">协议状态图：两家 SSE 事件流，共享分行层，payload 形状不同</title>
+  <desc id="d">顶部共享层 src/sse.ts 的 readSSE() 只管按行拆 data: payload，两家协议都过这一层。左列 Anthropic：content_block_start 按 index 开块，content_block_delta 的 text_delta 追加到 text 块并触发 onToken，input_json_delta 追加到 tool_use 块的 inputJson 字符串（只攒不 parse），message_delta 给出最终 stop_reason，流结束后才把 inputJson 逐个 parse 一次。右列 OpenAI 兼容：每行是完整 chunk，choices[0].delta.content 有值就追加并触发 onToken，choices[0].delta.tool_calls[].function 按 index 归位累加 name 和 arguments 字符串，finish_reason 非空更新 stopReason，遇到字面量 [DONE] 终止，流结束后才把 argsJson 逐个 parse 一次。底部结论：两家协议形状不同，但处理策略相同——文本碎片喂 onToken，工具参数只攒字符串，不在循环中 JSON.parse。</desc>
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+
+  <text x="440" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">SSE 协议：两家方言不同，处理策略同一句话</text>
+  <text x="440" y="58" text-anchor="middle" font-size="13" fill="#475569">分行是共享的（src/sse.ts）；payload 里装什么，两家各干各的</text>
+
+  <!-- 共享层 -->
+  <rect x="60" y="78" width="760" height="48" rx="10" fill="#eef2ff" stroke="#6366f1" stroke-width="2"/>
+  <text x="440" y="98" text-anchor="middle" font-size="12.5" font-weight="700" fill="#4338ca">共享：src/sse.ts readSSE()</text>
+  <text x="440" y="116" text-anchor="middle" font-size="10.5" fill="#4338ca">按 \n 拆行、吐 data: 之后的 payload——不管里面 json 长什么样，两家 provider 都过这一层</text>
+
+  <line x1="250" y1="126" x2="250" y2="146" stroke="#6366f1" stroke-width="2"/>
+  <polygon points="250,150 244,138 256,138" fill="#6366f1"/>
+  <line x1="630" y1="126" x2="630" y2="146" stroke="#6366f1" stroke-width="2"/>
+  <polygon points="630,150 624,138 636,138" fill="#6366f1"/>
+
+  <!-- 列头 -->
+  <rect x="60" y="150" width="380" height="34" rx="8" fill="#fffbeb" stroke="#b45309" stroke-width="1.8"/>
+  <text x="250" y="172" text-anchor="middle" font-size="12.5" font-weight="700" fill="#92400e">Anthropic：按 index 归位内容块</text>
+  <rect x="440" y="150" width="380" height="34" rx="8" fill="#eff6ff" stroke="#1d4ed8" stroke-width="1.8"/>
+  <text x="630" y="172" text-anchor="middle" font-size="12.5" font-weight="700" fill="#1e40af">OpenAI 兼容（GLM）：每行一个完整 chunk</text>
+
+  <!-- 左列：Anthropic -->
+  <rect x="60" y="200" width="380" height="34" rx="6" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.4"/>
+  <text x="250" y="221" text-anchor="middle" font-size="10.5" fill="#475569">content_block_start {index:0, type:'text'}</text>
+  <line x1="250" y1="234" x2="250" y2="242" stroke="#94a3b8" stroke-width="1.6"/><polygon points="250,246 245,236 255,236" fill="#94a3b8"/>
+
+  <rect x="60" y="248" width="380" height="42" rx="6" fill="#fffbeb" stroke="#b45309" stroke-width="1.8"/>
+  <text x="250" y="266" text-anchor="middle" font-size="10" font-weight="700" fill="#92400e">content_block_delta：text_delta</text>
+  <text x="250" y="282" text-anchor="middle" font-size="10" fill="#92400e">text += delta.text，触发 onToken(delta.text)</text>
+  <line x1="250" y1="290" x2="250" y2="298" stroke="#94a3b8" stroke-width="1.6"/><polygon points="250,302 245,292 255,292" fill="#94a3b8"/>
+
+  <rect x="60" y="304" width="380" height="34" rx="6" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.4"/>
+  <text x="250" y="325" text-anchor="middle" font-size="10.5" fill="#475569">content_block_start {index:1, type:'tool_use'}</text>
+  <line x1="250" y1="338" x2="250" y2="346" stroke="#94a3b8" stroke-width="1.6"/><polygon points="250,350 245,340 255,340" fill="#94a3b8"/>
+
+  <rect x="60" y="352" width="380" height="42" rx="6" fill="#f8fafc" stroke="#64748b" stroke-width="1.8"/>
+  <text x="250" y="370" text-anchor="middle" font-size="10" font-weight="700" fill="#334155">content_block_delta：input_json_delta</text>
+  <text x="250" y="386" text-anchor="middle" font-size="10" fill="#334155">inputJson += partial_json（只攒字符串，不 parse）</text>
+  <line x1="250" y1="394" x2="250" y2="402" stroke="#94a3b8" stroke-width="1.6"/><polygon points="250,406 245,396 255,396" fill="#94a3b8"/>
+
+  <rect x="60" y="408" width="380" height="34" rx="6" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.4"/>
+  <text x="250" y="429" text-anchor="middle" font-size="10.5" fill="#475569">message_delta → 拿到最终 stop_reason</text>
+  <line x1="250" y1="442" x2="250" y2="450" stroke="#94a3b8" stroke-width="1.6"/><polygon points="250,454 245,444 255,444" fill="#94a3b8"/>
+
+  <rect x="60" y="456" width="380" height="40" rx="6" fill="#f0fdf4" stroke="#166534" stroke-width="2"/>
+  <text x="250" y="474" text-anchor="middle" font-size="10.5" font-weight="700" fill="#166534">流结束 → 逐个 safeParse(inputJson)</text>
+  <text x="250" y="490" text-anchor="middle" font-size="9.5" fill="#166534">这才拿到完整 ToolCall[]，只解析这一次</text>
+
+  <!-- 右列：OpenAI -->
+  <rect x="440" y="200" width="380" height="42" rx="6" fill="#fffbeb" stroke="#b45309" stroke-width="1.8"/>
+  <text x="630" y="218" text-anchor="middle" font-size="10" font-weight="700" fill="#92400e">choices[0].delta.content 有值</text>
+  <text x="630" y="234" text-anchor="middle" font-size="10" fill="#92400e">text += content，触发 onToken(content)</text>
+  <line x1="630" y1="242" x2="630" y2="250" stroke="#94a3b8" stroke-width="1.6"/><polygon points="630,254 625,244 635,244" fill="#94a3b8"/>
+
+  <rect x="440" y="256" width="380" height="50" rx="6" fill="#f8fafc" stroke="#64748b" stroke-width="1.8"/>
+  <text x="630" y="274" text-anchor="middle" font-size="10" font-weight="700" fill="#334155">choices[0].delta.tool_calls[].function</text>
+  <text x="630" y="290" text-anchor="middle" font-size="10" fill="#334155">按 index 归位 → name/arguments 累加字符串</text>
+  <text x="630" y="302" text-anchor="middle" font-size="9" fill="#334155">（只攒字符串，不 parse）</text>
+  <line x1="630" y1="306" x2="630" y2="314" stroke="#94a3b8" stroke-width="1.6"/><polygon points="630,318 625,308 635,308" fill="#94a3b8"/>
+
+  <rect x="440" y="320" width="380" height="34" rx="6" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.4"/>
+  <text x="630" y="341" text-anchor="middle" font-size="10.5" fill="#475569">finish_reason 非空 → 更新 stopReason</text>
+  <line x1="630" y1="354" x2="630" y2="362" stroke="#94a3b8" stroke-width="1.6"/><polygon points="630,366 625,356 635,356" fill="#94a3b8"/>
+
+  <rect x="440" y="368" width="380" height="34" rx="6" fill="#fef2f2" stroke="#b91c1c" stroke-width="1.6"/>
+  <text x="630" y="389" text-anchor="middle" font-size="10.5" font-weight="700" fill="#b91c1c">遇到字面量 data: [DONE] → 终止循环</text>
+  <line x1="630" y1="402" x2="630" y2="410" stroke="#94a3b8" stroke-width="1.6"/><polygon points="630,414 625,404 635,404" fill="#94a3b8"/>
+
+  <rect x="440" y="416" width="380" height="40" rx="6" fill="#f0fdf4" stroke="#166534" stroke-width="2"/>
+  <text x="630" y="434" text-anchor="middle" font-size="10.5" font-weight="700" fill="#166534">流结束 → 逐个 safeParse(argsJson)</text>
+  <text x="630" y="450" text-anchor="middle" font-size="9.5" fill="#166534">这才拿到完整 ToolCall[]，只解析这一次</text>
+
+  <!-- 收口 -->
+  <rect x="40" y="510" width="800" height="96" rx="10" fill="#fffbeb" stroke="#b45309" stroke-width="2"/>
+  <text x="440" y="534" text-anchor="middle" font-size="13.5" font-weight="700" fill="#92400e">两家方言不同，处理策略是同一句话</text>
+  <text x="440" y="558" text-anchor="middle" font-size="11" fill="#92400e">text_delta / delta.content：每片都喂 onToken——这是"边到边"的唯一入口</text>
+  <rect x="150" y="568" width="580" height="26" rx="7" fill="#fff7ed" stroke="#b45309" stroke-width="1.4"/>
+  <text x="440" y="586" text-anchor="middle" font-size="10.5" font-weight="700" fill="#92400e">input_json_delta / tool_calls.arguments：只做字符串拼接，不在循环中 JSON.parse</text>
+</svg>

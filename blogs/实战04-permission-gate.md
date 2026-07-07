@@ -320,4 +320,4 @@ if (toolPermissionResult?.behavior === 'deny') return toolPermissionResult
 - **bash 黑名单只拦一眼致命，判不出的一律 ask**（折叠点③）：**fail toward asking**。demo 里模型用 `find … -delete`（一个完全不同的命令）绕过了 `rm -rf` 黑名单、落到 ask——**黑名单拦钝器，人接住语义等价的绕道**。这把锁永远关不严：真源码正则校验已 `_DEPRECATED`、改用 AI 分类器，只能层层设防（回扣 [Blog 30](30-security-guardrails.md) 打地鼠）。
 - 🔬 源码对照：三态 `PermissionBehavior`（`types/permissions.ts`）；精度顺序 `checkRuleBasedPermissions`（`permissions.ts:1071`）；闸门由 loop 调 `hasPermissionsToUseTool`（`:473`）；`ask` 带 `suggestions`= 总是允许；五种模式（我们的 `gate=false`=bypass）；`bashCommandIsSafe_DEPRECATED`（`bashSecurity.ts:2257`）已弃用、`CC-643` 把超 50 段的复合命令直接兜到 `ask`——都是「正则靠不住、只能层层设防」的铁证。
 
-下一篇——**实战05《把 loop 重构成流式：让字一个个蹦出来》**：到目前为止，模型说完整段我们才看得到——一次 `chat()` 憋到底。这一篇要动主干：把实战02 定下的**非流式 loop 重构成流式**，让 token 一个个蹦出来、工具调用边收边解析（这是卷首语预告过的「重塑主干、不是加零件」那一刀）。
+下一篇——**实战05《文本流式渲染：SSE 解析与 onToken 回调》**：到目前为止，模型说完整段我们才看得到——一次 `chat()` 憋到底。这一篇先解决**看得见**的那一半：接上 SSE，让文本一个字一个字蹦出来；工具调用先按兵不动，还是跟实战02-04 一样收完整参数、一次性解析。真正**动主干**的那一刀——工具参数边流边解析、把实战02 定下的非流式 loop 重构成流式（卷首语预告过的「重塑主干、不是加零件」）——挪到**实战06**，两块难点拆开、各自能独立验收。
