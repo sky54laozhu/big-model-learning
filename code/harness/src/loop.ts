@@ -19,16 +19,21 @@ export async function runAgent(
   const toolByName = new Map(tools.map(t => [t.name, t]))
   const session = newSession()   // 会话级"总是允许"规则，只活在这一次运行里
 
+  process.stdout.write('\n[assistant] ') // 实战05：字从这儿开始一个个蹦出来，不再等模型说完整段才见字
+
   for (let turn = 1; turn <= maxTurns; turn++) {
-    const reply = await provider.chat(messages, tools)
+    const reply = await provider.chat(messages, tools, chunk => process.stdout.write(chunk))
 
     // 模型这轮没请求工具 → 收工（谁决定停 = 模型不再吐 toolCall，把开关交给模型）
     if (reply.toolCalls.length === 0) {
+      process.stdout.write('\n')
       return reply.text
     }
 
     // 模型要工具：先把它这轮的请求作为 assistant 轮记进历史（缝 id 用，下一轮结果要对回来）
     messages.push({ role: 'assistant', content: reply.text, toolCalls: reply.toolCalls })
+
+    console.log() // 跟刚流出来的文本隔开一行，工具日志另起一段
 
     // 逐个执行，结果作为 tool 消息塞回 messages，供下一轮模型看到
     for (const call of reply.toolCalls) {
@@ -41,6 +46,7 @@ export async function runAgent(
       messages.push({ role: 'tool', toolCallId: call.id, content: result })
     }
   }
+  process.stdout.write('\n')
   return `（达到最大轮数 ${maxTurns}，强制停止）`
 }
 

@@ -42,6 +42,10 @@ export type ChatReply = {
 /** 模型层的契约：谁想当一个 provider，就得实现它 */
 export interface ModelProvider {
   readonly name: string
-  /** tools 可选：不传就退化成 实战01 的纯聊天（回扣 Blog18：工具按需 opt-in） */
-  chat(messages: Message[], tools?: Tool[]): Promise<ChatReply>
+  /**
+   * tools 可选：不传就退化成 实战01 的纯聊天（回扣 Blog18：工具按需 opt-in）。
+   * onToken 也可选：不传就是 实战04 的老样子（憋到底再拿完整 text）；
+   * 传了，文本每到一个片段就喂一次——工具调用仍然是收完整参数字符串再解析一次，不逐 token 解析（这是实战06 的活）。
+   */
+  chat(messages: Message[], tools?: Tool[], onToken?: (delta: string) => void): Promise<ChatReply>
 }

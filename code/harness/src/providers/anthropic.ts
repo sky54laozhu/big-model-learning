@@ -1,4 +1,10 @@
 import type { Message, ChatReply, ModelProvider, Tool, ToolCall } from '../types'
+import { readSSE } from '../sse'
+
+/** 流式响应里正在拼的一块内容——text 块攒 text，tool_use 块的参数先攒成字符串，最后一次性 parse */
+type ContentBlock =
+  | { type: 'text'; text: string }
+  | { type: 'tool_use'; id: string; name: string; inputJson: string }
 
 /** Anthropic 协议 provider（直连 api.anthropic.com，或经聚合器如 zenmux） */
 export class AnthropicProvider implements ModelProvider {
@@ -10,7 +16,7 @@ export class AnthropicProvider implements ModelProvider {
     private model: string,
   ) {}
 
-  async chat(messages: Message[], tools?: Tool[]): Promise<ChatReply> {
+  async chat(messages: Message[], tools?: Tool[], onToken?: (delta: string) => void): Promise<ChatReply> {
     const headers: Record<string, string> = {
       'content-type': 'application/json',
       'anthropic-version': '2023-06-01',
@@ -22,6 +28,7 @@ export class AnthropicProvider implements ModelProvider {
     const body: Record<string, unknown> = {
       model: this.model,
       max_tokens: 1024,
+      stream: true,
       // 入口翻译①：中立 messages（含工具请求/结果）→ Anthropic 的 content 块方言
       messages: this.toAnthropicMessages(messages),
     }
@@ -41,22 +48,43 @@ export class AnthropicProvider implements ModelProvider {
     })
     if (!res.ok) throw new Error(`anthropic ${res.status}: ${await res.text()}`)
 
-    // 出口翻译：Anthropic 回的是 content[] 数组，里面混着 text 块和 tool_use 块
-    // res.json() 在 strict 下是 unknown——给它一个最小形状，别信运行时数据（回扣 Blog 18）
-    const data = (await res.json()) as {
-      content?: Array<{ type: string; text?: string; id?: string; name?: string; input?: unknown }>
-      stop_reason?: string
+    // 出口翻译：SSE 事件流里按 index 拼出 content 块——text 块边到边喂 onToken，
+    // tool_use 块的参数只攒字符串，不逐片 parse（跟真源码 claude.ts 的理由一样：避免 O(n²) 重复解析）
+    const blocks: ContentBlock[] = []
+    let stopReason = 'end_turn'
+    for await (const payload of readSSE(res)) {
+      const event = JSON.parse(payload) as {
+        type: string
+        index?: number
+        content_block?: { type: string; id?: string; name?: string }
+        delta?: { type?: string; text?: string; partial_json?: string; stop_reason?: string }
+      }
+      if (event.type === 'content_block_start' && event.index !== undefined && event.content_block) {
+        blocks[event.index] =
+          event.content_block.type === 'tool_use'
+            ? { type: 'tool_use', id: event.content_block.id ?? '', name: event.content_block.name ?? '', inputJson: '' }
+            : { type: 'text', text: '' }
+      } else if (event.type === 'content_block_delta' && event.index !== undefined && event.delta) {
+        const block = blocks[event.index]
+        if (event.delta.type === 'text_delta' && block?.type === 'text') {
+          block.text += event.delta.text ?? ''
+          onToken?.(event.delta.text ?? '')
+        } else if (event.delta.type === 'input_json_delta' && block?.type === 'tool_use') {
+          block.inputJson += event.delta.partial_json ?? ''
+        }
+      } else if (event.type === 'message_delta' && event.delta?.stop_reason) {
+        stopReason = event.delta.stop_reason
+      }
     }
-    const blocks = data.content ?? []
+
     const text = blocks
-      .filter(b => b.type === 'text')
-      .map(b => b.text ?? '')
+      .filter((b): b is Extract<ContentBlock, { type: 'text' }> => b?.type === 'text')
+      .map(b => b.text)
       .join('')
-    // 从 tool_use 块抽出归一化的 toolCalls（input 就是解析好的参数对象）
     const toolCalls: ToolCall[] = blocks
-      .filter(b => b.type === 'tool_use')
-      .map(b => ({ id: b.id ?? '', name: b.name ?? '', args: b.input ?? {} }))
-    return { text, stopReason: data.stop_reason ?? 'end_turn', toolCalls }
+      .filter((b): b is Extract<ContentBlock, { type: 'tool_use' }> => b?.type === 'tool_use')
+      .map(b => ({ id: b.id, name: b.name, args: safeParse(b.inputJson) }))
+    return { text, stopReason, toolCalls }
   }
 
   /** 入口翻译：中立 Message[] → Anthropic messages[]（tool_use / tool_result 都是 content 块） */
@@ -88,5 +116,15 @@ export class AnthropicProvider implements ModelProvider {
       }
     }
     return out
+  }
+}
+
+/** tool_use 块的参数是攒出来的 JSON 字符串，攒完才 parse 一次；万一模型吐了坏 JSON，退回空对象别崩循环 */
+function safeParse(s: string): any {
+  if (!s) return {}
+  try {
+    return JSON.parse(s)
+  } catch {
+    return {}
   }
 }
