@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 560" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <title id="t">编译期擦除：类型只活在这一扇窗口里</title>
+  <desc id="d">注解、推断、宽化的较量全部发生在编译期这一侧窗口；编译完成后类型信息 100% 擦除。any 相当于在编译期这一侧就把检查关掉，运行时没有第二道防线接住错误：let x: any = "hello" 后 x.foo.bar.baz() 编译期不报错，运行时却因为 x.foo 是 undefined 而崩溃；相反 unknown 逼你先收窄，收窄本身就是一次运行时检查，之后调用是安全的。</desc>
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+
+  <text x="420" y="34" text-anchor="middle" font-size="19" font-weight="700" fill="#1e293b">编译期擦除：类型只活在这一扇窗口里</text>
+  <text x="420" y="57" text-anchor="middle" font-size="13" fill="#475569">注解 / 推断 / 宽化的较量全在编译期；编译完成后，类型信息 100% 消失</text>
+
+  <line x1="420" y1="88" x2="420" y2="420" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="6 5"/>
+  <text x="210" y="103" text-anchor="middle" font-size="13" font-weight="700" fill="#1e40af">编译期（类型系统活着的地方）</text>
+  <text x="630" y="103" text-anchor="middle" font-size="13" font-weight="700" fill="#334155">运行时（类型信息已消失）</text>
+
+  <!-- Row A: 注解被擦除 -->
+  <rect x="60" y="122" width="300" height="44" rx="8" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="210" y="149" text-anchor="middle" font-size="12.5" font-family="ui-monospace, Menlo, monospace" fill="#1e40af">let x: string = "hello"</text>
+
+  <line x1="363" y1="144" x2="472" y2="144" stroke="#94a3b8" stroke-width="2"/>
+  <polygon points="480,144 468,138 468,150" fill="#94a3b8"/>
+  <text x="420" y="134" text-anchor="middle" font-size="11" fill="#64748b">编译</text>
+
+  <rect x="480" y="122" width="300" height="44" rx="8" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.5"/>
+  <text x="630" y="149" text-anchor="middle" font-size="12.5" font-family="ui-monospace, Menlo, monospace" fill="#334155">let x = "hello";</text>
+
+  <text x="420" y="188" text-anchor="middle" font-size="12" fill="#64748b">注解 string 编译期查完，编译产物里一个字不剩</text>
+
+  <!-- Row B: any 放行，运行时崩溃 -->
+  <text x="210" y="218" text-anchor="middle" font-size="11" font-weight="700" fill="#2563eb">编译期：不报错</text>
+  <rect x="60" y="224" width="300" height="52" rx="8" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="210" y="246" text-anchor="middle" font-size="12" font-family="ui-monospace, Menlo, monospace" fill="#1e40af">let x: any = "hello"</text>
+  <text x="210" y="264" text-anchor="middle" font-size="12" font-family="ui-monospace, Menlo, monospace" fill="#1e40af">x.foo.bar.baz()</text>
+
+  <line x1="363" y1="250" x2="472" y2="250" stroke="#94a3b8" stroke-width="2"/>
+  <polygon points="480,250 468,244 468,256" fill="#94a3b8"/>
+  <text x="420" y="240" text-anchor="middle" font-size="11" fill="#64748b">运行</text>
+
+  <text x="630" y="218" text-anchor="middle" font-size="11" font-weight="700" fill="#b91c1c">运行时：崩溃</text>
+  <rect x="480" y="224" width="300" height="52" rx="8" fill="#fee2e2" stroke="#b91c1c" stroke-width="2"/>
+  <text x="630" y="246" text-anchor="middle" font-size="12.5" font-weight="700" font-family="ui-monospace, Menlo, monospace" fill="#b91c1c">❌ TypeError</text>
+  <text x="630" y="264" text-anchor="middle" font-size="11.5" fill="#b91c1c">读取 undefined.bar 时崩溃</text>
+
+  <text x="420" y="298" text-anchor="middle" font-size="12" fill="#64748b">any 放行了这两行，但运行时 x.foo 是 undefined，访问 .bar 直接报错</text>
+
+  <!-- Row C: unknown 逼你先收窄，运行时安全 -->
+  <text x="210" y="328" text-anchor="middle" font-size="11" font-weight="700" fill="#2563eb">编译期：逼你先收窄</text>
+  <rect x="60" y="334" width="300" height="52" rx="8" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="210" y="356" text-anchor="middle" font-size="11.5" font-family="ui-monospace, Menlo, monospace" fill="#1e40af">let y: unknown = "hello"</text>
+  <text x="210" y="374" text-anchor="middle" font-size="11.5" font-family="ui-monospace, Menlo, monospace" fill="#1e40af">if (typeof y === "string") …</text>
+
+  <line x1="363" y1="360" x2="472" y2="360" stroke="#94a3b8" stroke-width="2"/>
+  <polygon points="480,360 468,354 468,366" fill="#94a3b8"/>
+  <text x="420" y="350" text-anchor="middle" font-size="11" fill="#64748b">运行</text>
+
+  <text x="630" y="328" text-anchor="middle" font-size="11" font-weight="700" fill="#166534">运行时：安全</text>
+  <rect x="480" y="334" width="300" height="52" rx="8" fill="#dcfce7" stroke="#166534" stroke-width="2"/>
+  <text x="630" y="356" text-anchor="middle" font-size="12.5" font-weight="700" fill="#166534">✅ 安全执行</text>
+  <text x="630" y="374" text-anchor="middle" font-size="11.5" fill="#15803d">正常执行，无崩溃</text>
+
+  <text x="420" y="408" text-anchor="middle" font-size="12" fill="#64748b">unknown 逼你先收窄——收窄本身就是一次运行时检查，调用时已经验证过类型</text>
+
+  <!-- Summary -->
+  <rect x="120" y="440" width="600" height="66" rx="10" fill="#fef3c7" stroke="#b45309" stroke-width="1.5"/>
+  <text x="420" y="466" text-anchor="middle" font-size="13.5" font-weight="700" fill="#92400e">类型只活在编译期这一扇窗口里</text>
+  <text x="420" y="488" text-anchor="middle" font-size="12" fill="#92400e">any 关掉的不是运行时的某道防线，是唯一存在过的那道</text>
+  <text x="420" y="504" text-anchor="middle" font-size="12" fill="#92400e">——运行时没有第二道防线接住错误</text>
+</svg>

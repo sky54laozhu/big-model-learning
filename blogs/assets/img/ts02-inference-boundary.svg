@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 480" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <title id="t">推断的边界：看得到的路径 vs 看不到的未来调用者</title>
+  <desc id="d">左边 let arr = [] 沿着 arr.push(1)、arr.push("hello") 这条编译器亲眼看得到终点的路径边走边攒类型，最终得到 (string | number)[] 且不报错；右边函数参数 name 的值来自未来某个不确定的调用者，编译器没有路径可看，只能要求你现在就写注解当契约，否则滑向 any 并报出 TS7006 implicit any 错误。</desc>
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+
+  <text x="420" y="34" text-anchor="middle" font-size="19" font-weight="700" fill="#1e293b">推断的边界：看得到的路径 vs 看不到的未来调用者</text>
+  <text x="420" y="57" text-anchor="middle" font-size="13" fill="#475569">编译器只能沿一条已知路径边走边攒类型；面对不确定的未来，它要你现在就写好注解</text>
+
+  <!-- left boundary: 看得到的路径 -->
+  <rect x="45" y="80" width="350" height="315" rx="14" fill="#f0fdf4" stroke="#166534" stroke-width="1.5" stroke-dasharray="6 4"/>
+  <text x="220" y="103" text-anchor="middle" font-size="13.5" font-weight="700" fill="#166534">编译器看得到的路径</text>
+
+  <rect x="120" y="118" width="200" height="36" rx="8" fill="#ffffff" stroke="#166534" stroke-width="1.5"/>
+  <text x="220" y="141" text-anchor="middle" font-size="12.5" font-family="ui-monospace, Menlo, monospace" fill="#166534">let arr = []</text>
+
+  <line x1="220" y1="154" x2="220" y2="176" stroke="#166534" stroke-width="1.5"/>
+  <polygon points="220,184 214,172 226,172" fill="#166534"/>
+
+  <rect x="120" y="184" width="200" height="36" rx="8" fill="#ffffff" stroke="#166534" stroke-width="1.5"/>
+  <text x="220" y="207" text-anchor="middle" font-size="12.5" font-family="ui-monospace, Menlo, monospace" fill="#166534">arr.push(1)</text>
+
+  <line x1="220" y1="220" x2="220" y2="242" stroke="#166534" stroke-width="1.5"/>
+  <polygon points="220,250 214,238 226,238" fill="#166534"/>
+
+  <rect x="120" y="250" width="200" height="36" rx="8" fill="#ffffff" stroke="#166534" stroke-width="1.5"/>
+  <text x="220" y="273" text-anchor="middle" font-size="12.5" font-family="ui-monospace, Menlo, monospace" fill="#166534">arr.push("hello")</text>
+
+  <line x1="220" y1="286" x2="220" y2="308" stroke="#166534" stroke-width="1.5"/>
+  <polygon points="220,316 214,304 226,304" fill="#166534"/>
+
+  <rect x="120" y="316" width="200" height="50" rx="8" fill="#dcfce7" stroke="#166534" stroke-width="2"/>
+  <text x="220" y="336" text-anchor="middle" font-size="12.5" font-weight="700" font-family="ui-monospace, Menlo, monospace" fill="#166534">(string | number)[]</text>
+  <text x="220" y="355" text-anchor="middle" font-size="12" fill="#15803d">✅ 不报错</text>
+
+  <!-- right boundary: 看不到的未来 -->
+  <rect x="445" y="80" width="350" height="315" rx="14" fill="#f8fafc" stroke="#64748b" stroke-width="1.5" stroke-dasharray="6 4"/>
+  <text x="620" y="103" text-anchor="middle" font-size="13.5" font-weight="700" fill="#475569">编译器看不到的未来</text>
+
+  <rect x="520" y="118" width="200" height="36" rx="8" fill="#ffffff" stroke="#334155" stroke-width="1.5"/>
+  <text x="620" y="141" text-anchor="middle" font-size="12" font-family="ui-monospace, Menlo, monospace" fill="#334155">function greet(name)</text>
+
+  <line x1="620" y1="154" x2="620" y2="176" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4 3"/>
+  <polygon points="620,184 614,172 626,172" fill="#94a3b8"/>
+
+  <rect x="512" y="190" width="94" height="32" rx="16" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="3 3"/>
+  <text x="559" y="211" text-anchor="middle" font-size="11" font-family="ui-monospace, Menlo, monospace" fill="#64748b">greet("hi")</text>
+
+  <rect x="634" y="190" width="94" height="32" rx="16" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="3 3"/>
+  <text x="681" y="211" text-anchor="middle" font-size="11" font-family="ui-monospace, Menlo, monospace" fill="#64748b">greet(42)</text>
+
+  <text x="620" y="245" text-anchor="middle" font-size="11.5" fill="#64748b">未来 · 谁调用、传什么，现在不知道</text>
+
+  <line x1="620" y1="256" x2="620" y2="278" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4 3"/>
+  <polygon points="620,286 614,274 626,274" fill="#94a3b8"/>
+
+  <rect x="520" y="286" width="200" height="50" rx="8" fill="#fee2e2" stroke="#b91c1c" stroke-width="2"/>
+  <text x="620" y="306" text-anchor="middle" font-size="12.5" font-weight="700" font-family="ui-monospace, Menlo, monospace" fill="#b91c1c">name: any</text>
+  <text x="620" y="325" text-anchor="middle" font-size="12" fill="#b91c1c">❌ TS7006 报错</text>
+
+  <text x="420" y="428" text-anchor="middle" font-size="13" fill="#475569">判断标准不是「在不在同一个文件」，是这个值的确定过程</text>
+  <text x="420" y="448" text-anchor="middle" font-size="13" fill="#475569">是否走在一条编译器看得到终点的路径上</text>
+</svg>
