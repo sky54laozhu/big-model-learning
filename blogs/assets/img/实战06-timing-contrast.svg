@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 620" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <title id="t">真实源码时序 vs 教学简化对比图：解析时机两边一致，执行时机刻意不同</title>
+  <desc id="d">上半部分"真实 Claude Code"：一条时间轴上，tool_use 块刚解析完成（虚线标记"parse 完成"）那一刻，StreamingToolExecutor 立刻在时间轴下方开出一条并行执行轨道，跟模型继续吐这一轮剩余内容的主轨道并行推进，两条轨道在"整轮结束+所有工具执行完毕"处才汇合、才把这一轮的 assistant 消息连同工具结果一起并入对话历史。下半部分"这一篇的教学 harness"：同一条时间轴上，tool_use 解析完成同样在这一刻发生（跟上方对齐，强调解析提前了这一点两边一致），但执行轨道要等这一整轮的 for await 循环彻底跑完（done 事件到达）之后才开始，且是顺序执行不是并行执行。底部说明框：解析时机两边一致（这一篇的改动焦点），执行时机两边不同（教学 harness 刻意不跟进边解析边执行），并列出两条不复刻的理由：实战04 的权限闸门 ask 交互跟并发执行不兼容需要新设计；这一篇的验收线是边流边解析不是边流边执行。</desc>
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+
+  <text x="440" y="32" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">解析提前了，执行没有跟着提前——一条刻意划清的界线</text>
+  <text x="440" y="54" text-anchor="middle" font-size="13" fill="#475569">同一个 tool_use 块，真实 Claude Code 和这一篇的教学 harness 在"什么时候真正执行"这件事上分道扬镳</text>
+
+  <!-- 真实 Claude Code 区块 -->
+  <rect x="40" y="72" width="800" height="216" rx="10" fill="#fef2f2" stroke="#b91c1c" stroke-width="2"/>
+  <text x="60" y="94" font-size="13" font-weight="700" fill="#b91c1c">真实 Claude Code（query.ts + StreamingToolExecutor.ts）</text>
+
+  <!-- 主时间轴 -->
+  <line x1="80" y1="130" x2="800" y2="130" stroke="#334155" stroke-width="2"/>
+  <polygon points="804,130 794,125 794,135" fill="#334155"/>
+  <text x="90" y="122" font-size="10.5" fill="#334155">模型继续吐这一轮剩余内容（文字/别的工具调用）→</text>
+
+  <!-- parse 完成标记 -->
+  <line x1="300" y1="112" x2="300" y2="230" stroke="#92400e" stroke-width="1.6" stroke-dasharray="4 3"/>
+  <rect x="240" y="96" width="120" height="20" rx="5" fill="#fffbeb" stroke="#b45309" stroke-width="1.4"/>
+  <text x="300" y="110" text-anchor="middle" font-size="9.5" font-weight="700" fill="#92400e">tool_use parse 完成</text>
+
+  <!-- 并行执行轨道 -->
+  <rect x="300" y="160" width="360" height="34" rx="6" fill="#dcfce7" stroke="#166534" stroke-width="1.8"/>
+  <text x="480" y="182" text-anchor="middle" font-size="10.5" font-weight="700" fill="#166534">StreamingToolExecutor.addTool() 立刻起跑——并发轨道</text>
+  <line x1="300" y1="177" x2="300" y2="130" stroke="#166534" stroke-width="1.6"/>
+  <polygon points="300,196 293,206 307,206" fill="#166534"/>
+  <text x="300" y="150" text-anchor="middle" font-size="9" fill="#166534">并发</text>
+
+  <!-- 汇合点 -->
+  <line x1="700" y1="130" x2="700" y2="194" stroke="#334155" stroke-width="1.6" stroke-dasharray="3 3"/>
+  <rect x="620" y="200" width="160" height="46" rx="6" fill="#fef9c3" stroke="#a16207" stroke-width="1.8"/>
+  <text x="700" y="218" text-anchor="middle" font-size="10" font-weight="700" fill="#854d0e">汇合点：整轮结束</text>
+  <text x="700" y="234" text-anchor="middle" font-size="9.5" fill="#854d0e">+ 所有工具执行完毕</text>
+
+  <rect x="300" y="254" width="480" height="26" rx="6" fill="#f8fafc" stroke="#64748b" stroke-width="1.4"/>
+  <text x="540" y="272" text-anchor="middle" font-size="10" fill="#334155">此刻才把 assistant 消息 + 工具结果并入历史（query.ts:1716）</text>
+
+  <!-- 教学 harness 区块 -->
+  <rect x="40" y="304" width="800" height="216" rx="10" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
+  <text x="60" y="326" font-size="13" font-weight="700" fill="#475569">这一篇的教学 harness（loop.ts）</text>
+
+  <line x1="80" y1="362" x2="800" y2="362" stroke="#334155" stroke-width="2"/>
+  <polygon points="804,362 794,357 794,367" fill="#334155"/>
+  <text x="90" y="354" font-size="10.5" fill="#334155">for await 消费 streamChat() 事件流 →</text>
+
+  <line x1="300" y1="344" x2="300" y2="462" stroke="#92400e" stroke-width="1.6" stroke-dasharray="4 3"/>
+  <rect x="240" y="328" width="120" height="20" rx="5" fill="#fffbeb" stroke="#b45309" stroke-width="1.4"/>
+  <text x="300" y="342" text-anchor="middle" font-size="9.5" font-weight="700" fill="#92400e">tool_call yield（同一时机）</text>
+
+  <!-- 无并行，标注等待 -->
+  <rect x="300" y="392" width="360" height="34" rx="6" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.8" stroke-dasharray="5 3"/>
+  <text x="480" y="414" text-anchor="middle" font-size="10.5" fill="#64748b">（不执行，只是 push 进 toolCalls[] 数组，继续等）</text>
+
+  <line x1="700" y1="362" x2="700" y2="410" stroke="#334155" stroke-width="1.6" stroke-dasharray="3 3"/>
+  <rect x="620" y="416" width="160" height="34" rx="6" fill="#fef9c3" stroke="#a16207" stroke-width="1.8"/>
+  <text x="700" y="438" text-anchor="middle" font-size="10" font-weight="700" fill="#854d0e">done 事件到达</text>
+
+  <rect x="700" y="458" width="80" height="24" rx="6" fill="#e0e7ff" stroke="#4338ca" stroke-width="1.6"/>
+  <text x="740" y="474" text-anchor="middle" font-size="9" font-weight="700" fill="#4338ca">循环结束</text>
+  <line x1="740" y1="458" x2="700" y2="450" stroke="#4338ca" stroke-width="1.4"/>
+
+  <rect x="300" y="458" width="380" height="30" rx="6" fill="#eef2ff" stroke="#6366f1" stroke-width="1.8"/>
+  <text x="490" y="478" text-anchor="middle" font-size="10" font-weight="700" fill="#4338ca">这里才开始顺序执行 toolCalls（一个接一个，非并发）</text>
+
+  <!-- 底部说明 -->
+  <rect x="40" y="530" width="800" height="76" rx="10" fill="#fffbeb" stroke="#b45309" stroke-width="2"/>
+  <text x="440" y="550" text-anchor="middle" font-size="12" font-weight="700" fill="#92400e">解析时机同构，执行时机刻意不同——不是回避，是明确划线</text>
+  <text x="440" y="568" text-anchor="middle" font-size="10.5" fill="#92400e">理由①：实战04 权限闸门的 ask 交互跟"边解析边执行"不兼容，需要新设计才能共存</text>
+  <text x="440" y="584" text-anchor="middle" font-size="10.5" fill="#92400e">理由②：这一篇验收线是"边流边解析"，不是"边流边执行"——真源码的并发调度记一笔账，留到以后再拆</text>
+  <text x="440" y="600" text-anchor="middle" font-size="10" fill="#94a3b8">🔬 对应 query.ts:826-844（起跑）· query.ts:1380-1408（getRemainingResults 收口）· query.ts:1716（历史拼接）</text>
+</svg>

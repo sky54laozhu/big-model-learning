@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 560" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <title id="t">骨架定位图：chat() 换血成 streamChat()，loop 从 await 整包改成 for await 消费事件流</title>
+  <desc id="d">调用方 index.ts、权限闸门、五个工具与消息历史结构全部沿用实战02-05（灰，不改）。本章高亮：ModelProvider 接口的 chat() 被删除、换成 streamChat(): AsyncGenerator&lt;StreamEvent&gt;；types.ts 新增 StreamEvent 三态可辨识联合（text_delta/tool_call/done）；anthropic.ts 用 content_block_stop 触发工具调用参数的即时 parse；openai.ts 用 tool_calls[].index 变化反推块结束、并在流结束后兜底 flush 最后一个；loop.ts 从 await chat() 整包改成 for await 消费事件流，循环条件依旧是 toolCalls 是否为空。底部灰字：工具顺序执行、权限闸门三态、消息历史结构一个字没改。</desc>
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+
+  <text x="420" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">骨架定位：chat() 换血成 streamChat()，边流边解析工具调用</text>
+  <text x="420" y="58" text-anchor="middle" font-size="13" fill="#475569">权限闸门 / 五个工具 / 消息历史结构全沿用实战02-05（灰）；本章重建的是"模型层怎么把工具调用交给 loop"这一条管子</text>
+
+  <!-- 调用方 -->
+  <rect x="40" y="80" width="200" height="38" rx="8" fill="#f1f5f9" stroke="#94a3b8" stroke-width="2"/>
+  <text x="140" y="104" text-anchor="middle" font-size="12.5" font-weight="700" fill="#475569">调用方 index.ts</text>
+  <line x1="140" y1="118" x2="140" y2="148" stroke="#94a3b8" stroke-width="2"/>
+  <polygon points="140,152 134,140 146,140" fill="#94a3b8"/>
+
+  <!-- runAgent loop -->
+  <rect x="40" y="152" width="392" height="196" rx="10" fill="#f8fafc" stroke="#94a3b8" stroke-width="2.4" stroke-dasharray="6 4"/>
+  <text x="56" y="174" font-size="12.5" font-weight="700" fill="#475569">agent loop · runAgent()</text>
+
+  <rect x="58" y="184" width="356" height="30" rx="6" fill="#fffbeb" stroke="#b45309" stroke-width="1.8"/>
+  <text x="236" y="204" text-anchor="middle" font-size="11" fill="#92400e">① for await (event of streamChat()) ← 本章重建（原：await chat()）</text>
+
+  <rect x="58" y="220" width="356" height="30" rx="6" fill="#fffbeb" stroke="#b45309" stroke-width="1.8"/>
+  <text x="236" y="240" text-anchor="middle" font-size="11" fill="#92400e">② text_delta → 累加 text；tool_call → push 进 toolCalls[]</text>
+
+  <rect x="58" y="256" width="356" height="30" rx="6" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.4"/>
+  <text x="236" y="276" text-anchor="middle" font-size="11.5" fill="#475569">③ toolCalls 为空 → return text（判断依据不变）</text>
+
+  <rect x="58" y="292" width="356" height="30" rx="6" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.4"/>
+  <text x="236" y="312" text-anchor="middle" font-size="11.5" fill="#475569">④ 循环内顺序执行 toolCalls，塞回 messages（不变）</text>
+
+  <!-- provider 层：本章新增/改动，高亮 -->
+  <rect x="470" y="182" width="330" height="110" rx="10" fill="#fffbeb" stroke="#1e293b" stroke-width="2.6"/>
+  <text x="635" y="204" text-anchor="middle" font-size="12.5" font-weight="700" fill="#1e293b">provider 层 · streamChat()（本章换血）</text>
+  <text x="635" y="224" text-anchor="middle" font-size="11" fill="#92400e">Anthropic：content_block_stop → 就地 parse + yield tool_call</text>
+  <text x="635" y="242" text-anchor="middle" font-size="11" fill="#92400e">OpenAI 兼容：index 变化反推 → flush + 流结束兜底 flush</text>
+  <rect x="480" y="252" width="310" height="28" rx="6" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
+  <text x="635" y="270" text-anchor="middle" font-size="9.5" fill="#4338ca">StreamEvent: text_delta | tool_call | done（新增）</text>
+
+  <line x1="414" y1="199" x2="466" y2="203" stroke="#b45309" stroke-width="2"/>
+  <polygon points="470,204 457,199 458,210" fill="#b45309"/>
+  <text x="443" y="192" text-anchor="middle" font-size="10" fill="#92400e">streamChat</text>
+
+  <!-- StreamEvent：provider → loop，边到边喂 -->
+  <line x1="466" y1="271" x2="418" y2="271" stroke="#b45309" stroke-width="2" stroke-dasharray="3 3"/>
+  <polygon points="414,271 424,266 424,276" fill="#b45309"/>
+  <text x="443" y="262" text-anchor="middle" font-size="9.5" font-weight="700" fill="#92400e">yield StreamEvent</text>
+
+  <!-- provider → 双端 API -->
+  <line x1="635" y1="292" x2="635" y2="300" stroke="#94a3b8" stroke-width="2"/>
+  <polygon points="635,304 629,294 641,294" fill="#94a3b8"/>
+  <rect x="470" y="304" width="330" height="46" rx="8" fill="#f8fafc" stroke="#94a3b8" stroke-width="2" stroke-dasharray="6 4"/>
+  <text x="635" y="326" text-anchor="middle" font-size="10.5" font-weight="700" fill="#475569">Anthropic /v1/messages</text>
+  <text x="635" y="342" text-anchor="middle" font-size="10.5" font-weight="700" fill="#475569">OpenAI 兼容 /chat/completions（均 stream:true，不变）</text>
+
+  <!-- execute 路径：不变，灰 -->
+  <line x1="236" y1="322" x2="236" y2="396" stroke="#94a3b8" stroke-width="2.2"/>
+  <polygon points="236,400 230,388 242,388" fill="#94a3b8"/>
+  <text x="330" y="366" text-anchor="middle" font-size="10.5" fill="#64748b">等 for await 循环结束才执行（不提前，路径不变）</text>
+
+  <line x1="236" y1="374" x2="466" y2="374" stroke="#94a3b8" stroke-width="2.2" stroke-dasharray="4 3"/>
+  <polygon points="470,374 457,369 458,379" fill="#94a3b8"/>
+  <rect x="470" y="370" width="330" height="70" rx="10" fill="#f8fafc" stroke="#94a3b8" stroke-width="2" stroke-dasharray="6 4"/>
+  <text x="635" y="392" text-anchor="middle" font-size="12" font-weight="700" fill="#475569">权限闸门 permission.ts　实战04 已有</text>
+  <text x="635" y="412" text-anchor="middle" font-size="11" fill="#64748b">allow / ask / deny 三态——本章不改</text>
+
+  <line x1="236" y1="404" x2="236" y2="430" stroke="#94a3b8" stroke-width="2"/>
+  <polygon points="236,434 230,422 242,422" fill="#94a3b8"/>
+
+  <!-- allTools 注册表 灰=不变 -->
+  <rect x="40" y="440" width="760" height="76" rx="10" fill="#f8fafc" stroke="#94a3b8" stroke-width="2" stroke-dasharray="6 4"/>
+  <text x="56" y="462" font-size="12.5" font-weight="700" fill="#475569">allTools[] · 五个工具 + 消息历史结构　实战02-05 已有（本章一个字不改）</text>
+  <text x="420" y="486" text-anchor="middle" font-size="11.5" fill="#64748b">read_file · write_file · edit_file · list_dir · bash</text>
+  <text x="420" y="506" text-anchor="middle" font-size="10.5" fill="#94a3b8">顺序执行、逐个过权限闸门——跟实战04/05 完全一样</text>
+
+  <text x="420" y="546" text-anchor="middle" font-size="10.5" fill="#92400e">灰 = 实战02-05 已有，未改动　·　琥珀 = 本章新增/改动（streamChat() + StreamEvent + 两端完成检测 + loop.ts 的 for await）</text>
+</svg>

@@ -1,5 +1,5 @@
 // harness 最底层的契约：可插拔的模型层
-// 入口给中立的 messages（+ 这一轮可用的 tools），出口拿归一化的 ChatReply——provider 差异全烂在实现里。
+// 入口给中立的 messages（+ 这一轮可用的 tools），出口是一串归一化的 StreamEvent——provider 差异全烂在实现里。
 
 export type Role = 'user' | 'assistant' | 'tool'
 
@@ -26,26 +26,32 @@ export type Tool = {
   execute: (args: any) => Promise<string>
 }
 
-/** 归一化回复：无论后面接的是 Anthropic 还是 GLM，调用方只认这个形状 */
-export type ChatReply = {
-  text: string
-  /**
-   * 停止原因，已抹平两端字段名差异。⚠️ 只统一了"字段位置"没统一"取值词表"
-   * （Anthropic end_turn/tool_use、OpenAI stop/tool_calls），别拿它跨端 switch。
-   * 循环该不该继续，看 toolCalls.length，不看这个字符串（回扣源码 query.ts §554）。
-   */
-  stopReason: string
-  /** 这一轮模型请求的工具（没请求就是空数组）。agent loop 的循环条件就靠它 */
-  toolCalls: ToolCall[]
-}
+/**
+ * 流式事件，三种：文本碎片、一个已经解析完参数的工具调用、这一轮结束。
+ * 实战06 之前 chat() 是"憋到底给一整包"，这一篇改成边流边吐——工具调用不再只活在
+ * 收尾时打包好的数组里，它自己参数攒完那一刻，就该以一个独立事件的身份出现。
+ */
+export type StreamEvent =
+  | { type: 'text_delta'; delta: string }
+  | { type: 'tool_call'; call: ToolCall }
+  | {
+      type: 'done'
+      /**
+       * 停止原因，已抹平两端字段名差异。⚠️ 只统一了"字段位置"没统一"取值词表"
+       * （Anthropic end_turn/tool_use、OpenAI stop/tool_calls），别拿它跨端 switch。
+       * 循环该不该继续，看有没有收到过 tool_call 事件，不看这个字符串（回扣源码 query.ts §554）。
+       */
+      stopReason: string
+    }
 
 /** 模型层的契约：谁想当一个 provider，就得实现它 */
 export interface ModelProvider {
   readonly name: string
   /**
    * tools 可选：不传就退化成 实战01 的纯聊天（回扣 Blog18：工具按需 opt-in）。
-   * onToken 也可选：不传就是 实战04 的老样子（憋到底再拿完整 text）；
-   * 传了，文本每到一个片段就喂一次——工具调用仍然是收完整参数字符串再解析一次，不逐 token 解析（这是实战06 的活）。
+   * 文本每到一片就吐一个 text_delta；工具调用的参数字符串只在它自己那一块结束时
+   * parse 一次（不逐 delta 解析，避免 O(n²)——实战05 的账，只是触发时机从"整个响应
+   * 结束"提前到"这一块结束"），parse 完立刻吐一个 tool_call，不用等模型说完这一轮。
    */
-  chat(messages: Message[], tools?: Tool[], onToken?: (delta: string) => void): Promise<ChatReply>
+  streamChat(messages: Message[], tools?: Tool[]): AsyncGenerator<StreamEvent>
 }

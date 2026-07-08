@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 620" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <title id="t">事件完成检测图：Anthropic 靠显式 content_block_stop，OpenAI 兼容靠 index 变化反推</title>
+  <desc id="d">左侧 Anthropic：按 index 开块，text_delta 逐片 yield，tool_use 块的 input_json_delta 只攒字符串，content_block_stop 到达时（显式信号）立刻 safeParse 并 yield tool_call 事件。右侧 OpenAI 兼容：按 tool_calls[].index 归位累加，主循环内一旦下一片数据的 index 与 currentIndex 不同就 flush 上一个 index（隐式反推信号），主循环结束后单独用当前 currentIndex 兜底 flush 最后一个，避免最后一个工具调用因为没有下一个 index 而永远留在 pending 里。底部结论：两条路径殊途同归——都是参数字符串攒完的那一刻就地 parse、立刻 yield tool_call，只是攒完这件事一个有官方显式事件、一个要靠协议里能拿到的唯一线索反推。</desc>
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+
+  <text x="440" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">工具调用"攒完了"，两家协议给的信号完全不同</text>
+  <text x="440" y="58" text-anchor="middle" font-size="13" fill="#475569">左：官方显式事件；右：靠协议里唯一能拿到的线索反推——终点是同一句话</text>
+
+  <!-- 列头 -->
+  <rect x="60" y="78" width="380" height="34" rx="8" fill="#fffbeb" stroke="#b45309" stroke-width="1.8"/>
+  <text x="250" y="100" text-anchor="middle" font-size="12.5" font-weight="700" fill="#92400e">Anthropic：content_block_stop（显式信号）</text>
+  <rect x="440" y="78" width="380" height="34" rx="8" fill="#eff6ff" stroke="#1d4ed8" stroke-width="1.8"/>
+  <text x="630" y="100" text-anchor="middle" font-size="12.5" font-weight="700" fill="#1e40af">OpenAI 兼容：index 变化（隐式反推）</text>
+
+  <!-- 左列 -->
+  <rect x="60" y="126" width="380" height="30" rx="6" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.4"/>
+  <text x="250" y="147" text-anchor="middle" font-size="10.5" fill="#475569">content_block_start {index:1, type:'tool_use'}</text>
+  <line x1="250" y1="156" x2="250" y2="164" stroke="#94a3b8" stroke-width="1.6"/><polygon points="250,168 245,158 255,158" fill="#94a3b8"/>
+
+  <rect x="60" y="170" width="380" height="42" rx="6" fill="#f8fafc" stroke="#64748b" stroke-width="1.8"/>
+  <text x="250" y="188" text-anchor="middle" font-size="10" font-weight="700" fill="#334155">content_block_delta：input_json_delta ×N</text>
+  <text x="250" y="204" text-anchor="middle" font-size="10" fill="#334155">block.inputJson += partial_json（只攒，不 parse）</text>
+  <line x1="250" y1="212" x2="250" y2="220" stroke="#94a3b8" stroke-width="1.6"/><polygon points="250,224 245,214 255,214" fill="#94a3b8"/>
+
+  <rect x="60" y="226" width="380" height="54" rx="6" fill="#fffbeb" stroke="#b45309" stroke-width="2"/>
+  <text x="250" y="246" text-anchor="middle" font-size="11" font-weight="700" fill="#92400e">content_block_stop {index:1}</text>
+  <text x="250" y="262" text-anchor="middle" font-size="10" fill="#92400e">这个块彻底封版了——权威信号，就地判断</text>
+  <text x="250" y="276" text-anchor="middle" font-size="9.5" fill="#92400e">（实战05 里这个事件曾被忽略）</text>
+  <line x1="250" y1="280" x2="250" y2="288" stroke="#b45309" stroke-width="1.8"/><polygon points="250,292 244,282 256,282" fill="#b45309"/>
+
+  <rect x="60" y="294" width="380" height="44" rx="6" fill="#f0fdf4" stroke="#166534" stroke-width="2"/>
+  <text x="250" y="314" text-anchor="middle" font-size="10.5" font-weight="700" fill="#166534">safeParse(inputJson) → yield tool_call</text>
+  <text x="250" y="330" text-anchor="middle" font-size="9.5" fill="#166534">不用等整条流结束，这一块结束就吐</text>
+
+  <!-- 右列 -->
+  <rect x="440" y="126" width="380" height="42" rx="6" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.4"/>
+  <text x="630" y="144" text-anchor="middle" font-size="10" fill="#475569">tool_calls:[{index:0, arguments:'{"pa'}]</text>
+  <text x="630" y="160" text-anchor="middle" font-size="10" fill="#475569">pending[0].argsJson += '{"pa'　（currentIndex=0）</text>
+  <line x1="630" y1="168" x2="630" y2="176" stroke="#94a3b8" stroke-width="1.6"/><polygon points="630,180 625,170 635,170" fill="#94a3b8"/>
+
+  <rect x="440" y="182" width="380" height="42" rx="6" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.4"/>
+  <text x="630" y="200" text-anchor="middle" font-size="10" fill="#475569">tool_calls:[{index:0, arguments:'th":"x"}'}]</text>
+  <text x="630" y="216" text-anchor="middle" font-size="10" fill="#475569">index 还是 0 → 继续累加，还没到该 flush 的时候</text>
+  <line x1="630" y1="224" x2="630" y2="232" stroke="#94a3b8" stroke-width="1.6"/><polygon points="630,236 625,226 635,226" fill="#94a3b8"/>
+
+  <rect x="440" y="238" width="380" height="54" rx="6" fill="#eff6ff" stroke="#1d4ed8" stroke-width="2"/>
+  <text x="630" y="257" text-anchor="middle" font-size="11" font-weight="700" fill="#1e40af">tool_calls:[{index:1, ...}] ← index 变了！</text>
+  <text x="630" y="273" text-anchor="middle" font-size="10" fill="#1e40af">tc.index(1) !== currentIndex(0)</text>
+  <text x="630" y="287" text-anchor="middle" font-size="9.5" fill="#1e40af">→ index 0 不会再有片段追加了，该 flush 它</text>
+  <line x1="630" y1="292" x2="630" y2="300" stroke="#1d4ed8" stroke-width="1.8"/><polygon points="630,304 624,294 636,294" fill="#1d4ed8"/>
+
+  <rect x="440" y="306" width="380" height="32" rx="6" fill="#f0fdf4" stroke="#166534" stroke-width="2"/>
+  <text x="630" y="326" text-anchor="middle" font-size="10.5" font-weight="700" fill="#166534">safeParse(pending[0].argsJson) → yield tool_call</text>
+
+  <!-- 兜底 flush -->
+  <rect x="440" y="346" width="380" height="60" rx="6" fill="#fef2f2" stroke="#b91c1c" stroke-width="2"/>
+  <text x="630" y="366" text-anchor="middle" font-size="10.5" font-weight="700" fill="#b91c1c">主循环跑完 → currentIndex 停在 1</text>
+  <text x="630" y="382" text-anchor="middle" font-size="10" fill="#b91c1c">index 1 没有"下一个 index"来触发 flush</text>
+  <text x="630" y="398" text-anchor="middle" font-size="9.5" fill="#b91c1c">→ 兜底：手动 flush pending[1] 一次</text>
+
+  <!-- 底部：共性总结 -->
+  <rect x="60" y="352" width="380" height="54" rx="6" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.6" stroke-dasharray="4 3"/>
+  <text x="250" y="374" text-anchor="middle" font-size="10.5" fill="#475569">每个 content_block_stop 各自独立触发</text>
+  <text x="250" y="392" text-anchor="middle" font-size="10" fill="#64748b">多个工具调用互不干扰，没有"最后一个"特例</text>
+
+  <rect x="40" y="430" width="800" height="150" rx="10" fill="#fffbeb" stroke="#b45309" stroke-width="2"/>
+  <text x="440" y="454" text-anchor="middle" font-size="13.5" font-weight="700" fill="#92400e">两条路径殊途同归</text>
+  <text x="440" y="478" text-anchor="middle" font-size="11" fill="#92400e">都是"参数字符串攒完的那一刻就地 parse、立刻 yield tool_call"——差别只在"攒完"这件事怎么判断</text>
+  <rect x="150" y="490" width="280" height="30" rx="7" fill="#fff7ed" stroke="#b45309" stroke-width="1.4"/>
+  <text x="290" y="510" text-anchor="middle" font-size="10.5" font-weight="700" fill="#92400e">Anthropic：官方给了显式事件</text>
+  <rect x="450" y="490" width="280" height="30" rx="7" fill="#eff6ff" stroke="#1d4ed8" stroke-width="1.4"/>
+  <text x="590" y="510" text-anchor="middle" font-size="10.5" font-weight="700" fill="#1e40af">OpenAI 兼容：靠 index 反推 + 流结束兜底</text>
+  <text x="440" y="540" text-anchor="middle" font-size="10.5" fill="#92400e">这条反推链是本系列在协议约束下自己想出来的，不是照抄 SDK——已用"一轮两个工具调用"的真实请求验证过两条路径</text>
+  <text x="440" y="562" text-anchor="middle" font-size="10" fill="#94a3b8">input_json_delta / arguments 分片累加策略本身不变——实战05 立的 O(n²) 规避账，只是 parse 时机提前了</text>
+</svg>

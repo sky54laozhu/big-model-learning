@@ -1,4 +1,4 @@
-import type { Message, ChatReply, ModelProvider, Tool, ToolCall } from '../types'
+import type { Message, StreamEvent, ModelProvider, Tool } from '../types'
 import { readSSE } from '../sse'
 
 /** 流式里正在拼的一个工具调用——按 index 归位，name 一般随第一个 delta 到齐，arguments 分片累加 */
@@ -13,7 +13,7 @@ export class OpenAICompatProvider implements ModelProvider {
     private model: string,
   ) {}
 
-  async chat(messages: Message[], tools?: Tool[], onToken?: (delta: string) => void): Promise<ChatReply> {
+  async *streamChat(messages: Message[], tools?: Tool[]): AsyncGenerator<StreamEvent> {
     const body: Record<string, unknown> = {
       model: this.model,
       stream: true,
@@ -38,10 +38,12 @@ export class OpenAICompatProvider implements ModelProvider {
     })
     if (!res.ok) throw new Error(`openai-compat ${res.status}: ${await res.text()}`)
 
-    // 出口翻译：SSE 里每个 data: 是一个 chunk，text 边到边喂 onToken；
-    // tool_calls 的 arguments 按 index 分片累加成字符串，收完才 parse 一次
-    let text = ''
+    // 出口翻译：SSE 里每个 data: 是一个 chunk，text 边到边喂 text_delta；
+    // 这协议没有 Anthropic 那种显式的"这块结束了"事件，只能靠 tool_calls[].index 反推——
+    // 换了 index，说明上一个工具调用的参数字符串已经攒完，可以 parse 并吐一个 tool_call 了。
+    // 最后一个工具调用没有"下一个 index"来触发这一下，得靠 finish_reason 到达时兜底 flush 一次。
     const pending: PendingToolCall[] = []
+    let currentIndex: number | null = null
     let stopReason = 'stop'
     for await (const payload of readSSE(res)) {
       if (payload === '[DONE]') break
@@ -56,10 +58,14 @@ export class OpenAICompatProvider implements ModelProvider {
       }
       const choice = chunk.choices?.[0]
       if (choice?.delta?.content) {
-        text += choice.delta.content
-        onToken?.(choice.delta.content)
+        yield { type: 'text_delta', delta: choice.delta.content }
       }
       for (const tc of choice?.delta?.tool_calls ?? []) {
+        if (currentIndex !== null && tc.index !== currentIndex) {
+          const done = pending[currentIndex]
+          if (done) yield { type: 'tool_call', call: { id: done.id, name: done.name, args: safeParse(done.argsJson) } }
+        }
+        currentIndex = tc.index
         const slot = (pending[tc.index] ??= { id: '', name: '', argsJson: '' })
         if (tc.id) slot.id = tc.id
         if (tc.function?.name) slot.name += tc.function.name
@@ -68,11 +74,13 @@ export class OpenAICompatProvider implements ModelProvider {
       if (choice?.finish_reason) stopReason = choice.finish_reason
     }
 
-    // ⚠️ OpenAI 的参数是一坨 JSON 字符串，不是对象——得 parse 才能归一化成 args（回扣 Blog18 概率性坏格式）
-    const toolCalls: ToolCall[] = pending
-      .filter((tc): tc is PendingToolCall => Boolean(tc))
-      .map(tc => ({ id: tc.id, name: tc.name, args: safeParse(tc.argsJson) }))
-    return { text, stopReason, toolCalls }
+    // 兜底：最后一个工具调用没有"下一个 index"帮它触发 flush，流结束后手动补一次
+    if (currentIndex !== null) {
+      const last = pending[currentIndex]
+      if (last) yield { type: 'tool_call', call: { id: last.id, name: last.name, args: safeParse(last.argsJson) } }
+    }
+
+    yield { type: 'done', stopReason }
   }
 
   /** 入口翻译：中立 Message[] → OpenAI messages[]（结果走 role:'tool'，工具请求走 tool_calls） */

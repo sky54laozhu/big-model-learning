@@ -94,6 +94,7 @@
 | 实战03 | [工具系统：从一只手到一套家伙，外加一个逃生舱](blogs/实战03-tool-system.md) | ✅ |
 | 实战04 | [给逃生舱上锁：命令安全与人工审批](blogs/实战04-permission-gate.md) | ✅ |
 | 实战05 | [文本流式渲染：从「憋到底」到「边到边喂」](blogs/实战05-text-streaming.md) | ✅ |
+| 实战06 | [流式工具执行/解析：把 loop 真正重构成流式](blogs/实战06-streaming-tool-calls.md) | ✅ |
 
 ### 独立系列 · 从 0 到精通 TypeScript
 > 🏁 里程碑：读懂任何库的类型定义、自己写类型体操（21 篇，配填空练习仓 `code/ts-course/`）｜ 暗线：类型 = 一组允许的值（集合）

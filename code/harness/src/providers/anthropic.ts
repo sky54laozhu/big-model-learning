@@ -1,4 +1,4 @@
-import type { Message, ChatReply, ModelProvider, Tool, ToolCall } from '../types'
+import type { Message, StreamEvent, ModelProvider, Tool, ToolCall } from '../types'
 import { readSSE } from '../sse'
 
 /** 流式响应里正在拼的一块内容——text 块攒 text，tool_use 块的参数先攒成字符串，最后一次性 parse */
@@ -16,7 +16,7 @@ export class AnthropicProvider implements ModelProvider {
     private model: string,
   ) {}
 
-  async chat(messages: Message[], tools?: Tool[], onToken?: (delta: string) => void): Promise<ChatReply> {
+  async *streamChat(messages: Message[], tools?: Tool[]): AsyncGenerator<StreamEvent> {
     const headers: Record<string, string> = {
       'content-type': 'application/json',
       'anthropic-version': '2023-06-01',
@@ -48,8 +48,10 @@ export class AnthropicProvider implements ModelProvider {
     })
     if (!res.ok) throw new Error(`anthropic ${res.status}: ${await res.text()}`)
 
-    // 出口翻译：SSE 事件流里按 index 拼出 content 块——text 块边到边喂 onToken，
-    // tool_use 块的参数只攒字符串，不逐片 parse（跟真源码 claude.ts 的理由一样：避免 O(n²) 重复解析）
+    // 出口翻译：SSE 事件流里按 index 拼出 content 块——text 块边到边喂 text_delta 事件，
+    // tool_use 块的参数只攒字符串、不逐片 parse（跟真源码 claude.ts 的理由一样：避免 O(n²) 重复解析），
+    // 但 content_block_stop 一到（这块彻底结束），立刻 parse 一次并吐出 tool_call 事件——
+    // 不用等整条流跑完，实战05 里这个事件是被忽略的，这一篇把它请回来当"该 parse 了"的信号。
     const blocks: ContentBlock[] = []
     let stopReason = 'end_turn'
     for await (const payload of readSSE(res)) {
@@ -67,24 +69,23 @@ export class AnthropicProvider implements ModelProvider {
       } else if (event.type === 'content_block_delta' && event.index !== undefined && event.delta) {
         const block = blocks[event.index]
         if (event.delta.type === 'text_delta' && block?.type === 'text') {
-          block.text += event.delta.text ?? ''
-          onToken?.(event.delta.text ?? '')
+          const delta = event.delta.text ?? ''
+          block.text += delta
+          yield { type: 'text_delta', delta }
         } else if (event.delta.type === 'input_json_delta' && block?.type === 'tool_use') {
           block.inputJson += event.delta.partial_json ?? ''
+        }
+      } else if (event.type === 'content_block_stop' && event.index !== undefined) {
+        const block = blocks[event.index]
+        if (block?.type === 'tool_use') {
+          yield { type: 'tool_call', call: { id: block.id, name: block.name, args: safeParse(block.inputJson) } }
         }
       } else if (event.type === 'message_delta' && event.delta?.stop_reason) {
         stopReason = event.delta.stop_reason
       }
     }
 
-    const text = blocks
-      .filter((b): b is Extract<ContentBlock, { type: 'text' }> => b?.type === 'text')
-      .map(b => b.text)
-      .join('')
-    const toolCalls: ToolCall[] = blocks
-      .filter((b): b is Extract<ContentBlock, { type: 'tool_use' }> => b?.type === 'tool_use')
-      .map(b => ({ id: b.id, name: b.name, args: safeParse(b.inputJson) }))
-    return { text, stopReason, toolCalls }
+    yield { type: 'done', stopReason }
   }
 
   /** 入口翻译：中立 Message[] → Anthropic messages[]（tool_use / tool_result 都是 content 块） */

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 700" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <title id="t">序列图：runAgent、provider、模型 API 三条泳道——边流边解析，事件流跑完才执行</title>
+  <desc id="d">runAgent、provider（内部含 SSE 读取与完成检测）、模型 API 三条泳道。beat1 用户提问进入循环，provider 发起 stream:true 请求。beat2 text_delta 陆续到达并逐片 yield，loop 边收边写到 stdout。beat3 工具调用参数片段到达，provider 内部按各自协议的完成信号（content_block_stop 或 index 变化）判断某个工具调用攒完了，一攒完立刻 yield 一个 tool_call 事件，loop 把它推进本地 toolCalls 数组，此刻还不执行只是收下。beat4 done 事件到达，loop 的 for await 循环结束，这才检查 toolCalls 是否为空。beat5 若非空，loop 才开始顺序执行——逐个过权限闸门、调用 execute()、把结果塞回 messages，进入下一轮。底部红字点题：tool_call 事件比实战05 更早吐出来了，不用等整条流结束，但收到事件和真正执行之间还隔着一层，这一层是这一篇刻意保留、留给以后再拆的账。</desc>
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+
+  <text x="450" y="32" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">序列图：边流边解析工具调用，事件流跑完才顺序执行</text>
+
+  <!-- 泳道头 -->
+  <rect x="60" y="52" width="180" height="34" rx="8" fill="#eef2ff" stroke="#6366f1" stroke-width="2"/>
+  <text x="150" y="74" text-anchor="middle" font-size="12.5" font-weight="700" fill="#4338ca">runAgent（loop.ts）</text>
+  <rect x="370" y="52" width="180" height="34" rx="8" fill="#fffbeb" stroke="#b45309" stroke-width="2"/>
+  <text x="460" y="74" text-anchor="middle" font-size="12.5" font-weight="700" fill="#92400e">provider（streamChat）</text>
+  <rect x="670" y="52" width="180" height="34" rx="8" fill="#f1f5f9" stroke="#94a3b8" stroke-width="2"/>
+  <text x="760" y="74" text-anchor="middle" font-size="12.5" font-weight="700" fill="#475569">模型 API</text>
+
+  <!-- 生命线 -->
+  <line x1="150" y1="86" x2="150" y2="660" stroke="#6366f1" stroke-width="1.6" stroke-dasharray="4 3"/>
+  <line x1="460" y1="86" x2="460" y2="660" stroke="#b45309" stroke-width="1.6" stroke-dasharray="4 3"/>
+  <line x1="760" y1="86" x2="760" y2="660" stroke="#94a3b8" stroke-width="1.6" stroke-dasharray="4 3"/>
+
+  <!-- beat 1 -->
+  <text x="20" y="112" font-size="12" font-weight="700" fill="#1e293b">① 发起</text>
+  <line x1="150" y1="118" x2="460" y2="118" stroke="#334155" stroke-width="1.8"/>
+  <polygon points="460,118 450,113 450,123" fill="#334155"/>
+  <text x="305" y="112" text-anchor="middle" font-size="10" fill="#334155">provider.streamChat(messages, tools)</text>
+
+  <line x1="460" y1="134" x2="760" y2="134" stroke="#334155" stroke-width="1.8"/>
+  <polygon points="760,134 750,129 750,139" fill="#334155"/>
+  <text x="610" y="128" text-anchor="middle" font-size="10" fill="#334155">POST stream:true</text>
+
+  <!-- beat 2 -->
+  <text x="20" y="176" font-size="12" font-weight="700" fill="#1e293b">② 文本</text>
+  <rect x="670" y="152" width="180" height="46" rx="6" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.6"/>
+  <text x="760" y="170" text-anchor="middle" font-size="9.5" fill="#475569">SSE: text_delta ×N</text>
+  <text x="760" y="186" text-anchor="middle" font-size="9.5" fill="#475569">陆续到达</text>
+  <line x1="670" y1="182" x2="460" y2="182" stroke="#b45309" stroke-width="1.8" stroke-dasharray="3 3"/>
+  <polygon points="460,182 470,177 470,187" fill="#b45309"/>
+
+  <line x1="460" y1="206" x2="150" y2="206" stroke="#b45309" stroke-width="1.8" stroke-dasharray="3 3"/>
+  <polygon points="150,206 160,201 160,211" fill="#b45309"/>
+  <text x="305" y="200" text-anchor="middle" font-size="10" font-weight="700" fill="#92400e">yield text_delta → 边收边 write(stdout)</text>
+
+  <!-- beat 3 -->
+  <text x="20" y="252" font-size="12" font-weight="700" fill="#1e293b">③ 工具调用攒完</text>
+  <rect x="670" y="222" width="180" height="46" rx="6" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.6"/>
+  <text x="760" y="240" text-anchor="middle" font-size="9.5" fill="#475569">content_block_stop /</text>
+  <text x="760" y="256" text-anchor="middle" font-size="9.5" fill="#475569">index 变化（各协议判断）</text>
+  <line x1="670" y1="252" x2="460" y2="252" stroke="#334155" stroke-width="1.4"/>
+
+  <rect x="380" y="276" width="160" height="40" rx="6" fill="#fffbeb" stroke="#b45309" stroke-width="1.8"/>
+  <text x="460" y="292" text-anchor="middle" font-size="9.5" font-weight="700" fill="#92400e">safeParse(argsJson)</text>
+  <text x="460" y="306" text-anchor="middle" font-size="9.5" fill="#92400e">就地解析，不用等流结束</text>
+
+  <line x1="460" y1="326" x2="150" y2="326" stroke="#b45309" stroke-width="2" stroke-dasharray="3 3"/>
+  <polygon points="150,326 160,321 160,331" fill="#b45309"/>
+  <text x="305" y="320" text-anchor="middle" font-size="10" font-weight="700" fill="#92400e">yield tool_call → push 进 toolCalls[]（只收，不执行）</text>
+
+  <rect x="60" y="336" width="180" height="30" rx="6" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.4"/>
+  <text x="150" y="356" text-anchor="middle" font-size="9.5" fill="#475569">toolCalls.push(call)</text>
+
+  <!-- beat 4 -->
+  <text x="20" y="400" font-size="12" font-weight="700" fill="#1e293b">④ 收工判断</text>
+  <line x1="760" y1="380" x2="460" y2="380" stroke="#334155" stroke-width="1.8" stroke-dasharray="3 3"/>
+  <polygon points="460,380 470,375 470,385" fill="#334155"/>
+  <text x="610" y="374" text-anchor="middle" font-size="10" fill="#334155">SSE: [DONE] / message_stop</text>
+
+  <line x1="460" y1="398" x2="150" y2="398" stroke="#334155" stroke-width="1.8"/>
+  <polygon points="150,398 160,393 160,403" fill="#334155"/>
+  <text x="305" y="392" text-anchor="middle" font-size="10" font-weight="700" fill="#334155">yield done → for await 循环结束</text>
+
+  <rect x="60" y="406" width="180" height="34" rx="6" fill="#eef2ff" stroke="#6366f1" stroke-width="1.8"/>
+  <text x="150" y="422" text-anchor="middle" font-size="9.5" font-weight="700" fill="#4338ca">toolCalls.length === 0?</text>
+  <text x="150" y="435" text-anchor="middle" font-size="8.5" fill="#4338ca">（此刻才检查，不看 stopReason）</text>
+
+  <!-- beat 5 -->
+  <text x="20" y="472" font-size="12" font-weight="700" fill="#1e293b">⑤ 顺序执行</text>
+  <rect x="60" y="452" width="180" height="76" rx="8" fill="#f0fdf4" stroke="#166534" stroke-width="2"/>
+  <text x="150" y="472" text-anchor="middle" font-size="9.5" font-weight="700" fill="#166534">非空 → 逐个：</text>
+  <text x="150" y="488" text-anchor="middle" font-size="9" fill="#166534">过权限闸门 → execute()</text>
+  <text x="150" y="504" text-anchor="middle" font-size="9" fill="#166534">结果 push 进 messages</text>
+  <text x="150" y="520" text-anchor="middle" font-size="8.5" fill="#166534">（顺序，非并发）</text>
+
+  <line x1="150" y1="536" x2="150" y2="556" stroke="#166534" stroke-width="1.8"/>
+  <polygon points="150,560 144,548 156,548" fill="#166534"/>
+  <text x="230" y="552" font-size="10" fill="#166534">进入下一轮，重新发起 streamChat</text>
+
+  <!-- 底部结论 -->
+  <rect x="40" y="574" width="820" height="106" rx="10" fill="#fef2f2" stroke="#b91c1c" stroke-width="2"/>
+  <text x="450" y="598" text-anchor="middle" font-size="13" font-weight="700" fill="#b91c1c">tool_call 事件比实战05 更早吐出来了，但"收到"和"真正执行"之间还隔着一层</text>
+  <text x="450" y="620" text-anchor="middle" font-size="11" fill="#b91c1c">③ 这一步只是 push 进数组，不触发执行——执行要等 ④ 整轮 done 之后，在 ⑤ 才顺序发生</text>
+  <text x="450" y="640" text-anchor="middle" font-size="10.5" fill="#b91c1c">这层间隔是这一篇刻意保留、留给以后再拆的账（对应真源码 StreamingToolExecutor 的并发起跑，本篇未复刻）</text>
+  <text x="450" y="662" text-anchor="middle" font-size="10" fill="#94a3b8">循环条件不变：看 toolCalls 是否为空，不看 stopReason 字符串——回扣实战02、query.ts:554</text>
+</svg>
