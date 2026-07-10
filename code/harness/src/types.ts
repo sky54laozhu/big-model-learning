@@ -43,6 +43,18 @@ export type StreamEvent =
        */
       stopReason: string
     }
+  | {
+      /**
+       * 实战08 新增：独立频道的系统通知，不是 assistant 说的话——请求失败、判断值得重试时吐出来。
+       * 消费端（loop.ts）看到这个事件，该做两件事：把它打印成单独一行（别跟 text_delta 拼在一起），
+       * 并清空这一轮已经攒到一半的 text/toolCalls——无状态协议的重试是整包重发，上一次的碎片作废。
+       */
+      type: 'retry'
+      attempt: number
+      maxRetries: number
+      delayMs: number
+      reason: string
+    }
 
 /** 模型层的契约：谁想当一个 provider，就得实现它 */
 export interface ModelProvider {

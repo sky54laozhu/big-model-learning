@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 700" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t" aria-describedby="d">
+  <title id="t">主控制流程图：withRetry 内部的 for 循环——试、判断、退避、再试，三条出口各走各的路</title>
+  <desc id="d">streamChat 外层现在只是 yield* withRetry(runOnce) 一行。withRetry 内部是一个 for 循环，最多跑 MAX_RETRIES+1=4 轮，主干七步依次编号①-⑦：①for (attempt=1; attempt≤MAX_RETRIES+1(=4); attempt++)；②try { yield* runOnce() } 完整跑一次请求——如果没抛错，右侧绿色出口直接 return 收工，这次尝试成功，不进入下面任何判断；如果抛错，进入③isRetryable(extractHttpStatus(err))判断——不可重试（400/401 这类）时右侧红色出口 throw err 原样抛出，不包装，不算"重试耗尽"；可重试则继续判断④attempt > MAX_RETRIES(=3)——超过了，右侧红色出口 throw RetryExhaustedError(attempt-1, err)，带上真正试过的次数和最后一次的原因；没超过，算出⑤delayMs = backoffDelay(attempt)（1s→2s→4s）；⑥yield { type:'retry', attempt, maxRetries, delayMs, reason } 独立频道通知调用方；⑦await sleep(delayMs) 真的等这么久，右侧灰色出口说明循环回到①进入下一轮 attempt，runOnce 整个重新调用一遍。底部结论：runOnce 每次被调用都是全新的一次请求，内部所有累积状态都是它自己新建的局部变量，没有任何跨尝试的状态被带过来——这就是"无状态协议→重试=整包重发"的运行时体现。</desc>
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+
+  <text x="420" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">主控制流程：withRetry(runOnce) 内部的 for 循环</text>
+  <text x="420" y="58" text-anchor="middle" font-size="13" fill="#475569">streamChat 外层只剩 yield* withRetry(runOnce) 一行；重试节奏全部收在这个循环里（灰=继续走主干，绿=成功出口，红=失败出口）</text>
+
+  <!-- ① -->
+  <rect x="80" y="80" width="340" height="42" rx="8" fill="#f1f5f9" stroke="#475569" stroke-width="2"/>
+  <text x="250" y="106" text-anchor="middle" font-size="11" fill="#334155">① for (attempt=1; attempt≤MAX_RETRIES+1(=4); attempt++)</text>
+  <line x1="250" y1="122" x2="250" y2="142" stroke="#475569" stroke-width="2"/>
+  <polygon points="250,146 244,134 256,134" fill="#475569"/>
+
+  <!-- ② -->
+  <rect x="80" y="148" width="340" height="46" rx="8" fill="#f1f5f9" stroke="#475569" stroke-width="2"/>
+  <text x="250" y="167" text-anchor="middle" font-size="10.6" fill="#334155">② try { yield* runOnce() } —— 完整跑一次</text>
+  <text x="250" y="182" text-anchor="middle" font-size="10.6" fill="#334155">请求（SSE 解析在其内部，见下方灰框）</text>
+  <line x1="420" y1="171" x2="558" y2="171" stroke="#166534" stroke-width="2"/>
+  <text x="490" y="164" text-anchor="middle" font-size="9" fill="#166534">没抛错</text>
+  <polygon points="562,171 550,165 550,177" fill="#166534"/>
+  <rect x="560" y="146" width="200" height="50" rx="8" fill="#f0fdf4" stroke="#166534" stroke-width="2"/>
+  <text x="660" y="167" text-anchor="middle" font-size="10.3" font-weight="700" fill="#166534">return —— 直接收工</text>
+  <text x="660" y="182" text-anchor="middle" font-size="8.8" fill="#166534">这次尝试成功，不进入下面任何判断</text>
+
+  <line x1="250" y1="194" x2="250" y2="214" stroke="#475569" stroke-width="2"/>
+  <text x="264" y="208" font-size="9" fill="#475569">抛错了</text>
+  <polygon points="250,218 244,206 256,206" fill="#475569"/>
+
+  <!-- ③ 判断 isRetryable -->
+  <rect x="80" y="222" width="340" height="42" rx="8" fill="#fffbeb" stroke="#b45309" stroke-width="2.2"/>
+  <text x="250" y="248" text-anchor="middle" font-size="10.6" fill="#92400e">③ isRetryable(extractHttpStatus(err)) ？</text>
+  <line x1="420" y1="243" x2="558" y2="243" stroke="#b91c1c" stroke-width="2"/>
+  <text x="480" y="236" text-anchor="middle" font-size="9" fill="#b91c1c">否（400/401这类）</text>
+  <polygon points="562,243 550,237 550,249" fill="#b91c1c"/>
+  <rect x="560" y="218" width="200" height="50" rx="8" fill="#fef2f2" stroke="#b91c1c" stroke-width="2"/>
+  <text x="660" y="239" text-anchor="middle" font-size="10.3" font-weight="700" fill="#b91c1c">throw err —— 原样抛出</text>
+  <text x="660" y="254" text-anchor="middle" font-size="8.8" fill="#b91c1c">不包装，不算"重试耗尽"</text>
+
+  <line x1="250" y1="264" x2="250" y2="284" stroke="#475569" stroke-width="2"/>
+  <text x="264" y="278" font-size="9" fill="#475569">是（429/5xx/网络错误）</text>
+  <polygon points="250,288 244,276 256,276" fill="#475569"/>
+
+  <!-- ④ 判断 attempt > MAX_RETRIES -->
+  <rect x="80" y="292" width="340" height="42" rx="8" fill="#fffbeb" stroke="#b45309" stroke-width="2.2"/>
+  <text x="250" y="318" text-anchor="middle" font-size="10.6" fill="#92400e">④ attempt &gt; MAX_RETRIES(=3) ？</text>
+  <line x1="420" y1="313" x2="558" y2="313" stroke="#b91c1c" stroke-width="2"/>
+  <text x="480" y="306" text-anchor="middle" font-size="9" fill="#b91c1c">是，够了</text>
+  <polygon points="562,313 550,307 550,319" fill="#b91c1c"/>
+  <rect x="560" y="286" width="200" height="58" rx="8" fill="#fef2f2" stroke="#b91c1c" stroke-width="2"/>
+  <text x="660" y="306" text-anchor="middle" font-size="10.3" font-weight="700" fill="#b91c1c">throw RetryExhaustedError</text>
+  <text x="660" y="320" text-anchor="middle" font-size="8.8" fill="#b91c1c">(attempt-1, err) —— 响亮失败</text>
+  <text x="660" y="333" text-anchor="middle" font-size="8.8" fill="#b91c1c">带上真正试过的次数和原因</text>
+
+  <line x1="250" y1="334" x2="250" y2="354" stroke="#475569" stroke-width="2"/>
+  <text x="264" y="348" font-size="9" fill="#475569">否，还没够</text>
+  <polygon points="250,358 244,346 256,346" fill="#475569"/>
+
+  <!-- ⑤ backoffDelay -->
+  <rect x="80" y="362" width="340" height="40" rx="8" fill="#f1f5f9" stroke="#475569" stroke-width="2"/>
+  <text x="250" y="386" text-anchor="middle" font-size="10.6" fill="#334155">⑤ delayMs = backoffDelay(attempt)（1s→2s→4s）</text>
+  <line x1="250" y1="402" x2="250" y2="420" stroke="#475569" stroke-width="2"/>
+  <polygon points="250,424 244,412 256,412" fill="#475569"/>
+
+  <!-- ⑥ yield retry -->
+  <rect x="80" y="428" width="340" height="46" rx="8" fill="#fffbeb" stroke="#b45309" stroke-width="2.4"/>
+  <text x="250" y="447" text-anchor="middle" font-size="10.4" font-weight="700" fill="#92400e">⑥ yield { type:'retry', attempt, maxRetries,</text>
+  <text x="250" y="462" text-anchor="middle" font-size="10.4" font-weight="700" fill="#92400e">delayMs, reason } —— 独立频道通知调用方</text>
+  <line x1="250" y1="474" x2="250" y2="494" stroke="#475569" stroke-width="2"/>
+  <polygon points="250,498 244,486 256,486" fill="#475569"/>
+
+  <!-- ⑦ sleep -->
+  <rect x="80" y="502" width="340" height="42" rx="8" fill="#f1f5f9" stroke="#475569" stroke-width="2"/>
+  <text x="250" y="528" text-anchor="middle" font-size="10.6" fill="#334155">⑦ await sleep(delayMs) —— 真的等这么久</text>
+  <line x1="420" y1="523" x2="558" y2="523" stroke="#475569" stroke-width="2" stroke-dasharray="5 4"/>
+  <text x="480" y="516" text-anchor="middle" font-size="9" fill="#475569">下一条事件才到达</text>
+  <polygon points="562,523 550,517 550,529" fill="#475569"/>
+  <rect x="560" y="496" width="200" height="56" rx="8" fill="#f8fafc" stroke="#94a3b8" stroke-width="2" stroke-dasharray="6 4"/>
+  <text x="660" y="516" text-anchor="middle" font-size="10" fill="#475569">↺ 循环回到①</text>
+  <text x="660" y="530" text-anchor="middle" font-size="9" fill="#475569">进入下一轮 attempt，runOnce</text>
+  <text x="660" y="543" text-anchor="middle" font-size="9" fill="#475569">整个重新调用一遍</text>
+
+  <line x1="250" y1="544" x2="250" y2="564" stroke="#475569" stroke-width="2"/>
+  <polygon points="250,568 244,556 256,556" fill="#475569"/>
+
+  <!-- 结论 -->
+  <rect x="60" y="572" width="720" height="80" rx="10" fill="#fffbeb" stroke="#b45309" stroke-width="2.4"/>
+  <text x="420" y="596" text-anchor="middle" font-size="12" font-weight="700" fill="#92400e">runOnce 每次被调用都是全新的一次请求</text>
+  <text x="420" y="616" text-anchor="middle" font-size="10.5" fill="#a16207">内部所有累积状态（SSE 里正在拼的文本块、工具调用参数）都是它自己新建的局部变量</text>
+  <text x="420" y="634" text-anchor="middle" font-size="10.5" fill="#a16207">没有任何跨尝试的状态被带过来——这就是"无状态协议→重试=整包重发"的运行时体现（折叠点④）</text>
+</svg>

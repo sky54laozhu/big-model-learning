@@ -11,6 +11,9 @@ import { checkPermission, askHuman, grantAlways, newSession } from './permission
  * text_delta 边到边写 stdout，tool_call 边到边收进本轮的数组，直到 done 才知道这轮该不该收工。
  * 实战07 新增：system 可选，整场对话每一轮都原样带上同一份系统提示词——它不进 messages
  * 历史（那是"发生过什么"），是每轮请求单独一份"这轮该怎么表现"，回扣折叠点①。
+ * 实战08 新增：streamChat 内部失败会自己重试，重试时吐一个独立频道的 retry 事件——收到它，
+ * 已经打到屏幕上的碎片留在原地不撤回，但这一轮攒的 text/toolCalls 要清空重来（无状态协议，
+ * 重试=整包重发，不是接着上次没说完的地方续），退避真的等完才会有下一条事件到达。
  */
 export async function runAgent(
   provider: ModelProvider,
@@ -35,6 +38,12 @@ export async function runAgent(
         process.stdout.write(event.delta)
       } else if (event.type === 'tool_call') {
         toolCalls.push(event.call)
+      } else if (event.type === 'retry') {
+        // 独立频道通知：单独一行，不跟 assistant 的文本拼在一起；这一轮攒到一半的碎片作废重来
+        const seconds = (event.delayMs / 1000).toFixed(1)
+        process.stdout.write(`\n⚠ 请求失败，${seconds}s 后重试（第 ${event.attempt}/${event.maxRetries} 次）：${event.reason}\n[assistant] `)
+        text = ''
+        toolCalls.length = 0
       }
       // done 事件本身不用管——收没收到过 tool_call 才是"这轮要不要继续"的判断依据
     }

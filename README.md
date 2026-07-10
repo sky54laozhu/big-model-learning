@@ -96,6 +96,7 @@
 | 实战05 | [文本流式渲染：从「憋到底」到「边到边喂」](blogs/实战05-text-streaming.md) | ✅ |
 | 实战06 | [流式工具执行/解析：把 loop 真正重构成流式](blogs/实战06-streaming-tool-calls.md) | ✅ |
 | 实战07 | [系统提示词与上下文拼装：给模型一份「这轮该怎么表现」的说明书](blogs/实战07-system-prompt-context.md) | ✅ |
+| 实战08 | [错误处理与重试：请求失败了，不该当场认输](blogs/实战08-error-handling-retry.md) | ✅ |
 
 ### 独立系列 · 从 0 到精通 TypeScript
 > 🏁 里程碑：读懂任何库的类型定义、自己写类型体操（21 篇，配填空练习仓 `code/ts-course/`）｜ 暗线：类型 = 一组允许的值（集合）
