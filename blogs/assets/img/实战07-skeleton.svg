@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 600" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <title id="t">骨架定位图：系统提示词第一次有了真内容——buildSystemPrompt() 装配，system 作为独立参数贯通 loop 与两端 provider</title>
+  <desc id="d">调用方 index.ts 新增一行 buildSystemPrompt({cwd})，产出一份 system 字符串。runAgent（loop.ts）新增可选参数 system，每一轮原样带着同一份字符串调用 provider.streamChat(messages, tools, system)——system 不进 messages 历史，是独立于对话记录之外单独传的"这轮该怎么表现"。两端 provider 按各自协议接住：anthropic.ts 把它塞进请求体顶层的 system 字段；openai.ts 把它转成一条 role: 'system' 的消息插在 messages 数组最前面。systemPrompt.ts 是本章新增模块，内部装配顺序是静态基础指令→CLAUDE.md 项目规则（可关）→环境信息（可关）→git 状态快照，跟真源码核对过的顺序一致：memory 排在 env_info 前面。底部灰色框：工具注册表、权限闸门三态、消息历史结构、两端 API 的 stream:true 请求方式，全部沿用实战02-06，一个字没改。</desc>
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+
+  <text x="420" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">骨架定位：system 作为独立参数，第一次装了真内容</text>
+  <text x="420" y="58" text-anchor="middle" font-size="13" fill="#475569">调用方多一行 buildSystemPrompt()；system 不进 messages 历史，独立贯通 loop 和两端 provider（灰=不变，琥珀=新增/改动）</text>
+
+  <!-- 调用方 index.ts -->
+  <rect x="40" y="82" width="270" height="64" rx="8" fill="#f1f5f9" stroke="#94a3b8" stroke-width="2"/>
+  <text x="175" y="102" text-anchor="middle" font-size="12.5" font-weight="700" fill="#475569">调用方 index.ts</text>
+  <rect x="54" y="110" width="242" height="26" rx="6" fill="#fffbeb" stroke="#b45309" stroke-width="1.6"/>
+  <text x="175" y="127" text-anchor="middle" font-size="9" fill="#92400e">system = buildSystemPrompt({cwd}) ← 新增</text>
+
+  <!-- 箭头：index.ts → systemPrompt.ts -->
+  <line x1="310" y1="114" x2="470" y2="114" stroke="#b45309" stroke-width="2"/>
+  <polygon points="474,114 462,109 462,119" fill="#b45309"/>
+  <text x="392" y="106" text-anchor="middle" font-size="9.5" fill="#92400e">调用</text>
+
+  <!-- systemPrompt.ts 新模块 -->
+  <rect x="478" y="78" width="322" height="196" rx="10" fill="#fffbeb" stroke="#1e293b" stroke-width="2.6"/>
+  <text x="639" y="100" text-anchor="middle" font-size="12.5" font-weight="700" fill="#1e293b">systemPrompt.ts（本章新增）</text>
+
+  <rect x="492" y="110" width="294" height="28" rx="6" fill="#ffffff" stroke="#94a3b8" stroke-width="1.4"/>
+  <text x="639" y="129" text-anchor="middle" font-size="10.5" fill="#475569">① BASE_INSTRUCTIONS（硬编码，恒在）</text>
+
+  <rect x="492" y="144" width="294" height="28" rx="6" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
+  <text x="639" y="163" text-anchor="middle" font-size="10.5" fill="#4338ca">② CLAUDE.md 项目规则（includeMemory 可关）</text>
+
+  <rect x="492" y="178" width="294" height="28" rx="6" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
+  <text x="639" y="197" text-anchor="middle" font-size="9.5" fill="#4338ca">③ 环境信息：cwd/平台/是否git仓库（includeEnvInfo可关）</text>
+
+  <rect x="492" y="212" width="294" height="28" rx="6" fill="#eef2ff" stroke="#6366f1" stroke-width="1.6"/>
+  <text x="639" y="231" text-anchor="middle" font-size="10.5" fill="#4338ca">④ git 状态快照（进程内只算一次，缓存）</text>
+
+  <text x="639" y="262" text-anchor="middle" font-size="9.5" fill="#92400e">四段 join('\n\n') → 一份 system 字符串，②③④顺序跟真源码核对过</text>
+
+  <!-- index.ts → runAgent -->
+  <line x1="175" y1="146" x2="175" y2="176" stroke="#94a3b8" stroke-width="2"/>
+  <polygon points="175,180 169,168 181,168" fill="#94a3b8"/>
+
+  <!-- runAgent loop -->
+  <rect x="40" y="184" width="410" height="180" rx="10" fill="#f8fafc" stroke="#94a3b8" stroke-width="2.4" stroke-dasharray="6 4"/>
+  <text x="56" y="206" font-size="12.5" font-weight="700" fill="#475569">agent loop · runAgent(provider, tools, input, …, system?)</text>
+
+  <rect x="58" y="216" width="376" height="28" rx="6" fill="#fffbeb" stroke="#b45309" stroke-width="1.8"/>
+  <text x="246" y="235" text-anchor="middle" font-size="10.5" fill="#92400e">新增参数 system?: string ← 本章改动</text>
+
+  <rect x="58" y="250" width="376" height="30" rx="6" fill="#fffbeb" stroke="#b45309" stroke-width="1.8"/>
+  <text x="246" y="270" text-anchor="middle" font-size="10.5" fill="#92400e">for (turn 1..N)：streamChat(messages, tools, system) ← 每轮原样带上</text>
+
+  <rect x="58" y="288" width="376" height="30" rx="6" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.4"/>
+  <text x="246" y="308" text-anchor="middle" font-size="10.5" fill="#475569">toolCalls 为空 → return text（判断依据不变，实战06）</text>
+
+  <rect x="58" y="324" width="376" height="30" rx="6" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.4"/>
+  <text x="246" y="344" text-anchor="middle" font-size="10.5" fill="#475569">非空 → 顺序过权限闸门 → execute()（不变，实战04）</text>
+
+  <!-- runAgent → provider 分支 -->
+  <line x1="450" y1="265" x2="478" y2="265" stroke="#b45309" stroke-width="2"/>
+  <polygon points="482,265 470,260 470,270" fill="#b45309"/>
+
+  <!-- provider 两端分支 -->
+  <rect x="478" y="300" width="152" height="86" rx="9" fill="#fffbeb" stroke="#b45309" stroke-width="2"/>
+  <text x="554" y="320" text-anchor="middle" font-size="11.5" font-weight="700" fill="#92400e">anthropic.ts</text>
+  <text x="554" y="340" text-anchor="middle" font-size="9.5" fill="#92400e">body.system = system</text>
+  <text x="554" y="356" text-anchor="middle" font-size="9" fill="#a16207">（请求体顶层字段，新增）</text>
+  <text x="554" y="374" text-anchor="middle" font-size="9" fill="#a16207">跟 messages 平级，不混进去</text>
+
+  <rect x="648" y="300" width="152" height="86" rx="9" fill="#fffbeb" stroke="#b45309" stroke-width="2"/>
+  <text x="724" y="320" text-anchor="middle" font-size="11.5" font-weight="700" fill="#92400e">openai.ts</text>
+  <text x="724" y="340" text-anchor="middle" font-size="9.5" fill="#92400e">messages.unshift(</text>
+  <text x="724" y="354" text-anchor="middle" font-size="9.5" fill="#92400e">{role:'system',...})</text>
+  <text x="724" y="372" text-anchor="middle" font-size="9" fill="#a16207">（塞进消息数组最前面）</text>
+
+  <line x1="554" y1="386" x2="554" y2="408" stroke="#94a3b8" stroke-width="2"/>
+  <polygon points="554,412 548,400 560,400" fill="#94a3b8"/>
+  <line x1="724" y1="386" x2="724" y2="408" stroke="#94a3b8" stroke-width="2"/>
+  <polygon points="724,412 718,400 730,400" fill="#94a3b8"/>
+
+  <rect x="478" y="414" width="322" height="42" rx="8" fill="#f8fafc" stroke="#94a3b8" stroke-width="2" stroke-dasharray="6 4"/>
+  <text x="639" y="440" text-anchor="middle" font-size="10.5" font-weight="700" fill="#475569">两端 API POST（stream: true，实战06 已有，不变）</text>
+
+  <!-- 下方灰色不变区域 -->
+  <rect x="40" y="476" width="760" height="90" rx="10" fill="#f8fafc" stroke="#94a3b8" stroke-width="2" stroke-dasharray="6 4"/>
+  <text x="56" y="498" font-size="12.5" font-weight="700" fill="#475569">灰色区域：实战02-06 已有，本章一个字不改</text>
+  <text x="420" y="522" text-anchor="middle" font-size="11" fill="#64748b">allTools[]（read_file / write_file / edit_file / list_dir / bash） · 权限闸门 allow/ask/deny 三态</text>
+  <text x="420" y="544" text-anchor="middle" font-size="11" fill="#64748b">messages 历史（system 不进这里）</text>
+
+  <text x="420" y="586" text-anchor="middle" font-size="10.5" fill="#92400e">灰 = 实战02-06 已有，未改动　·　琥珀 = 本章新增/改动　·　紫 = systemPrompt.ts 内部可开关的动态段</text>
+</svg>

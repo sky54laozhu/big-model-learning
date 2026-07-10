@@ -9,6 +9,8 @@ import { checkPermission, askHuman, grantAlways, newSession } from './permission
  * 实战04 新增：execute 前插一道权限闸门（gate=false 退回实战03 的"裸奔"= bypassPermissions mode）。
  * 实战06 重建：不再等 chat() 憋出一整包 ChatReply，而是 for await 消费 streamChat() 的事件流——
  * text_delta 边到边写 stdout，tool_call 边到边收进本轮的数组，直到 done 才知道这轮该不该收工。
+ * 实战07 新增：system 可选，整场对话每一轮都原样带上同一份系统提示词——它不进 messages
+ * 历史（那是"发生过什么"），是每轮请求单独一份"这轮该怎么表现"，回扣折叠点①。
  */
 export async function runAgent(
   provider: ModelProvider,
@@ -16,6 +18,7 @@ export async function runAgent(
   userInput: string,
   maxTurns = 10,
   gate = true,
+  system?: string,
 ): Promise<string> {
   const messages: Message[] = [{ role: 'user', content: userInput }]
   const toolByName = new Map(tools.map(t => [t.name, t]))
@@ -26,7 +29,7 @@ export async function runAgent(
   for (let turn = 1; turn <= maxTurns; turn++) {
     let text = ''
     const toolCalls: ToolCall[] = []
-    for await (const event of provider.streamChat(messages, tools)) {
+    for await (const event of provider.streamChat(messages, tools, system)) {
       if (event.type === 'text_delta') {
         text += event.delta
         process.stdout.write(event.delta)

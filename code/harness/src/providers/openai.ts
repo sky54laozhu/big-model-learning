@@ -13,12 +13,16 @@ export class OpenAICompatProvider implements ModelProvider {
     private model: string,
   ) {}
 
-  async *streamChat(messages: Message[], tools?: Tool[]): AsyncGenerator<StreamEvent> {
+  async *streamChat(messages: Message[], tools?: Tool[], system?: string): AsyncGenerator<StreamEvent> {
+    // 入口翻译③：这协议没有独立的 system 字段，系统提示词就是 messages 数组最前面一条
+    // role:'system' 消息——跟 Anthropic 顶层 system 字段是同一份内容，两种不同的搬运方式
+    const openaiMessages = this.toOpenAIMessages(messages)
+    if (system) openaiMessages.unshift({ role: 'system', content: system })
+
     const body: Record<string, unknown> = {
       model: this.model,
       stream: true,
-      // 入口翻译①：中立 messages → OpenAI chat.completions 方言
-      messages: this.toOpenAIMessages(messages),
+      messages: openaiMessages,
     }
     // 入口翻译②：工具说明 → OpenAI 的 tools（外面套一层 type:'function'）
     if (tools && tools.length > 0) {

@@ -16,7 +16,7 @@ export class AnthropicProvider implements ModelProvider {
     private model: string,
   ) {}
 
-  async *streamChat(messages: Message[], tools?: Tool[]): AsyncGenerator<StreamEvent> {
+  async *streamChat(messages: Message[], tools?: Tool[], system?: string): AsyncGenerator<StreamEvent> {
     const headers: Record<string, string> = {
       'content-type': 'application/json',
       'anthropic-version': '2023-06-01',
@@ -32,6 +32,9 @@ export class AnthropicProvider implements ModelProvider {
       // 入口翻译①：中立 messages（含工具请求/结果）→ Anthropic 的 content 块方言
       messages: this.toAnthropicMessages(messages),
     }
+    // 入口翻译③：system 是请求体顶层的独立字段，不混进 messages 数组——
+    // 这跟 实战07 折叠点①同一件事：工具描述、系统提示词都不挤在 messages 里，各自有各自的槽位
+    if (system) body.system = system
     // 入口翻译②：工具说明 → Anthropic 的 tools（参数字段叫 input_schema）
     if (tools && tools.length > 0) {
       body.tools = tools.map(t => ({

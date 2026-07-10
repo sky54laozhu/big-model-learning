@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 700" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <title id="t">序列图：system 装配一次，多轮循环原样重复传——不是每轮都问 systemPrompt.ts 要新的一份</title>
+  <desc id="d">调用方（index.ts）三条泳道之一，在进入 runAgent 循环之前，先调一次 buildSystemPrompt({cwd})。systemPrompt.ts 泳道内部：cachedGitStatus 为 null，于是并行跑 git branch/status/log 三条命令、拼好四段内容，返回一份 system 字符串——这是本次进程里唯一一次真正的装配开销。调用方拿到这份字符串后进入 for 循环，turn 1 把它和 messages、tools 一起传给 provider.streamChat；provider 按自己协议接住（Anthropic 塞进请求体顶层的 system 字段，OpenAI 兼容转成一条 role:system 的消息插进 messages 数组最前面），POST 给模型 API。模型这轮请求了工具，loop 执行完把结果塞回 messages，进入 turn 2——这一轮再次调用 streamChat 时，system 参数还是同一个字符串值，systemPrompt.ts 全程没有被第二次调用过。模型给出最终文本后循环结束。底部红字点题：system 只在循环外装配一次，循环内不管转几轮都是原样重复传，这正是折叠点⑦"动态≠每轮重算"在真实调用链路上的样子。</desc>
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+
+  <text x="450" y="32" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">序列图：装配一次，循环内原样重复传</text>
+
+  <!-- 泳道头 -->
+  <rect x="60" y="52" width="180" height="34" rx="8" fill="#f1f5f9" stroke="#94a3b8" stroke-width="2"/>
+  <text x="150" y="74" text-anchor="middle" font-size="12.5" font-weight="700" fill="#475569">调用方（index.ts→runAgent）</text>
+  <rect x="370" y="52" width="180" height="34" rx="8" fill="#fffbeb" stroke="#b45309" stroke-width="2"/>
+  <text x="460" y="74" text-anchor="middle" font-size="12.5" font-weight="700" fill="#92400e">systemPrompt.ts</text>
+  <rect x="670" y="52" width="180" height="34" rx="8" fill="#f1f5f9" stroke="#94a3b8" stroke-width="2"/>
+  <text x="760" y="74" text-anchor="middle" font-size="12.5" font-weight="700" fill="#475569">provider ＋ 模型 API</text>
+
+  <!-- 生命线 -->
+  <line x1="150" y1="86" x2="150" y2="662" stroke="#94a3b8" stroke-width="1.6" stroke-dasharray="4 3"/>
+  <line x1="460" y1="86" x2="460" y2="662" stroke="#b45309" stroke-width="1.6" stroke-dasharray="4 3"/>
+  <line x1="760" y1="86" x2="760" y2="662" stroke="#94a3b8" stroke-width="1.6" stroke-dasharray="4 3"/>
+
+  <!-- beat 1 -->
+  <text x="20" y="112" font-size="12" font-weight="700" fill="#1e293b">① 循环前装配</text>
+  <line x1="150" y1="118" x2="460" y2="118" stroke="#334155" stroke-width="1.8"/>
+  <polygon points="460,118 450,113 450,123" fill="#334155"/>
+  <text x="305" y="112" text-anchor="middle" font-size="10" fill="#334155">buildSystemPrompt({cwd})</text>
+
+  <!-- beat 2 -->
+  <text x="20" y="176" font-size="12" font-weight="700" fill="#1e293b">② 唯一一次真装配</text>
+  <rect x="380" y="132" width="160" height="60" rx="6" fill="#fffbeb" stroke="#b45309" stroke-width="1.8"/>
+  <text x="460" y="150" text-anchor="middle" font-size="9.5" font-weight="700" fill="#92400e">cachedGitStatus===null</text>
+  <text x="460" y="166" text-anchor="middle" font-size="9" fill="#92400e">并行跑 branch/status/log</text>
+  <text x="460" y="182" text-anchor="middle" font-size="9" fill="#92400e">拼四段，存进缓存</text>
+
+  <line x1="460" y1="202" x2="150" y2="202" stroke="#b45309" stroke-width="2"/>
+  <polygon points="150,202 160,197 160,207" fill="#b45309"/>
+  <text x="305" y="196" text-anchor="middle" font-size="10" font-weight="700" fill="#92400e">返回一份 system 字符串（本次进程唯一一次装配开销）</text>
+
+  <!-- beat 3 -->
+  <rect x="60" y="216" width="180" height="30" rx="6" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.4"/>
+  <text x="150" y="236" text-anchor="middle" font-size="9.5" fill="#475569">进入 for 循环，turn=1</text>
+  <text x="20" y="210" font-size="12" font-weight="700" fill="#1e293b">③ turn 1</text>
+
+  <line x1="150" y1="264" x2="760" y2="264" stroke="#334155" stroke-width="1.8"/>
+  <polygon points="760,264 750,259 750,269" fill="#334155"/>
+  <text x="455" y="258" text-anchor="middle" font-size="10" fill="#334155">streamChat(messages, tools, system)</text>
+
+  <rect x="670" y="278" width="180" height="52" rx="6" fill="#fffbeb" stroke="#b45309" stroke-width="1.6"/>
+  <text x="760" y="296" text-anchor="middle" font-size="9" fill="#92400e">Anthropic：body.system=system</text>
+  <text x="760" y="310" text-anchor="middle" font-size="9" fill="#92400e">OpenAI：unshift role:system 消息</text>
+  <text x="760" y="324" text-anchor="middle" font-size="8.5" fill="#a16207">各自协议接住，POST 模型 API</text>
+
+  <!-- beat 4 -->
+  <line x1="760" y1="346" x2="150" y2="346" stroke="#334155" stroke-width="1.8" stroke-dasharray="3 3"/>
+  <polygon points="150,346 160,341 160,351" fill="#334155"/>
+  <text x="455" y="340" text-anchor="middle" font-size="10" fill="#334155">yield tool_call → loop 收进 toolCalls[]</text>
+
+  <rect x="60" y="356" width="180" height="46" rx="6" fill="#f0fdf4" stroke="#166534" stroke-width="1.8"/>
+  <text x="150" y="374" text-anchor="middle" font-size="9.5" font-weight="700" fill="#166534">过权限闸门 → execute()</text>
+  <text x="150" y="390" text-anchor="middle" font-size="9" fill="#166534">结果 push 进 messages（不变）</text>
+  <text x="20" y="350" font-size="12" font-weight="700" fill="#1e293b">④ 工具调用一轮</text>
+
+  <!-- beat 5：turn 2，同一个 system -->
+  <rect x="60" y="412" width="180" height="30" rx="6" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.4"/>
+  <text x="150" y="432" text-anchor="middle" font-size="9.5" fill="#475569">turn=2，messages 已多了工具结果</text>
+  <text x="20" y="406" font-size="12" font-weight="700" fill="#1e293b">⑤ turn 2</text>
+
+  <line x1="150" y1="460" x2="760" y2="460" stroke="#334155" stroke-width="1.8"/>
+  <polygon points="760,460 750,455 750,465" fill="#334155"/>
+  <text x="455" y="454" text-anchor="middle" font-size="10" font-weight="700" fill="#334155">streamChat(messages, tools, system) ← 同一个 system 值</text>
+
+  <line x1="150" y1="478" x2="440" y2="478" stroke="#b45309" stroke-width="1.6" stroke-dasharray="2 3"/>
+  <text x="295" y="472" text-anchor="middle" font-size="9" fill="#92400e">systemPrompt.ts 全程没被第二次调用</text>
+
+  <!-- beat 6 -->
+  <line x1="760" y1="504" x2="150" y2="504" stroke="#334155" stroke-width="1.8"/>
+  <polygon points="150,504 160,499 160,509" fill="#334155"/>
+  <text x="455" y="498" text-anchor="middle" font-size="10" fill="#334155">最终文本，本轮无 tool_call → toolCalls 为空</text>
+
+  <rect x="60" y="514" width="180" height="30" rx="6" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.4"/>
+  <text x="150" y="534" text-anchor="middle" font-size="9.5" fill="#475569">循环结束，return text</text>
+  <text x="20" y="508" font-size="12" font-weight="700" fill="#1e293b">⑥ 收工</text>
+
+  <!-- 底部结论 -->
+  <rect x="40" y="566" width="820" height="106" rx="10" fill="#fef2f2" stroke="#b91c1c" stroke-width="2"/>
+  <text x="450" y="590" text-anchor="middle" font-size="13" font-weight="700" fill="#b91c1c">system 只在循环外装配一次，循环内不管转几轮都是原样重复传</text>
+  <text x="450" y="612" text-anchor="middle" font-size="11" fill="#b91c1c">turn 1 和 turn 2 传的是同一个字符串值——不是"每轮问 systemPrompt.ts 要一份新的"，而是"造好一份，整场会话共用"</text>
+  <text x="450" y="634" text-anchor="middle" font-size="10.5" fill="#b91c1c">这正是折叠点⑦"动态≠每轮重算"在真实调用链路上的样子：动态指的是会随 /clear、/compact 失效重算，不是逐轮重算</text>
+  <text x="450" y="656" text-anchor="middle" font-size="10" fill="#94a3b8">provider 分支不变：Anthropic 顶层 system 字段 / OpenAI 兼容 leading role:system 消息——两条协议各走各的，system 值本身没变过</text>
+</svg>

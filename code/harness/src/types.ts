@@ -52,6 +52,10 @@ export interface ModelProvider {
    * 文本每到一片就吐一个 text_delta；工具调用的参数字符串只在它自己那一块结束时
    * parse 一次（不逐 delta 解析，避免 O(n²)——实战05 的账，只是触发时机从"整个响应
    * 结束"提前到"这一块结束"），parse 完立刻吐一个 tool_call，不用等模型说完这一轮。
+   *
+   * system 可选（实战07 新增）：一整段拼好的系统提示词字符串，独立于 messages 之外传入——
+   * 两端协议接它的方式不同（Anthropic 是请求体顶层 system 字段，OpenAI 兼容是 messages
+   * 数组最前面一条 role:'system'），差异烂在各自 provider 实现里，调用方不用关心。
    */
-  streamChat(messages: Message[], tools?: Tool[]): AsyncGenerator<StreamEvent>
+  streamChat(messages: Message[], tools?: Tool[], system?: string): AsyncGenerator<StreamEvent>
 }
