@@ -6,14 +6,20 @@ export type Role = 'user' | 'assistant' | 'tool'
 /** 模型吐回的一次工具请求。id 是把"哪个请求"和"哪个结果"缝在一起的线（Anthropic tool_use_id / OpenAI tool_call_id） */
 export type ToolCall = { id: string; name: string; args: any }
 
+/** 一次请求的 token 用量（回扣源码 tokens.ts：用量不是另开一个计数器，是长在这条消息自己身上） */
+export type Usage = { inputTokens: number; outputTokens: number }
+
 /**
  * 一条对话消息（回扣概念 Blog 17：记忆不在模型脑里，在这个数组里，每轮原样重放）。
  * 实战02 从"一种"劈成可辨识联合（回扣 实战00b：全卷最核心的类型技巧）——
  * 因为带工具后，消息不止"纯文本"一种：模型要工具 / 工具回结果 都得进历史。
+ * 实战09 新增：assistant 消息可选带上这一轮的 usage——压缩阈值判断要读的就是这个字段，
+ * 从历史里由近及远找最后一条带 usage 的 assistant 消息，不是另开一个跨轮累加的计数器
+ * （回扣源码 tokens.ts 的 tokenCountWithEstimation：用量是消息自身的属性，按需读回）。
  */
 export type Message =
   | { role: 'user'; content: string }
-  | { role: 'assistant'; content: string; toolCalls?: ToolCall[] }
+  | { role: 'assistant'; content: string; toolCalls?: ToolCall[]; usage?: Usage }
   | { role: 'tool'; toolCallId: string; content: string }
 
 /** 一个工具 = 一张说明书（给模型看）+ 一只手（harness 调）。自包含，加工具只是往清单塞一个新对象 */
@@ -42,6 +48,8 @@ export type StreamEvent =
        * 循环该不该继续，看有没有收到过 tool_call 事件，不看这个字符串（回扣源码 query.ts §554）。
        */
       stopReason: string
+      /** 实战09 新增：这一轮真实的 token 用量，两端协议各自的字段名已经在 provider 内部抹平 */
+      usage?: Usage
     }
   | {
       /**
@@ -59,6 +67,8 @@ export type StreamEvent =
 /** 模型层的契约：谁想当一个 provider，就得实现它 */
 export interface ModelProvider {
   readonly name: string
+  /** 实战09 新增：压缩阈值要按模型算窗口大小（尽管眼下 getContextWindowForModel 对哪个模型都兜底同一个数） */
+  readonly model: string
   /**
    * tools 可选：不传就退化成 实战01 的纯聊天（回扣 Blog18：工具按需 opt-in）。
    * 文本每到一片就吐一个 text_delta；工具调用的参数字符串只在它自己那一块结束时

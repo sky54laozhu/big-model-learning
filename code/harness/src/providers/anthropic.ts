@@ -1,4 +1,4 @@
-import type { Message, StreamEvent, ModelProvider, Tool, ToolCall } from '../types'
+import type { Message, StreamEvent, ModelProvider, Tool, ToolCall, Usage } from '../types'
 import { readSSE } from '../sse'
 import { HttpError, withRetry } from '../retry'
 
@@ -14,7 +14,7 @@ export class AnthropicProvider implements ModelProvider {
     private base: string,
     private apiKey: string,
     private authToken: string,
-    private model: string,
+    readonly model: string,
   ) {}
 
   async *streamChat(messages: Message[], tools?: Tool[], system?: string): AsyncGenerator<StreamEvent> {
@@ -63,12 +63,23 @@ export class AnthropicProvider implements ModelProvider {
       // 不用等整条流跑完，实战05 里这个事件是被忽略的，这一篇把它请回来当"该 parse 了"的信号。
       const blocks: ContentBlock[] = []
       let stopReason = 'end_turn'
+      // 实战09：input_tokens 只在 message_start 报一次；output_tokens 在 message_delta 里
+      // 报的是"跑到目前为止的累计总数"，不是增量——所以最后一次收到的值就是这轮的最终用量
+      // （回扣 Anthropic 官方 SDK MessageStream 的累积逻辑：message_delta.usage 直接覆盖，不相加）。
+      let usage: Usage | undefined
       for await (const payload of readSSE(res)) {
         const event = JSON.parse(payload) as {
           type: string
           index?: number
           content_block?: { type: string; id?: string; name?: string }
           delta?: { type?: string; text?: string; partial_json?: string; stop_reason?: string }
+          message?: { usage?: { input_tokens?: number } }
+          usage?: { output_tokens?: number }
+        }
+        if (event.type === 'message_start' && event.message?.usage?.input_tokens !== undefined) {
+          usage = { inputTokens: event.message.usage.input_tokens, outputTokens: 0 }
+        } else if (event.type === 'message_delta' && event.usage?.output_tokens !== undefined) {
+          usage = { inputTokens: usage?.inputTokens ?? 0, outputTokens: event.usage.output_tokens }
         }
         if (event.type === 'content_block_start' && event.index !== undefined && event.content_block) {
           blocks[event.index] =
@@ -94,7 +105,7 @@ export class AnthropicProvider implements ModelProvider {
         }
       }
 
-      yield { type: 'done', stopReason }
+      yield { type: 'done', stopReason, usage }
     }
 
     yield* withRetry(runOnce)

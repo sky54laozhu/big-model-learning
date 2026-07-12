@@ -1,4 +1,4 @@
-import type { Message, StreamEvent, ModelProvider, Tool } from '../types'
+import type { Message, StreamEvent, ModelProvider, Tool, Usage } from '../types'
 import { readSSE } from '../sse'
 import { HttpError, withRetry } from '../retry'
 
@@ -11,7 +11,7 @@ export class OpenAICompatProvider implements ModelProvider {
   constructor(
     private base: string,
     private apiKey: string,
-    private model: string,
+    readonly model: string,
   ) {}
 
   async *streamChat(messages: Message[], tools?: Tool[], system?: string): AsyncGenerator<StreamEvent> {
@@ -28,6 +28,9 @@ export class OpenAICompatProvider implements ModelProvider {
         model: self.model,
         stream: true,
         messages: openaiMessages,
+        // 实战09：这协议默认不在流里带用量——挂了这个开关，服务器才会在最后一个 chunk
+        // （choices 为空数组）里额外塞一份 usage: {prompt_tokens, completion_tokens}
+        stream_options: { include_usage: true },
       }
       // 入口翻译②：工具说明 → OpenAI 的 tools（外面套一层 type:'function'）
       if (tools && tools.length > 0) {
@@ -55,6 +58,9 @@ export class OpenAICompatProvider implements ModelProvider {
       const pending: PendingToolCall[] = []
       let currentIndex: number | null = null
       let stopReason = 'stop'
+      // 实战09：带用量的最后一个 chunk 是 choices:[]（空数组），跟正文 chunk 是两种形状——
+      // 下面按 chunk.usage 是否存在来认，不依赖 choices 是否为空这个副作用
+      let usage: Usage | undefined
       for await (const payload of readSSE(res)) {
         if (payload === '[DONE]') break
         const chunk = JSON.parse(payload) as {
@@ -65,6 +71,10 @@ export class OpenAICompatProvider implements ModelProvider {
             }
             finish_reason?: string | null
           }>
+          usage?: { prompt_tokens?: number; completion_tokens?: number }
+        }
+        if (chunk.usage) {
+          usage = { inputTokens: chunk.usage.prompt_tokens ?? 0, outputTokens: chunk.usage.completion_tokens ?? 0 }
         }
         const choice = chunk.choices?.[0]
         if (choice?.delta?.content) {
@@ -90,7 +100,7 @@ export class OpenAICompatProvider implements ModelProvider {
         if (last) yield { type: 'tool_call', call: { id: last.id, name: last.name, args: safeParse(last.argsJson) } }
       }
 
-      yield { type: 'done', stopReason }
+      yield { type: 'done', stopReason, usage }
     }
 
     yield* withRetry(runOnce)

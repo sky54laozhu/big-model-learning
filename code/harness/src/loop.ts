@@ -1,5 +1,6 @@
-import type { ModelProvider, Tool, Message, ToolCall } from './types'
+import type { ModelProvider, Tool, Message, ToolCall, Usage } from './types'
 import { checkPermission, askHuman, grantAlways, newSession } from './permission'
+import { shouldAutoCompact, compactMessages } from './compact'
 
 /**
  * agent loop 骨架 = 把 实战01 的单圈 chat() 套进 while（回扣概念 24：agent 就这么点骨架，无黑魔法）。
@@ -30,8 +31,19 @@ export async function runAgent(
   process.stdout.write('\n[assistant] ') // 实战05：字从这儿开始一个个蹦出来，不再等模型说完整段才见字
 
   for (let turn = 1; turn <= maxTurns; turn++) {
+    // 实战09：每轮开口前先看这一眼——历史顶到阈值就先压缩，压缩后 messages 整段被摘要替换掉
+    // （splice 就地整段换血，不是重新 const 一个数组：外面握着的是同一个引用，回扣 折叠点：
+    // 本章只做"整段替换"，没有 messagesToKeep 那道局部保留的裁剪线）
+    if (shouldAutoCompact(messages, provider.model)) {
+      process.stdout.write('\n[压缩] 历史接近上下文窗口阈值，正在摘要…\n')
+      const compacted = await compactMessages(provider, messages)
+      messages.splice(0, messages.length, ...compacted)
+      process.stdout.write('[压缩] 完成，继续对话\n[assistant] ')
+    }
+
     let text = ''
     const toolCalls: ToolCall[] = []
+    let usage: Usage | undefined
     for await (const event of provider.streamChat(messages, tools, system)) {
       if (event.type === 'text_delta') {
         text += event.delta
@@ -44,8 +56,11 @@ export async function runAgent(
         process.stdout.write(`\n⚠ 请求失败，${seconds}s 后重试（第 ${event.attempt}/${event.maxRetries} 次）：${event.reason}\n[assistant] `)
         text = ''
         toolCalls.length = 0
+      } else if (event.type === 'done') {
+        // 实战09：这一轮真实的 token 用量随 done 事件到达——记下来，待会儿跟着这轮的 assistant
+        // 消息一起存进历史（回扣源码 tokens.ts：用量长在消息自己身上，不是另开一个跨轮计数器）
+        usage = event.usage
       }
-      // done 事件本身不用管——收没收到过 tool_call 才是"这轮要不要继续"的判断依据
     }
 
     // 模型这轮没请求工具 → 收工（谁决定停 = 模型不再吐 toolCall，把开关交给模型）
@@ -55,7 +70,7 @@ export async function runAgent(
     }
 
     // 模型要工具：先把它这轮的请求作为 assistant 轮记进历史（缝 id 用，下一轮结果要对回来）
-    messages.push({ role: 'assistant', content: text, toolCalls })
+    messages.push({ role: 'assistant', content: text, toolCalls, usage })
 
     console.log() // 跟刚流出来的文本隔开一行，工具日志另起一段
 
