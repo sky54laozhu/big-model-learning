@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 900" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t" aria-describedby="d">
+  <title id="t">序列图：两轮循环，第二轮开口前触发一次压缩，对主流程透明</title>
+  <desc id="d">两轮循环，第二轮前触发一次压缩。三条生命线：loop.ts、compact.ts、FakeProvider。第①拍 loop.ts 第1轮开口前调 shouldAutoCompact，历史还很短，compact.ts 返回 false，loop.ts 正常调 streamChat，FakeProvider 回一段文本加一个工具调用，done 事件带着越过阈值的巨额 usage。第②拍 loop.ts 把这份 usage 随 assistant 消息一起 push 进 messages，执行 noop 工具，工具结果也 push 进 messages。第③拍进入第2轮，开口前再调 shouldAutoCompact——compact.ts 内部 tokenCountWithEstimation 找到刚才那条带巨额 usage 的 assistant 消息，判定越过门槛，返回 true。第④拍 loop.ts 调 compactMessages(provider, messages)，compact.ts 内部拼出摘要请求、用 COMPACT_SYSTEM_PROMPT 向 FakeProvider 发起一次独立的 streamChat 调用，FakeProvider 认出这个专属 system，回一段 analysis+summary 文本。第⑤拍 compact.ts 剥掉 analysis、包成续接消息，返回单条消息数组给 loop.ts，loop.ts 用 splice 整段替换 messages。第⑥拍 loop.ts 用换血后的 messages 正常发起这一轮真正的 streamChat 调用，FakeProvider 认出这不是压缩调用，回一段正常收尾文本，done 无工具调用。第⑦拍 loop.ts 发现 toolCalls 为空，return 收工。结论：compactMessages 是嵌在正常轮次之间的一次额外调用，对 loop.ts 主流程完全透明——只是在真正开口前多做一次检查、必要时多打一次独立的模型请求。</desc>
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+
+  <text x="450" y="30" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">序列图：第2轮开口前触发一次压缩</text>
+  <text x="450" y="52" text-anchor="middle" font-size="13" fill="#475569">灰 = 主流程不变　·　琥珀 = 压缩相关　·　红 = 越阈值的告警信号　·　绿 = 成功收尾</text>
+
+  <!-- 生命线头部 -->
+  <rect x="60" y="70" width="190" height="34" rx="8" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
+  <text x="155" y="92" text-anchor="middle" font-size="12" font-weight="700" fill="#475569">loop.ts（每轮循环）</text>
+  <line x1="155" y1="104" x2="155" y2="850" stroke="#94a3b8" stroke-width="1.4" stroke-dasharray="4 4"/>
+
+  <rect x="365" y="70" width="170" height="34" rx="8" fill="#fffbeb" stroke="#b45309" stroke-width="2.2"/>
+  <text x="450" y="92" text-anchor="middle" font-size="12" font-weight="700" fill="#92400e">compact.ts（压缩本体）</text>
+  <line x1="450" y1="104" x2="450" y2="850" stroke="#b45309" stroke-width="1.4" stroke-dasharray="4 4"/>
+
+  <rect x="650" y="70" width="200" height="34" rx="8" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
+  <text x="750" y="92" text-anchor="middle" font-size="12" font-weight="700" fill="#475569">FakeProvider（模型 API）</text>
+  <line x1="750" y1="104" x2="750" y2="850" stroke="#94a3b8" stroke-width="1.4" stroke-dasharray="4 4"/>
+
+  <!-- 第①拍 -->
+  <text x="16" y="122" font-size="11" font-weight="700" fill="#1e293b">①</text>
+  <line x1="155" y1="116" x2="450" y2="116" stroke="#94a3b8" stroke-width="1.8"/>
+  <polygon points="446,112 446,120 456,116" fill="#94a3b8"/>
+  <text x="302" y="112" text-anchor="middle" font-size="8.6" fill="#64748b">第1轮开口前：shouldAutoCompact(messages, model)</text>
+
+  <line x1="450" y1="132" x2="155" y2="132" stroke="#94a3b8" stroke-width="1.6" stroke-dasharray="3 3"/>
+  <polygon points="159,128 159,136 149,132" fill="#94a3b8"/>
+  <text x="302" y="128" text-anchor="middle" font-size="8.6" fill="#64748b">false（历史还很短）</text>
+
+  <line x1="155" y1="150" x2="750" y2="150" stroke="#94a3b8" stroke-width="1.8"/>
+  <polygon points="746,146 746,154 756,150" fill="#94a3b8"/>
+  <text x="452" y="146" text-anchor="middle" font-size="8.6" fill="#64748b">streamChat(messages, tools, system) 正常调用</text>
+
+  <rect x="655" y="158" width="190" height="42" rx="6" fill="#fef2f2" stroke="#b91c1c" stroke-width="1.6"/>
+  <text x="750" y="174" text-anchor="middle" font-size="8.4" fill="#b91c1c">text_delta+tool_call(noop)</text>
+  <text x="750" y="188" text-anchor="middle" font-size="8.4" fill="#b91c1c">+ done(usage=越过阈值)</text>
+
+  <line x1="750" y1="208" x2="155" y2="208" stroke="#b91c1c" stroke-width="1.6" stroke-dasharray="3 3"/>
+  <polygon points="159,204 159,212 149,208" fill="#b91c1c"/>
+  <text x="452" y="204" text-anchor="middle" font-size="8.6" fill="#b91c1c">带越阈值巨额用量的事件流回传</text>
+
+  <!-- 第②拍 -->
+  <text x="16" y="238" font-size="11" font-weight="700" fill="#1e293b">②</text>
+  <rect x="60" y="222" width="190" height="52" rx="6" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.6"/>
+  <text x="155" y="238" text-anchor="middle" font-size="8.4" fill="#475569">push assistant 消息</text>
+  <text x="155" y="251" text-anchor="middle" font-size="8.4" fill="#475569">(含 usage) 进 messages；</text>
+  <text x="155" y="264" text-anchor="middle" font-size="8.4" fill="#475569">执行 noop，结果也 push</text>
+
+  <!-- 第③拍 -->
+  <text x="16" y="298" font-size="11" font-weight="700" fill="#1e293b">③</text>
+  <line x1="155" y1="292" x2="450" y2="292" stroke="#b45309" stroke-width="1.8"/>
+  <polygon points="446,288 446,296 456,292" fill="#b45309"/>
+  <text x="302" y="288" text-anchor="middle" font-size="8.6" fill="#92400e">第2轮开口前：再调 shouldAutoCompact</text>
+
+  <rect x="365" y="300" width="170" height="46" rx="6" fill="#fef3c7" stroke="#b45309" stroke-width="1.6"/>
+  <text x="450" y="316" text-anchor="middle" font-size="8.2" fill="#92400e">tokenCountWithEstimation</text>
+  <text x="450" y="329" text-anchor="middle" font-size="8.2" fill="#92400e">找到刚才那条巨额 usage</text>
+  <text x="450" y="341" text-anchor="middle" font-size="8.2" fill="#92400e">→ 越过 167_000 门槛</text>
+
+  <line x1="450" y1="354" x2="155" y2="354" stroke="#b45309" stroke-width="1.8" stroke-dasharray="3 3"/>
+  <polygon points="159,350 159,358 149,354" fill="#b45309"/>
+  <text x="302" y="350" text-anchor="middle" font-size="8.6" fill="#92400e">返回 true</text>
+
+  <!-- 第④拍 -->
+  <text x="16" y="382" font-size="11" font-weight="700" fill="#1e293b">④</text>
+  <line x1="155" y1="376" x2="450" y2="376" stroke="#b45309" stroke-width="2"/>
+  <polygon points="446,372 446,380 456,376" fill="#b45309"/>
+  <text x="302" y="372" text-anchor="middle" font-size="8.6" fill="#92400e">compactMessages(provider, messages)</text>
+
+  <line x1="450" y1="392" x2="750" y2="392" stroke="#b45309" stroke-width="2"/>
+  <polygon points="746,388 746,396 756,392" fill="#b45309"/>
+  <text x="602" y="388" text-anchor="middle" font-size="8.4" fill="#92400e">streamChat(combined, undefined, COMPACT_SYSTEM_PROMPT)</text>
+
+  <rect x="655" y="400" width="190" height="42" rx="6" fill="#fffbeb" stroke="#b45309" stroke-width="1.6"/>
+  <text x="750" y="416" text-anchor="middle" font-size="8.2" fill="#92400e">认出专属 system →</text>
+  <text x="750" y="430" text-anchor="middle" font-size="8.2" fill="#92400e">回 analysis+summary 文本</text>
+
+  <line x1="750" y1="450" x2="450" y2="450" stroke="#b45309" stroke-width="1.8" stroke-dasharray="3 3"/>
+  <polygon points="454,446 454,454 444,450" fill="#b45309"/>
+  <text x="602" y="446" text-anchor="middle" font-size="8.6" fill="#92400e">摘要文本回传给 compact.ts</text>
+
+  <!-- 第⑤拍 -->
+  <text x="16" y="480" font-size="11" font-weight="700" fill="#1e293b">⑤</text>
+  <rect x="365" y="464" width="170" height="40" rx="6" fill="#fef3c7" stroke="#b45309" stroke-width="1.6"/>
+  <text x="450" y="480" text-anchor="middle" font-size="8.4" fill="#92400e">剥掉 analysis，</text>
+  <text x="450" y="493" text-anchor="middle" font-size="8.4" fill="#92400e">包成续接消息</text>
+
+  <line x1="450" y1="512" x2="155" y2="512" stroke="#b45309" stroke-width="1.8" stroke-dasharray="3 3"/>
+  <polygon points="159,508 159,516 149,512" fill="#b45309"/>
+  <text x="302" y="508" text-anchor="middle" font-size="8.6" fill="#92400e">返回 [{role:'user',content:续接消息}]</text>
+
+  <rect x="60" y="522" width="190" height="34" rx="6" fill="#fef3c7" stroke="#b45309" stroke-width="1.6"/>
+  <text x="155" y="536" text-anchor="middle" font-size="8.2" fill="#92400e">messages.splice(0,length,</text>
+  <text x="155" y="549" text-anchor="middle" font-size="8.2" fill="#92400e">...compacted) 整段替换</text>
+
+  <!-- 第⑥拍 -->
+  <text x="16" y="580" font-size="11" font-weight="700" fill="#1e293b">⑥</text>
+  <line x1="155" y1="574" x2="750" y2="574" stroke="#94a3b8" stroke-width="1.8"/>
+  <polygon points="746,570 746,578 756,574" fill="#94a3b8"/>
+  <text x="452" y="570" text-anchor="middle" font-size="8.6" fill="#64748b">streamChat(messages,tools,system)（历史只剩一条摘要）</text>
+
+  <rect x="655" y="582" width="190" height="42" rx="6" fill="#f0fdf4" stroke="#166534" stroke-width="1.8"/>
+  <text x="750" y="598" text-anchor="middle" font-size="8.2" fill="#166534">认出不是压缩调用 →</text>
+  <text x="750" y="612" text-anchor="middle" font-size="8.2" fill="#166534">正常收尾文本 + done(无工具)</text>
+
+  <line x1="750" y1="632" x2="155" y2="632" stroke="#166534" stroke-width="1.8" stroke-dasharray="3 3"/>
+  <polygon points="159,628 159,636 149,632" fill="#166534"/>
+  <text x="452" y="628" text-anchor="middle" font-size="8.6" fill="#166534">正常文本事件流回传，无 tool_call</text>
+
+  <!-- 第⑦拍 -->
+  <text x="16" y="662" font-size="11" font-weight="700" fill="#1e293b">⑦</text>
+  <rect x="60" y="646" width="190" height="34" rx="6" fill="#f0fdf4" stroke="#166534" stroke-width="1.8"/>
+  <text x="155" y="660" text-anchor="middle" font-size="8.4" fill="#166534">toolCalls 为空</text>
+  <text x="155" y="673" text-anchor="middle" font-size="8.4" fill="#166534">→ return 收工</text>
+
+  <!-- 结论框 -->
+  <rect x="40" y="702" width="820" height="76" rx="10" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
+  <text x="450" y="726" text-anchor="middle" font-size="12" font-weight="700" fill="#1e293b">compactMessages 是嵌在正常轮次之间的一次额外调用</text>
+  <text x="450" y="746" text-anchor="middle" font-size="10.5" fill="#475569">对 loop.ts 的主流程完全透明——只是在真正开口前多做一次检查，</text>
+  <text x="450" y="764" text-anchor="middle" font-size="10.5" fill="#475569">必要时多打一次独立的模型请求，之后一切照旧继续往下走</text>
+</svg>

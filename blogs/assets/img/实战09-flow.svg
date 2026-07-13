@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 700" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t" aria-describedby="d">
+  <title id="t">主控制流程图：每轮开口前插一次 shouldAutoCompact 检查，命中就先摘要整段替换再继续</title>
+  <desc id="d">每轮循环最前面插入一次 shouldAutoCompact(messages, model) 检查。若为 false，直接走原有的 streamChat 消费路径（跟实战08 一模一样）。若为 true：先打印"正在摘要"提示，调用 compactMessages(provider, messages)——内部把 getCompactPrompt() 追加成一条新 user 消息，用 COMPACT_SYSTEM_PROMPT、tools:undefined 发起一次独立的 streamChat 调用（这次调用不受 shouldAutoCompact 影响，也不再触发递归压缩），收集全部 text_delta 拼成 summaryText，包成 getCompactUserSummaryMessage(summaryText) 返回。拿到返回的单条消息数组后，messages.splice(0, messages.length, ...compacted) 整段替换，打印"完成"提示，然后正常进入这一轮真正的 streamChat(messages, tools, system) 调用——这次模型看到的历史只剩一条摘要消息。done 事件到达后 usage 落地，随 assistant 消息一起 push 进历史，供下一轮 shouldAutoCompact 再次读取账本。之后分两条路：toolCalls 为空则收工返回文本（绿色成功出口）；toolCalls 非空则执行工具、push 结果、回到循环顶部，届时若历史又顶到阈值，压缩检查会再次命中；另有达到 maxTurns 时的强制停止出口（红色）。底部琥珀色结论框：压缩是插在正常轮次之间的一次额外检查与调用，对每轮真正的请求本身透明。</desc>
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+
+  <text x="420" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">主控制流程：压缩检查插在每轮开口最前面</text>
+  <text x="420" y="58" text-anchor="middle" font-size="13" fill="#475569">灰 = 沿用实战08 的主流程　·　琥珀 = 本章新增的压缩分支　·　绿 = 成功收工　·　红 = 强制停止</text>
+
+  <!-- ① for 循环入口 -->
+  <rect x="80" y="80" width="340" height="40" rx="8" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
+  <text x="250" y="105" text-anchor="middle" font-size="11.5" fill="#334155">① for (turn=1; turn&lt;=maxTurns; turn++) 每轮开始</text>
+  <line x1="250" y1="120" x2="250" y2="140" stroke="#475569" stroke-width="2"/>
+  <polygon points="250,144 244,132 256,132" fill="#475569"/>
+
+  <!-- ② 决策：shouldAutoCompact -->
+  <rect x="80" y="146" width="340" height="46" rx="8" fill="#fffbeb" stroke="#b45309" stroke-width="2.2"/>
+  <text x="250" y="165" text-anchor="middle" font-size="11.5" font-weight="700" fill="#92400e">② shouldAutoCompact(messages, model)？</text>
+  <text x="250" y="181" text-anchor="middle" font-size="9.3" fill="#a16207">（tokenCountWithEstimation 是否越过 167_000 门槛）</text>
+
+  <!-- 否 → 右侧灰色出口，直接跳到⑥ -->
+  <line x1="420" y1="169" x2="558" y2="169" stroke="#94a3b8" stroke-width="2"/>
+  <polygon points="562,169 550,163 550,175" fill="#94a3b8"/>
+  <text x="490" y="161" text-anchor="middle" font-size="9" fill="#64748b">否</text>
+  <rect x="562" y="144" width="200" height="50" rx="8" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.8"/>
+  <text x="662" y="163" text-anchor="middle" font-size="9.3" fill="#475569">直接走原有 streamChat</text>
+  <text x="662" y="177" text-anchor="middle" font-size="9.3" fill="#475569">消费路径（跟实战08一样）</text>
+  <line x1="662" y1="194" x2="662" y2="392" stroke="#94a3b8" stroke-width="1.8" stroke-dasharray="4 3"/>
+  <polygon points="662,396 656,384 668,384" fill="#94a3b8"/>
+  <text x="700" y="300" font-size="8.6" fill="#64748b" transform="rotate(90 700 300)">汇入 ⑥</text>
+
+  <!-- 是 → 往下 -->
+  <line x1="250" y1="192" x2="250" y2="210" stroke="#b45309" stroke-width="2"/>
+  <polygon points="250,214 244,202 256,202" fill="#b45309"/>
+  <text x="270" y="206" font-size="9" fill="#92400e">是</text>
+
+  <!-- ③ 打印正在摘要 -->
+  <rect x="80" y="216" width="340" height="34" rx="8" fill="#fffbeb" stroke="#b45309" stroke-width="2"/>
+  <text x="250" y="237" text-anchor="middle" font-size="10.6" fill="#92400e">③ 打印 [压缩] 历史接近阈值，正在摘要…</text>
+  <line x1="250" y1="250" x2="250" y2="268" stroke="#b45309" stroke-width="2"/>
+  <polygon points="250,272 244,260 256,260" fill="#b45309"/>
+
+  <!-- ④ compactMessages 内部 -->
+  <rect x="80" y="278" width="340" height="86" rx="8" fill="#fffbeb" stroke="#b45309" stroke-width="2.2"/>
+  <text x="250" y="296" text-anchor="middle" font-size="10.8" font-weight="700" fill="#92400e">④ compactMessages(provider, messages)</text>
+  <text x="250" y="312" text-anchor="middle" font-size="8.8" fill="#a16207">拼 getCompactPrompt() 追加成新 user 消息 →</text>
+  <text x="250" y="326" text-anchor="middle" font-size="8.8" fill="#a16207">streamChat(combined, undefined, COMPACT_SYSTEM_PROMPT)</text>
+  <text x="250" y="340" text-anchor="middle" font-size="8.8" fill="#a16207">独立调用（不再递归触发压缩）→ 收集 text_delta</text>
+  <text x="250" y="354" text-anchor="middle" font-size="8.8" fill="#a16207">拼 summaryText → getCompactUserSummaryMessage() 包装返回</text>
+  <line x1="250" y1="364" x2="250" y2="382" stroke="#b45309" stroke-width="2"/>
+  <polygon points="250,386 244,374 256,374" fill="#b45309"/>
+
+  <!-- ⑤ splice 整段替换 -->
+  <rect x="80" y="392" width="340" height="46" rx="8" fill="#fffbeb" stroke="#b45309" stroke-width="2.2"/>
+  <text x="250" y="411" text-anchor="middle" font-size="10.6" font-weight="700" fill="#92400e">⑤ messages.splice(0,length,...compacted)</text>
+  <text x="250" y="426" text-anchor="middle" font-size="9.3" fill="#a16207">整段替换；打印 [压缩] 完成，继续对话</text>
+  <line x1="250" y1="438" x2="250" y2="456" stroke="#475569" stroke-width="2"/>
+  <polygon points="250,460 244,448 256,448" fill="#475569"/>
+
+  <!-- ⑥ 正常真正发起这一轮 streamChat -->
+  <rect x="80" y="392" width="0" height="0"/>
+  <rect x="562" y="392" width="0" height="0"/>
+  <rect x="80" y="466" width="682" height="42" rx="8" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
+  <text x="420" y="484" text-anchor="middle" font-size="11" fill="#334155">⑥ 正式发起这一轮真正的 streamChat(messages, tools, system)</text>
+  <text x="420" y="500" text-anchor="middle" font-size="9" fill="#64748b">（若刚压缩过，历史只剩一条摘要消息；若②为否，历史是原样未动的 messages）</text>
+  <line x1="420" y1="508" x2="420" y2="526" stroke="#475569" stroke-width="2"/>
+  <polygon points="420,530 414,518 426,518" fill="#475569"/>
+
+  <!-- ⑦ done 落地 usage -->
+  <rect x="80" y="536" width="682" height="40" rx="8" fill="#fffbeb" stroke="#b45309" stroke-width="2"/>
+  <text x="420" y="554" text-anchor="middle" font-size="10.8" fill="#92400e">⑦ done 事件到达 → usage 落地，随 assistant 消息 push 进历史</text>
+  <text x="420" y="568" text-anchor="middle" font-size="8.8" fill="#a16207">（供下一轮 ② shouldAutoCompact 再次读取这份账本）</text>
+
+  <!-- 三条出口 -->
+  <line x1="250" y1="576" x2="250" y2="592" stroke="#166534" stroke-width="2"/>
+  <polygon points="250,596 244,584 256,584" fill="#166534"/>
+  <line x1="420" y1="576" x2="420" y2="592" stroke="#475569" stroke-width="2"/>
+  <polygon points="420,596 414,584 426,584" fill="#475569"/>
+  <line x1="600" y1="576" x2="600" y2="592" stroke="#b91c1c" stroke-width="2"/>
+  <polygon points="600,596 594,584 606,584" fill="#b91c1c"/>
+
+  <rect x="120" y="600" width="220" height="40" rx="8" fill="#f0fdf4" stroke="#166534" stroke-width="1.8"/>
+  <text x="230" y="616" text-anchor="middle" font-size="9" fill="#166534">toolCalls 为空</text>
+  <text x="230" y="630" text-anchor="middle" font-size="9" fill="#166534">→ return text，收工</text>
+
+  <rect x="360" y="600" width="220" height="40" rx="8" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.8"/>
+  <text x="470" y="616" text-anchor="middle" font-size="9" fill="#475569">toolCalls 非空 → 执行工具、</text>
+  <text x="470" y="630" text-anchor="middle" font-size="9" fill="#475569">push 结果，↺ 回到 ①</text>
+
+  <rect x="600" y="600" width="180" height="40" rx="8" fill="#fef2f2" stroke="#b91c1c" stroke-width="1.8"/>
+  <text x="690" y="616" text-anchor="middle" font-size="9" fill="#b91c1c">turn 到 maxTurns</text>
+  <text x="690" y="630" text-anchor="middle" font-size="9" fill="#b91c1c">→ 强制停止</text>
+
+  <!-- 结论框 -->
+  <rect x="60" y="650" width="720" height="42" rx="8" fill="#fffbeb" stroke="#b45309" stroke-width="2"/>
+  <text x="420" y="667" text-anchor="middle" font-size="11" font-weight="700" fill="#92400e">压缩是插在正常轮次之间的一次额外检查 + 调用</text>
+  <text x="420" y="682" text-anchor="middle" font-size="10" fill="#a16207">不命中什么都不做，命中时只在真正开口前多做一次独立的模型请求（折叠点②③）</text>
+</svg>

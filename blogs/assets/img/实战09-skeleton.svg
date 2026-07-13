@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 780" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t" aria-describedby="d">
+  <title id="t">骨架定位图：新增 compact.ts / compactPrompt.ts 两个文件，types.ts 加 usage 字段，loop.ts 每轮开口前插一道压缩检查</title>
+  <desc id="d">调用方入口 index.ts→runAgent 不变。改动分两层。压缩本体（本章新增两个文件）：src/compact.ts 装三个阈值常量（200_000/20_000/13_000 算出门槛 167_000）、tokenCountWithEstimation（由近及远找最后一条带 usage 的 assistant 消息）、shouldAutoCompact、compactMessages（发起一次独立的摘要调用，专属 system，不传 tools）；src/compactPrompt.ts 装 getCompactPrompt/formatCompactSummary/getCompactUserSummaryMessage 三个纯函数。types.ts 给 Message 和 StreamEvent 加一个可选的 usage 字段（紫色，类型系统新增）。账本层：anthropic.ts 从 message_start/message_delta 两拍拼出 usage，openai.ts 靠 stream_options:include_usage 在流末尾的空 choices chunk 里拿到 usage，两端都在末尾把 usage 随 done 事件带出（琥珀，改动）。loop.ts 每轮开口前插一次 shouldAutoCompact 检查，命中就调用上方的 compactMessages 后用 splice 整段替换 messages（琥珀，新增），done 事件到达后把 usage 存进这一轮的 assistant 消息（琥珀，改动）。底部灰色虚线框：SSE 解析、工具调用累积、权限闸门、重试机制 withRetry、系统提示词装配 buildSystemPrompt，全部沿用实战02-08，一个字没改。</desc>
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+
+  <text x="420" y="34" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">骨架定位：新增 compact.ts / compactPrompt.ts，types.ts 加 usage 字段</text>
+  <text x="420" y="58" text-anchor="middle" font-size="13" fill="#475569">loop.ts 每轮开口前插一道压缩检查，命中就整段替换历史（灰=不变，琥珀=新增/改动，紫=类型新增）</text>
+
+  <!-- compact.ts + compactPrompt.ts 新模块 -->
+  <rect x="200" y="80" width="440" height="142" rx="10" fill="#fffbeb" stroke="#1e293b" stroke-width="2.6"/>
+  <text x="420" y="100" text-anchor="middle" font-size="12.5" font-weight="700" fill="#1e293b">compact.ts + compactPrompt.ts（本章新增，两个新文件）</text>
+
+  <rect x="216" y="112" width="404" height="22" rx="5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.3"/>
+  <text x="420" y="127" text-anchor="middle" font-size="9.3" fill="#475569">① 三阈值常量：200_000-20_000-13_000=167_000 门槛</text>
+
+  <rect x="216" y="138" width="404" height="22" rx="5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.3"/>
+  <text x="420" y="153" text-anchor="middle" font-size="9.3" fill="#475569">② tokenCountWithEstimation：由近及远找最后一条带 usage 的消息</text>
+
+  <rect x="216" y="164" width="404" height="22" rx="5" fill="#fef3c7" stroke="#b45309" stroke-width="1.6"/>
+  <text x="420" y="179" text-anchor="middle" font-size="9.3" fill="#92400e">③ shouldAutoCompact / compactMessages：门槛判断 + 独立摘要调用</text>
+
+  <rect x="216" y="190" width="404" height="22" rx="5" fill="#fef3c7" stroke="#b45309" stroke-width="1.6"/>
+  <text x="420" y="205" text-anchor="middle" font-size="9.3" fill="#92400e">④ getCompactPrompt/formatCompactSummary/getCompactUserSummaryMessage</text>
+
+  <!-- types.ts -->
+  <rect x="660" y="80" width="140" height="142" rx="10" fill="#eef2ff" stroke="#6366f1" stroke-width="2.2"/>
+  <text x="730" y="100" text-anchor="middle" font-size="11.5" font-weight="700" fill="#4338ca">types.ts</text>
+  <text x="730" y="120" text-anchor="middle" font-size="8.6" fill="#4338ca">Message / StreamEvent</text>
+  <text x="730" y="134" text-anchor="middle" font-size="8.6" fill="#4338ca">原有字段不变</text>
+  <rect x="670" y="144" width="120" height="64" rx="6" fill="#fffbeb" stroke="#b45309" stroke-width="1.6"/>
+  <text x="730" y="160" text-anchor="middle" font-size="8.8" font-weight="700" fill="#92400e">+ usage ← 新增</text>
+  <text x="730" y="174" text-anchor="middle" font-size="7.8" fill="#92400e">inputTokens /</text>
+  <text x="730" y="187" text-anchor="middle" font-size="7.8" fill="#92400e">outputTokens</text>
+  <text x="730" y="200" text-anchor="middle" font-size="7.6" fill="#a16207">（只挂在 assistant 消息上）</text>
+
+  <!-- 箭头：新模块 → 两端 provider（compactMessages 内部复用同一个 provider.streamChat） -->
+  <line x1="330" y1="222" x2="220" y2="278" stroke="#b45309" stroke-width="2"/>
+  <polygon points="212,286 216,272 228,280" fill="#b45309"/>
+  <text x="230" y="250" font-size="8.4" fill="#92400e" transform="rotate(-32 230 250)">compactMessages 内部</text>
+  <line x1="510" y1="222" x2="620" y2="278" stroke="#b45309" stroke-width="2"/>
+  <polygon points="628,286 612,280 624,272" fill="#b45309"/>
+  <text x="610" y="250" font-size="8.4" fill="#92400e" transform="rotate(32 610 250)">调用 provider.streamChat</text>
+
+  <!-- anthropic.ts -->
+  <rect x="40" y="284" width="360" height="190" rx="10" fill="#f8fafc" stroke="#94a3b8" stroke-width="2.2"/>
+  <text x="220" y="306" text-anchor="middle" font-size="12" font-weight="700" fill="#475569">anthropic.ts</text>
+  <rect x="54" y="316" width="332" height="50" rx="6" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.4"/>
+  <text x="220" y="336" text-anchor="middle" font-size="9.3" fill="#64748b">runOnce()：fetch + SSE 解析</text>
+  <text x="220" y="352" text-anchor="middle" font-size="9.3" fill="#64748b">（跟实战08 一模一样，不变）</text>
+  <rect x="54" y="372" width="332" height="26" rx="6" fill="#fffbeb" stroke="#b45309" stroke-width="1.6"/>
+  <text x="220" y="390" text-anchor="middle" font-size="8.8" fill="#92400e">message_start → inputTokens ← 新增</text>
+  <rect x="54" y="404" width="332" height="26" rx="6" fill="#fffbeb" stroke="#b45309" stroke-width="1.6"/>
+  <text x="220" y="422" text-anchor="middle" font-size="8.8" fill="#92400e">message_delta → 累计 outputTokens ← 新增</text>
+  <text x="220" y="450" text-anchor="middle" font-size="8.3" fill="#a16207">outputTokens 是"跑到目前为止的累计</text>
+  <text x="220" y="463" text-anchor="middle" font-size="8.3" fill="#a16207">总数"，不是增量，最后一次收到的就是终值</text>
+
+  <!-- openai.ts -->
+  <rect x="440" y="284" width="360" height="190" rx="10" fill="#f8fafc" stroke="#94a3b8" stroke-width="2.2"/>
+  <text x="620" y="306" text-anchor="middle" font-size="12" font-weight="700" fill="#475569">openai.ts（结构相同）</text>
+  <rect x="454" y="316" width="332" height="50" rx="6" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.4"/>
+  <text x="620" y="336" text-anchor="middle" font-size="9.3" fill="#64748b">runOnce()：fetch + tool_calls[].index</text>
+  <text x="620" y="352" text-anchor="middle" font-size="9.3" fill="#64748b">累积（跟实战08 一模一样，不变）</text>
+  <rect x="454" y="372" width="332" height="26" rx="6" fill="#fffbeb" stroke="#b45309" stroke-width="1.6"/>
+  <text x="620" y="390" text-anchor="middle" font-size="8.8" fill="#92400e">stream_options:{include_usage:true} ← 新增</text>
+  <rect x="454" y="404" width="332" height="26" rx="6" fill="#fffbeb" stroke="#b45309" stroke-width="1.6"/>
+  <text x="620" y="422" text-anchor="middle" font-size="8.8" fill="#92400e">末尾空 choices 的 chunk.usage → Usage ← 新增</text>
+  <text x="620" y="450" text-anchor="middle" font-size="8.3" fill="#a16207">两种协议账本形状完全不同，抠出来后</text>
+  <text x="620" y="463" text-anchor="middle" font-size="8.3" fill="#a16207">统一成同一个 Usage 形状交给 loop.ts</text>
+
+  <!-- 箭头：providers → loop.ts -->
+  <line x1="220" y1="474" x2="220" y2="496" stroke="#94a3b8" stroke-width="2"/>
+  <polygon points="220,500 214,488 226,488" fill="#94a3b8"/>
+  <line x1="620" y1="474" x2="620" y2="496" stroke="#94a3b8" stroke-width="2"/>
+  <polygon points="620,500 614,488 626,488" fill="#94a3b8"/>
+
+  <!-- loop.ts -->
+  <rect x="40" y="500" width="760" height="112" rx="10" fill="#f8fafc" stroke="#94a3b8" stroke-width="2.4" stroke-dasharray="6 4"/>
+  <text x="56" y="522" font-size="12.5" font-weight="700" fill="#475569">loop.ts · runAgent()：每轮开口前先看账本，命中再动手</text>
+  <rect x="58" y="534" width="726" height="26" rx="6" fill="#fffbeb" stroke="#b45309" stroke-width="1.8"/>
+  <text x="420" y="551" text-anchor="middle" font-size="9.6" fill="#92400e">每轮最前：shouldAutoCompact() 命中 → compactMessages() → splice 整段替换 ← 新增</text>
+  <rect x="58" y="566" width="726" height="34" rx="6" fill="#fffbeb" stroke="#b45309" stroke-width="1.8"/>
+  <text x="420" y="583" text-anchor="middle" font-size="9.6" fill="#92400e">done 事件到达 → usage 落地，随 assistant 消息一起 push 进历史 ← 新增</text>
+  <text x="420" y="596" text-anchor="middle" font-size="8.4" fill="#a16207">（供下一轮 shouldAutoCompact 再次读取这份账本）</text>
+
+  <!-- 箭头：loop.ts → 灰色不变区域 -->
+  <line x1="420" y1="612" x2="420" y2="632" stroke="#94a3b8" stroke-width="2"/>
+  <polygon points="420,636 414,624 426,624" fill="#94a3b8"/>
+
+  <!-- 下方灰色不变区域 -->
+  <rect x="40" y="642" width="760" height="90" rx="10" fill="#f8fafc" stroke="#94a3b8" stroke-width="2" stroke-dasharray="6 4"/>
+  <text x="56" y="664" font-size="12.5" font-weight="700" fill="#475569">灰色区域：实战02-08 已有，本章一个字不改</text>
+  <text x="420" y="688" text-anchor="middle" font-size="11" fill="#64748b">SSE 解析（content_block/tool_calls[].index） · 工具调用累积 · 重试机制 withRetry</text>
+  <text x="420" y="710" text-anchor="middle" font-size="11" fill="#64748b">权限闸门 allow/ask/deny 三态 · 系统提示词装配 buildSystemPrompt()</text>
+
+  <text x="420" y="758" text-anchor="middle" font-size="10.5" fill="#92400e">灰 = 实战02-08 已有，未改动　·　琥珀 = 本章新增/改动　·　紫 = types.ts 里新增的 usage 字段</text>
+</svg>
