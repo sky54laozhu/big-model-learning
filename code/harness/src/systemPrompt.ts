@@ -1,4 +1,5 @@
 import { readFile } from 'node:fs/promises'
+import { loadMemoryPrompt } from './memdir'
 
 /**
  * 系统提示词装配（实战07）——静态基础指令是硬编码在这个文件里的字符串，跟任何运行时状态零依赖；
@@ -59,15 +60,24 @@ export interface SystemPromptOptions {
   includeMemory?: boolean
   /** 关掉它 = 没有环境信息和 git 快照，模型对"自己在哪、仓库什么状态"一无所知 */
   includeEnvInfo?: boolean
+  /** 实战10 新增：关掉它 = 没有跨会话备忘录，模型看不到之前记过的东西，也不会顺手记新的 */
+  includeAutoMemory?: boolean
 }
 
 export async function buildSystemPrompt(opts: SystemPromptOptions): Promise<string> {
-  const { cwd, includeMemory = true, includeEnvInfo = true } = opts
+  const { cwd, includeMemory = true, includeEnvInfo = true, includeAutoMemory = true } = opts
   const sections = [BASE_INSTRUCTIONS]
 
   if (includeMemory) {
     const memory = await loadMemory(cwd)
     if (memory) sections.push(`# 项目规则（来自 CLAUDE.md）\n${memory}`)
+  }
+
+  // 实战10：备忘录跟 CLAUDE.md 项目规则不是一回事——CLAUDE.md 是这个项目本身定死的规矩，
+  // 备忘录是模型自己在历次调用里攒下的、关于"做到哪了"的活的记忆，两者都属于"持久上下文"，
+  // 所以紧挨着放
+  if (includeAutoMemory) {
+    sections.push(await loadMemoryPrompt(cwd))
   }
 
   if (includeEnvInfo) {

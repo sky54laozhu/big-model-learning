@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 660" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t d">
+  <title id="t">实战10 骨架定位图</title>
+  <desc id="d">调用方入口 index.ts 新增 --session-id/--resume 两个 flag 的解析与 UUID 校验。两条独立的状态支线从这里分叉。Layer A 支线：新增 src/uuid.ts（validateUuid 纯函数）+ src/session.ts（createSessionId/sessionIdExists/appendSessionEntry/loadSessionMessages，按 cwd 分桶存进 ~/.mini-harness/sessions/），loop.ts 内部每写一条新消息就顺手调用 appendSessionEntry。Layer B 支线：新增 src/memdir.ts（findGitRoot/getMemoryDir/loadMemoryPrompt，按 git 根目录分桶存进 ~/.mini-harness/memory/，两级结构 MEMORY.md 索引 + 主题文件），systemPrompt.ts 新增 includeAutoMemory 选项，把 loadMemoryPrompt 的结果拼进系统提示词，紧跟在 CLAUDE.md 项目规则之后。底部灰色虚线框：streamChat 消费、权限闸门、重试机制、压缩检查全部沿用实战02-09，一个字没改。</desc>
+
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+
+  <text x="420" y="30" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">实战10 骨架定位图：从 index.ts 分叉的两条状态支线</text>
+  <text x="420" y="52" text-anchor="middle" font-size="13" fill="#475569">琥珀色 = 本章新增/修改的文件与存储路径　　灰色虚线框 = 沿用实战02-09不变部分</text>
+
+  <!-- index.ts -->
+  <rect x="280" y="80" width="280" height="64" rx="10" fill="#fffbeb" stroke="#b45309" stroke-width="1.8"/>
+  <text x="420" y="103" text-anchor="middle" font-size="14" font-weight="700" fill="#92400e">index.ts（改）</text>
+  <text x="420" y="120" text-anchor="middle" font-size="11.5" fill="#92400e">新增 --session-id / --resume 解析</text>
+  <text x="420" y="135" text-anchor="middle" font-size="11" fill="#a16207">先 validateUuid 校验，再决定 sessionId 从哪来</text>
+
+  <!-- wrap A -->
+  <rect x="55" y="168" width="350" height="300" rx="10" fill="none" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="6 5"/>
+  <text x="70" y="188" font-size="13" font-weight="700" fill="#92400e">Layer A：完整对话持久化（按 cwd 分桶）</text>
+
+  <!-- wrap B -->
+  <rect x="445" y="168" width="340" height="300" rx="10" fill="none" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="6 5"/>
+  <text x="460" y="188" font-size="13" font-weight="700" fill="#92400e">Layer B：项目备忘录（按 git 根目录分桶）</text>
+
+  <!-- uuid.ts -->
+  <rect x="70" y="204" width="150" height="56" rx="8" fill="#fffbeb" stroke="#b45309" stroke-width="1.5"/>
+  <text x="145" y="226" text-anchor="middle" font-size="12.5" font-weight="700" fill="#92400e">uuid.ts（新增）</text>
+  <text x="145" y="244" text-anchor="middle" font-size="11" fill="#a16207">validateUuid()</text>
+
+  <!-- loop.ts -->
+  <rect x="240" y="204" width="150" height="56" rx="8" fill="#fffbeb" stroke="#b45309" stroke-width="1.5"/>
+  <text x="315" y="226" text-anchor="middle" font-size="12.5" font-weight="700" fill="#92400e">loop.ts（改）</text>
+  <text x="315" y="244" text-anchor="middle" font-size="11" fill="#a16207">runAgent() + record()</text>
+
+  <!-- session.ts -->
+  <rect x="70" y="284" width="320" height="100" rx="8" fill="#fffbeb" stroke="#b45309" stroke-width="1.5"/>
+  <text x="230" y="306" text-anchor="middle" font-size="12.5" font-weight="700" fill="#92400e">session.ts（新增）</text>
+  <text x="230" y="324" text-anchor="middle" font-size="11" fill="#a16207">createSessionId / sessionIdExists</text>
+  <text x="230" y="342" text-anchor="middle" font-size="11" fill="#a16207">appendSessionEntry / loadSessionMessages</text>
+  <text x="230" y="360" text-anchor="middle" font-size="10.5" fill="#a16207">（按 cwd 分桶）</text>
+
+  <!-- storage A -->
+  <rect x="70" y="398" width="320" height="56" rx="8" fill="#fef3c7" stroke="#b45309" stroke-width="1.3" stroke-dasharray="3 3"/>
+  <text x="230" y="420" text-anchor="middle" font-size="11.5" font-weight="700" fill="#92400e">~/.mini-harness/sessions/</text>
+  <text x="230" y="438" text-anchor="middle" font-size="10.5" fill="#a16207">&lt;sanitize(cwd)&gt;/&lt;sessionId&gt;.jsonl</text>
+
+  <!-- systemPrompt.ts -->
+  <rect x="460" y="204" width="310" height="56" rx="8" fill="#fffbeb" stroke="#b45309" stroke-width="1.5"/>
+  <text x="615" y="226" text-anchor="middle" font-size="12.5" font-weight="700" fill="#92400e">systemPrompt.ts（改）</text>
+  <text x="615" y="244" text-anchor="middle" font-size="11" fill="#a16207">includeAutoMemory 选项</text>
+
+  <!-- memdir.ts -->
+  <rect x="460" y="284" width="310" height="100" rx="8" fill="#fffbeb" stroke="#b45309" stroke-width="1.5"/>
+  <text x="615" y="306" text-anchor="middle" font-size="12.5" font-weight="700" fill="#92400e">memdir.ts（新增）</text>
+  <text x="615" y="324" text-anchor="middle" font-size="11" fill="#a16207">findGitRoot / getMemoryDir</text>
+  <text x="615" y="342" text-anchor="middle" font-size="11" fill="#a16207">loadMemoryPrompt</text>
+  <text x="615" y="360" text-anchor="middle" font-size="10.5" fill="#a16207">（按 git 根目录分桶）</text>
+
+  <!-- storage B -->
+  <rect x="460" y="398" width="310" height="56" rx="8" fill="#fef3c7" stroke="#b45309" stroke-width="1.3" stroke-dasharray="3 3"/>
+  <text x="615" y="420" text-anchor="middle" font-size="11.5" font-weight="700" fill="#92400e">~/.mini-harness/memory/</text>
+  <text x="615" y="438" text-anchor="middle" font-size="10.5" fill="#a16207">MEMORY.md 索引 + 主题文件（两级结构）</text>
+
+  <!-- arrows from index.ts -->
+  <g stroke="#b45309" stroke-width="1.6" fill="none">
+    <line x1="330" y1="144" x2="150" y2="200"/>
+    <line x1="400" y1="144" x2="317" y2="200"/>
+    <line x1="500" y1="144" x2="612" y2="200"/>
+  </g>
+  <polygon points="-6,-9 6,-9 0,0" fill="#b45309" transform="translate(150,204) rotate(72)"/>
+  <polygon points="-6,-9 6,-9 0,0" fill="#b45309" transform="translate(317,204) rotate(55)"/>
+  <polygon points="-6,-9 6,-9 0,0" fill="#b45309" transform="translate(612,204) rotate(-63)"/>
+
+  <!-- straight arrows -->
+  <g stroke="#b45309" stroke-width="1.6" fill="none">
+    <line x1="315" y1="260" x2="315" y2="284"/>
+    <line x1="230" y1="384" x2="230" y2="398"/>
+    <line x1="615" y1="260" x2="615" y2="284"/>
+    <line x1="615" y1="384" x2="615" y2="398"/>
+  </g>
+  <polygon points="-6,-9 6,-9 0,0" fill="#b45309" transform="translate(315,284)"/>
+  <polygon points="-6,-9 6,-9 0,0" fill="#b45309" transform="translate(230,398)"/>
+  <polygon points="-6,-9 6,-9 0,0" fill="#b45309" transform="translate(615,284)"/>
+  <polygon points="-6,-9 6,-9 0,0" fill="#b45309" transform="translate(615,398)"/>
+
+  <!-- bottom unchanged box -->
+  <rect x="60" y="490" width="720" height="100" rx="8" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="6 5"/>
+  <text x="420" y="513" text-anchor="middle" font-size="13" font-weight="700" fill="#475569">沿用实战02-09，一个字没改：</text>
+  <text x="420" y="536" text-anchor="middle" font-size="11.5" fill="#475569">streamChat 消费（实战06）· 权限闸门 checkPermission（实战04）</text>
+  <text x="420" y="556" text-anchor="middle" font-size="11.5" fill="#475569">重试机制 withRetry（实战08）· 压缩检查 shouldAutoCompact（实战09）</text>
+
+  <text x="420" y="618" text-anchor="middle" font-size="12" fill="#64748b">琥珀色 = 本章新增或修改的文件与存储路径；灰色虚线框 = 沿用不变、本章未改动的部分</text>
+</svg>

@@ -1,6 +1,7 @@
 import type { ModelProvider, Tool, Message, ToolCall, Usage } from './types'
 import { checkPermission, askHuman, grantAlways, newSession } from './permission'
 import { shouldAutoCompact, compactMessages } from './compact'
+import { appendSessionEntry } from './session'
 
 /**
  * agent loop 骨架 = 把 实战01 的单圈 chat() 套进 while（回扣概念 24：agent 就这么点骨架，无黑魔法）。
@@ -15,6 +16,9 @@ import { shouldAutoCompact, compactMessages } from './compact'
  * 实战08 新增：streamChat 内部失败会自己重试，重试时吐一个独立频道的 retry 事件——收到它，
  * 已经打到屏幕上的碎片留在原地不撤回，但这一轮攒的 text/toolCalls 要清空重来（无状态协议，
  * 重试=整包重发，不是接着上次没说完的地方续），退避真的等完才会有下一条事件到达。
+ * 实战10 新增：cwd/sessionId 齐了才落盘（Layer A）——resumeMessages 是 --resume 读回的历史，
+ * 拼在新问题前面；messages 里每新增一条（含这轮的用户提问）都顺手 appendSessionEntry 一次，
+ * 不等收工才一次性写完（回扣源码：我们的单发架构没有"来不及写完进程就死了"这道题）。
  */
 export async function runAgent(
   provider: ModelProvider,
@@ -23,10 +27,20 @@ export async function runAgent(
   maxTurns = 10,
   gate = true,
   system?: string,
+  cwd?: string,
+  sessionId?: string,
+  resumeMessages?: Message[],
 ): Promise<string> {
-  const messages: Message[] = [{ role: 'user', content: userInput }]
+  const userMessage: Message = { role: 'user', content: userInput }
+  const messages: Message[] = [...(resumeMessages ?? []), userMessage]
   const toolByName = new Map(tools.map(t => [t.name, t]))
   const session = newSession()   // 会话级"总是允许"规则，只活在这一次运行里
+
+  /** cwd/sessionId 都给了才落盘；resume 读回的历史已经在磁盘上了，不重复写 */
+  const record = (message: Message): Promise<void> =>
+    cwd && sessionId ? appendSessionEntry(cwd, sessionId, message) : Promise.resolve()
+
+  await record(userMessage)
 
   process.stdout.write('\n[assistant] ') // 实战05：字从这儿开始一个个蹦出来，不再等模型说完整段才见字
 
@@ -66,11 +80,16 @@ export async function runAgent(
     // 模型这轮没请求工具 → 收工（谁决定停 = 模型不再吐 toolCall，把开关交给模型）
     if (toolCalls.length === 0) {
       process.stdout.write('\n')
+      // 这条最终回复不会进 messages（循环马上就退出了），但 Layer A 仍要记下来——不然
+      // 存下来的完整记录里会缺最后一句话
+      await record({ role: 'assistant', content: text, usage })
       return text
     }
 
     // 模型要工具：先把它这轮的请求作为 assistant 轮记进历史（缝 id 用，下一轮结果要对回来）
-    messages.push({ role: 'assistant', content: text, toolCalls, usage })
+    const assistantTurn: Message = { role: 'assistant', content: text, toolCalls, usage }
+    messages.push(assistantTurn)
+    await record(assistantTurn)
 
     console.log() // 跟刚流出来的文本隔开一行，工具日志另起一段
 
@@ -82,7 +101,9 @@ export async function runAgent(
         : `error: 未知工具 ${call.name}`
       const preview = result.slice(0, 60).replace(/\s+/g, ' ')
       console.log(`  [turn ${turn}] ${call.name}(${JSON.stringify(call.args)}) -> ${preview}…`)
-      messages.push({ role: 'tool', toolCallId: call.id, content: result })
+      const toolTurn: Message = { role: 'tool', toolCallId: call.id, content: result }
+      messages.push(toolTurn)
+      await record(toolTurn)
     }
   }
   process.stdout.write('\n')

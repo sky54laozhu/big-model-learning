@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1200" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t" aria-describedby="d">
+  <title id="t">主控制流程图：三分支解析 argv，收敛后并入 Layer B 读取，一起喂给 runAgent</title>
+  <desc id="d">index.ts 解析 argv，三分支决定 sessionId/resumeMessages——默认分支调 createSessionId 随机生成新会话；--session-id 分支先 validateUuid 再 sessionIdExists 查重；--resume 分支先 validateUuid 再 loadSessionMessages 读回历史，读不到直接 process.exit(1)。三条分支收敛到同一个状态，接着 buildSystemPrompt(cwd) 调 loadMemoryPrompt(cwd)，内部 findGitRoot 定位到 git 根目录（找不到就退化用 cwd），据此算出 memDir 路径，读取其中的 MEMORY.md 索引拼进 system 字符串。两路状态一起传入 runAgent(provider, tools, question, ..., system, cwd, sessionId, resumeMessages)。runAgent 内部循环的每一个消息产生点（初始 user 消息、无工具调用时的最终 assistant 回复、有工具调用时的 assistant 轮次、每条工具结果）都各自调用一次 record()——cwd 和 sessionId 都给了才真正调用 appendSessionEntry，向 ~/.mini-harness/sessions/ 追加一行。另外，在"有工具调用"这个消息产生点上，模型如果判断这轮工作值得记录，会主动发起 write_file 工具调用写入新的主题文件并更新 MEMORY.md 索引——这条写入路径完全复用实战03 已有的工具执行机制，loop.ts 本身不需要为"写备忘录"这件事新增任何专门代码。结论：两条独立支线共享同一个 cwd 变量，但分桶方式从这里分叉——Layer A 直接用 cwd，Layer B 用 findGitRoot(cwd) 的结果。</desc>
+
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+
+  <text x="450" y="30" text-anchor="middle" font-size="20" font-weight="700" fill="#1e293b">主控制流程：三分支收敛后并入 Layer B 读取，一起喂给 runAgent</text>
+  <text x="450" y="52" text-anchor="middle" font-size="12.5" fill="#475569">灰 = 状态汇总　·　琥珀 = 本章新增/修改　·　红 = 错误退出　·　虚线 = 写入/存储路径</text>
+
+  <!-- ① index.ts 解析 argv -->
+  <rect x="290" y="72" width="320" height="50" rx="10" fill="#fffbeb" stroke="#b45309" stroke-width="2.2"/>
+  <text x="450" y="93" text-anchor="middle" font-size="12" font-weight="700" fill="#92400e">① index.ts：parseArgs(argv)</text>
+  <text x="450" y="110" text-anchor="middle" font-size="9.8" fill="#a16207">→ sessionIdFlag / resumeId（三选一，互斥）</text>
+
+  <g stroke="#b45309" stroke-width="1.6" fill="none">
+    <line x1="380" y1="122" x2="170" y2="144"/>
+    <line x1="450" y1="122" x2="450" y2="144"/>
+    <line x1="520" y1="122" x2="730" y2="144"/>
+  </g>
+  <polygon points="-5,-8 5,-8 0,0" fill="#b45309" transform="translate(170,146) rotate(78)"/>
+  <polygon points="-5,-8 5,-8 0,0" fill="#b45309" transform="translate(450,146)"/>
+  <polygon points="-5,-8 5,-8 0,0" fill="#b45309" transform="translate(730,146) rotate(-78)"/>
+
+  <!-- 列头 -->
+  <rect x="40" y="146" width="260" height="28" rx="7" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.6"/>
+  <text x="170" y="164" text-anchor="middle" font-size="11.5" font-weight="700" fill="#334155">默认（不给 flag）</text>
+
+  <rect x="320" y="146" width="260" height="28" rx="7" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.6"/>
+  <text x="450" y="164" text-anchor="middle" font-size="11.5" font-weight="700" fill="#334155">--session-id &lt;uuid&gt;</text>
+
+  <rect x="600" y="146" width="260" height="28" rx="7" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.6"/>
+  <text x="730" y="164" text-anchor="middle" font-size="11.5" font-weight="700" fill="#334155">--resume &lt;uuid&gt;</text>
+
+  <g stroke="#b45309" stroke-width="1.4" fill="none">
+    <line x1="170" y1="174" x2="170" y2="182"/>
+    <line x1="450" y1="174" x2="450" y2="182"/>
+    <line x1="730" y1="174" x2="730" y2="182"/>
+  </g>
+
+  <!-- 列内容 -->
+  <rect x="40" y="182" width="260" height="150" rx="8" fill="#fffbeb" stroke="#b45309" stroke-width="1.7"/>
+  <text x="170" y="204" text-anchor="middle" font-size="10" fill="#92400e">createSessionId(cwd)</text>
+  <text x="170" y="221" text-anchor="middle" font-size="10" fill="#a16207">内部 randomUUID() +</text>
+  <text x="170" y="238" text-anchor="middle" font-size="10" fill="#a16207">sessionIdExists 查重循环</text>
+  <text x="170" y="255" text-anchor="middle" font-size="9.3" fill="#a16207">（撞了就重生成，概率极低）</text>
+  <text x="170" y="278" text-anchor="middle" font-size="10.3" font-weight="700" fill="#92400e">→ 得到全新 sessionId</text>
+
+  <rect x="320" y="182" width="260" height="150" rx="8" fill="#fffbeb" stroke="#b45309" stroke-width="1.7"/>
+  <text x="450" y="204" text-anchor="middle" font-size="10" fill="#92400e">① validateUuid(flag)</text>
+  <text x="450" y="220" text-anchor="middle" font-size="9.6" fill="#b91c1c">不合法 → ❌ exit(1)</text>
+  <text x="450" y="240" text-anchor="middle" font-size="10" fill="#92400e">② sessionIdExists(cwd,id)</text>
+  <text x="450" y="256" text-anchor="middle" font-size="9.6" fill="#b91c1c">已存在 → ❌ exit(1)</text>
+  <text x="450" y="280" text-anchor="middle" font-size="10.2" font-weight="700" fill="#92400e">③ 都通过 → sessionId=validId</text>
+
+  <rect x="600" y="182" width="260" height="150" rx="8" fill="#fffbeb" stroke="#b45309" stroke-width="1.7"/>
+  <text x="730" y="202" text-anchor="middle" font-size="10" fill="#92400e">① validateUuid(resumeId)</text>
+  <text x="730" y="218" text-anchor="middle" font-size="9.6" fill="#b91c1c">不合法 → ❌ exit(1)</text>
+  <text x="730" y="238" text-anchor="middle" font-size="10" fill="#92400e">② loadSessionMessages</text>
+  <text x="730" y="253" text-anchor="middle" font-size="9.6" fill="#a16207">(cwd, id)</text>
+  <text x="730" y="271" text-anchor="middle" font-size="9.6" fill="#b91c1c">返回 null → ❌ exit(1)</text>
+  <text x="730" y="290" text-anchor="middle" font-size="9.8" font-weight="700" fill="#92400e">③ sessionId/resumeMessages 就位</text>
+
+  <!-- 收敛箭头 -->
+  <g stroke="#94a3b8" stroke-width="1.6" fill="none">
+    <line x1="170" y1="332" x2="440" y2="354"/>
+    <line x1="450" y1="332" x2="450" y2="354"/>
+    <line x1="730" y1="332" x2="460" y2="354"/>
+  </g>
+  <polygon points="-5,-8 5,-8 0,0" fill="#94a3b8" transform="translate(450,358)"/>
+
+  <!-- ② 收敛 -->
+  <rect x="290" y="358" width="320" height="48" rx="9" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
+  <text x="450" y="378" text-anchor="middle" font-size="11.5" font-weight="700" fill="#334155">② 收敛：sessionId 确定</text>
+  <text x="450" y="394" text-anchor="middle" font-size="9.6" fill="#64748b">resumeMessages 命中 --resume 时非空，否则 undefined</text>
+
+  <line x1="450" y1="406" x2="450" y2="428" stroke="#b45309" stroke-width="1.8"/>
+  <polygon points="-5,-8 5,-8 0,0" fill="#b45309" transform="translate(450,430)"/>
+
+  <!-- ③ Layer B 读取链 -->
+  <rect x="40" y="432" width="260" height="70" rx="8" fill="#fffbeb" stroke="#b45309" stroke-width="1.9"/>
+  <text x="170" y="455" text-anchor="middle" font-size="10.8" font-weight="700" fill="#92400e">③ buildSystemPrompt(cwd)</text>
+  <text x="170" y="472" text-anchor="middle" font-size="9.6" fill="#a16207">调 loadMemoryPrompt(cwd)</text>
+  <text x="170" y="488" text-anchor="middle" font-size="9" fill="#a16207">（Layer B 入口）</text>
+
+  <rect x="320" y="432" width="260" height="70" rx="8" fill="#fffbeb" stroke="#b45309" stroke-width="1.9"/>
+  <text x="450" y="455" text-anchor="middle" font-size="10.8" font-weight="700" fill="#92400e">findGitRoot(cwd)</text>
+  <text x="450" y="472" text-anchor="middle" font-size="9.3" fill="#a16207">→ memDir 路径</text>
+  <text x="450" y="488" text-anchor="middle" font-size="9" fill="#a16207">（找不到 .git 就退化用 cwd）</text>
+
+  <rect x="600" y="432" width="260" height="70" rx="8" fill="#fffbeb" stroke="#b45309" stroke-width="1.9"/>
+  <text x="730" y="455" text-anchor="middle" font-size="10.8" font-weight="700" fill="#92400e">读取 MEMORY.md 索引</text>
+  <text x="730" y="472" text-anchor="middle" font-size="9.3" fill="#a16207">拼进 system 字符串</text>
+  <text x="730" y="488" text-anchor="middle" font-size="9" fill="#a16207">（紧跟 CLAUDE.md 之后）</text>
+
+  <line x1="300" y1="467" x2="320" y2="467" stroke="#b45309" stroke-width="1.6"/>
+  <polygon points="-4,-6 4,-6 0,0" fill="#b45309" transform="translate(320,467)"/>
+  <line x1="580" y1="467" x2="600" y2="467" stroke="#b45309" stroke-width="1.6"/>
+  <polygon points="-4,-6 4,-6 0,0" fill="#b45309" transform="translate(600,467)"/>
+
+  <line x1="730" y1="502" x2="470" y2="524" stroke="#b45309" stroke-width="1.8" fill="none"/>
+  <polygon points="-5,-8 5,-8 0,0" fill="#b45309" transform="translate(465,527) rotate(60)"/>
+
+  <!-- ④ runAgent 调用 -->
+  <rect x="290" y="528" width="320" height="70" rx="10" fill="#fffbeb" stroke="#b45309" stroke-width="2.4"/>
+  <text x="450" y="550" text-anchor="middle" font-size="11" font-weight="700" fill="#92400e">④ runAgent(provider, tools,</text>
+  <text x="450" y="566" text-anchor="middle" font-size="11" font-weight="700" fill="#92400e">question, …, system, cwd,</text>
+  <text x="450" y="582" text-anchor="middle" font-size="11" font-weight="700" fill="#92400e">sessionId, resumeMessages)</text>
+
+  <line x1="450" y1="598" x2="450" y2="636" stroke="#475569" stroke-width="1.8"/>
+  <polygon points="-5,-8 5,-8 0,0" fill="#475569" transform="translate(450,640)"/>
+
+  <!-- Act2 wrap -->
+  <rect x="20" y="646" width="860" height="290" rx="10" fill="none" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="6 5"/>
+  <text x="450" y="666" text-anchor="middle" font-size="12.5" font-weight="700" fill="#475569">runAgent() 内部循环（loop.ts）—— Layer A 落盘四个点</text>
+
+  <!-- messages init -->
+  <rect x="290" y="678" width="320" height="38" rx="8" fill="#fffbeb" stroke="#b45309" stroke-width="1.8"/>
+  <text x="450" y="702" text-anchor="middle" font-size="9.6" fill="#92400e">messages = [...resumeMessages ?? [], userMessage]</text>
+
+  <line x1="450" y1="716" x2="450" y2="742" stroke="#b45309" stroke-width="1.6"/>
+  <g stroke="#b45309" stroke-width="1.4" fill="none">
+    <line x1="450" y1="742" x2="135" y2="748"/>
+    <line x1="450" y1="742" x2="345" y2="748"/>
+    <line x1="450" y1="742" x2="555" y2="748"/>
+    <line x1="450" y1="742" x2="765" y2="748"/>
+  </g>
+
+  <!-- P1..P4 -->
+  <rect x="40" y="750" width="190" height="72" rx="8" fill="#fffbeb" stroke="#b45309" stroke-width="1.7"/>
+  <text x="135" y="768" text-anchor="middle" font-size="9.8" font-weight="700" fill="#92400e">P1 · 循环开始前</text>
+  <text x="135" y="783" text-anchor="middle" font-size="9.3" fill="#a16207">初始 user 消息</text>
+  <text x="135" y="798" text-anchor="middle" font-size="9.3" fill="#a16207">record() 落盘</text>
+
+  <rect x="250" y="750" width="190" height="72" rx="8" fill="#fffbeb" stroke="#b45309" stroke-width="1.7"/>
+  <text x="345" y="768" text-anchor="middle" font-size="9.8" font-weight="700" fill="#92400e">P2 · 无工具调用</text>
+  <text x="345" y="783" text-anchor="middle" font-size="9.3" fill="#a16207">assistant 最终回复</text>
+  <text x="345" y="798" text-anchor="middle" font-size="9.3" fill="#a16207">record() 落盘</text>
+
+  <rect x="460" y="750" width="190" height="72" rx="8" fill="#fffbeb" stroke="#b45309" stroke-width="2.2"/>
+  <text x="555" y="768" text-anchor="middle" font-size="9.8" font-weight="700" fill="#92400e">P3 · 有工具调用</text>
+  <text x="555" y="783" text-anchor="middle" font-size="9.3" fill="#a16207">assistant 轮次</text>
+  <text x="555" y="798" text-anchor="middle" font-size="9.3" font-weight="700" fill="#b91c1c">★可能触发 write_file</text>
+
+  <rect x="670" y="750" width="190" height="72" rx="8" fill="#fffbeb" stroke="#b45309" stroke-width="1.7"/>
+  <text x="765" y="768" text-anchor="middle" font-size="9.8" font-weight="700" fill="#92400e">P4 · 工具执行完</text>
+  <text x="765" y="783" text-anchor="middle" font-size="9.3" fill="#a16207">每条 tool 结果消息</text>
+  <text x="765" y="798" text-anchor="middle" font-size="9.3" fill="#a16207">record() 落盘</text>
+
+  <g stroke="#b45309" stroke-width="1.4" fill="none">
+    <line x1="135" y1="822" x2="440" y2="840"/>
+    <line x1="345" y1="822" x2="445" y2="840"/>
+    <line x1="555" y1="822" x2="455" y2="840"/>
+    <line x1="765" y1="822" x2="460" y2="840"/>
+  </g>
+  <polygon points="-5,-8 5,-8 0,0" fill="#b45309" transform="translate(450,844)"/>
+
+  <!-- record box -->
+  <rect x="290" y="846" width="320" height="40" rx="8" fill="#fffbeb" stroke="#b45309" stroke-width="1.9"/>
+  <text x="450" y="862" text-anchor="middle" font-size="10.3" font-weight="700" fill="#92400e">⑤ record(message)</text>
+  <text x="450" y="877" text-anchor="middle" font-size="8.8" fill="#a16207">cwd &amp;&amp; sessionId 都给了才 appendSessionEntry(...)</text>
+
+  <line x1="450" y1="886" x2="450" y2="904" stroke="#b45309" stroke-width="1.7"/>
+  <polygon points="-5,-8 5,-8 0,0" fill="#b45309" transform="translate(450,908)"/>
+
+  <!-- storage A -->
+  <rect x="290" y="910" width="320" height="46" rx="8" fill="#fef3c7" stroke="#b45309" stroke-width="1.4" stroke-dasharray="3 3"/>
+  <text x="450" y="929" text-anchor="middle" font-size="9.8" font-weight="700" fill="#92400e">~/.mini-harness/sessions/</text>
+  <text x="450" y="944" text-anchor="middle" font-size="9.3" fill="#a16207">&lt;sanitize(cwd)&gt;/&lt;sessionId&gt;.jsonl 追加一行</text>
+
+  <!-- connector from P3 to write-back (dashed, crosses wrap boundary) -->
+  <polyline points="650,786 830,786 830,1005 610,1005" fill="none" stroke="#b91c1c" stroke-width="1.6" stroke-dasharray="5 4"/>
+  <polygon points="-5,-8 5,-8 0,0" fill="#b91c1c" transform="translate(605,1005) rotate(-90)"/>
+  <text x="838" y="900" font-size="8.6" fill="#b91c1c" transform="rotate(90 838 900)">复用实战03 工具执行机制</text>
+
+  <!-- write-back box -->
+  <rect x="290" y="978" width="320" height="64" rx="10" fill="#fffbeb" stroke="#b45309" stroke-width="2.2"/>
+  <text x="450" y="998" text-anchor="middle" font-size="10.8" font-weight="700" fill="#92400e">⑥ 模型主动发起 write_file</text>
+  <text x="450" y="1014" text-anchor="middle" font-size="9.6" fill="#a16207">写新主题文件 + 更新 MEMORY.md 索引</text>
+  <text x="450" y="1030" text-anchor="middle" font-size="8.8" fill="#a16207">（loop.ts 未新增任何专门代码）</text>
+
+  <line x1="450" y1="1042" x2="450" y2="1060" stroke="#b45309" stroke-width="1.7"/>
+  <polygon points="-5,-8 5,-8 0,0" fill="#b45309" transform="translate(450,1064)"/>
+
+  <!-- storage B -->
+  <rect x="290" y="1066" width="320" height="48" rx="8" fill="#fef3c7" stroke="#b45309" stroke-width="1.4" stroke-dasharray="3 3"/>
+  <text x="450" y="1086" text-anchor="middle" font-size="9.6" font-weight="700" fill="#92400e">~/.mini-harness/memory/&lt;sanitize(gitRoot)&gt;/</text>
+  <text x="450" y="1101" text-anchor="middle" font-size="9.3" fill="#a16207">写入 feedback_xxx.md 等主题文件 + MEMORY.md 索引</text>
+
+  <!-- 结论 -->
+  <rect x="60" y="1130" width="780" height="58" rx="10" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.8"/>
+  <text x="450" y="1150" text-anchor="middle" font-size="11.5" font-weight="700" fill="#1e293b">两条支线共享同一个 cwd，分桶方式从这里彻底分叉</text>
+  <text x="450" y="1168" text-anchor="middle" font-size="10" fill="#475569">Layer A 直接用 cwd 分桶；Layer B 用 findGitRoot(cwd) 的结果分桶——同一仓库不同子目录也共享备忘录</text>
+</svg>

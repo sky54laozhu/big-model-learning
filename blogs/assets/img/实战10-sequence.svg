@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 1400" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t" aria-describedby="d">
+  <title id="t">序列图：Layer A 断点续传链路 + Layer B 备忘录读写链路，两条独立链路</title>
+  <desc id="d">Layer A 链路——三条生命线 index.ts、session.ts、~/.mini-harness/sessions/。第①拍 index.ts 收到 --resume &lt;uuid&gt;，调 validateUuid 校验格式；第②拍格式合法后调 loadSessionMessages(cwd, uuid)，session.ts 读取对应 jsonl 文件、按行 JSON.parse，返回消息数组；第③拍 index.ts 把这份历史连同新问题一起传给 runAgent；第④拍 runAgent 内部循环，每产生一条新消息就调 appendSessionEntry 追加写入同一个 jsonl 文件；第⑤拍循环结束，磁盘上的这份文件比 resume 时读到的又多了本轮新增的几行，下次 --resume 同一个 uuid 会读到更完整的历史。Layer B 链路——三条生命线 systemPrompt.ts、memdir.ts、模型。第①拍 buildSystemPrompt 调 loadMemoryPrompt(cwd)；第②拍 memdir.ts 内部 findGitRoot 定位仓库根、拼出 memDir 路径、读取当前 MEMORY.md 内容；第③拍把 MEMORY_INSTRUCTIONS 说明文案 + 当前索引内容拼成一段，混进这一轮的系统提示词发给模型；第④拍模型这一轮的回答中，判断这是值得记录的信息，主动发起 write_file 工具调用写新主题文件；第⑤拍模型再发起一次 write_file 更新 MEMORY.md 索引；第⑥拍下一次全新对话（哪怕是全新的 --session-id）再次调用 loadMemoryPrompt 时，会读到刚才写入的这份索引，备忘录持续生效。两条链路唯一的交汇点是 index.ts 里都用到了 cwd 这同一个变量，但分桶的方式从这里开始彻底分叉。</desc>
+
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+
+  <text x="460" y="28" text-anchor="middle" font-size="19" font-weight="700" fill="#1e293b">序列图：两条独立链路——Layer A 断点续传　/　Layer B 备忘录读写</text>
+  <text x="460" y="48" text-anchor="middle" font-size="12" fill="#475569">实线 = 调用　·　虚线 = 返回　·　琥珀 = 本章新增　·　两条链路唯一共享的是 index.ts 里的 cwd 变量</text>
+
+  <!-- ============ Layer A ============ -->
+  <text x="60" y="72" font-size="13.5" font-weight="700" fill="#92400e">Layer A —— --resume 断点续传链路</text>
+
+  <rect x="60" y="82" width="180" height="38" rx="7" fill="#fffbeb" stroke="#b45309" stroke-width="1.7"/>
+  <text x="150" y="106" text-anchor="middle" font-size="12.5" font-weight="700" fill="#92400e">index.ts</text>
+
+  <rect x="360" y="82" width="180" height="38" rx="7" fill="#fffbeb" stroke="#b45309" stroke-width="1.7"/>
+  <text x="450" y="106" text-anchor="middle" font-size="12.5" font-weight="700" fill="#92400e">session.ts</text>
+
+  <rect x="630" y="82" width="230" height="38" rx="7" fill="#fffbeb" stroke="#b45309" stroke-width="1.7"/>
+  <text x="745" y="106" text-anchor="middle" font-size="12.5" font-weight="700" fill="#92400e">~/.mini-harness/sessions/</text>
+
+  <g stroke="#cbd5e1" stroke-width="1.4" stroke-dasharray="4 4">
+    <line x1="150" y1="120" x2="150" y2="580"/>
+    <line x1="450" y1="120" x2="450" y2="580"/>
+    <line x1="745" y1="120" x2="745" y2="580"/>
+  </g>
+
+  <!-- 第①拍 -->
+  <circle cx="30" cy="150" r="12" fill="#b45309"/>
+  <text x="30" y="154" text-anchor="middle" font-size="11" font-weight="700" fill="#ffffff">1</text>
+  <rect x="60" y="132" width="180" height="42" rx="7" fill="#fffbeb" stroke="#b45309" stroke-width="1.5"/>
+  <text x="150" y="149" text-anchor="middle" font-size="9.6" fill="#92400e">收到 --resume &lt;uuid&gt;</text>
+  <text x="150" y="164" text-anchor="middle" font-size="9.6" fill="#92400e">调 validateUuid 校验格式</text>
+
+  <!-- 第②拍：跨三条生命线 -->
+  <circle cx="30" cy="248" r="12" fill="#b45309"/>
+  <text x="30" y="252" text-anchor="middle" font-size="11" font-weight="700" fill="#ffffff">2</text>
+
+  <line x1="150" y1="196" x2="440" y2="196" stroke="#b45309" stroke-width="1.6"/>
+  <polygon points="-6,-5 -6,5 0,0" fill="#b45309" transform="translate(440,196)"/>
+  <text x="295" y="190" text-anchor="middle" font-size="9.4" fill="#92400e">loadSessionMessages(cwd, uuid)</text>
+
+  <line x1="450" y1="226" x2="740" y2="226" stroke="#b45309" stroke-width="1.6"/>
+  <polygon points="-6,-5 -6,5 0,0" fill="#b45309" transform="translate(740,226)"/>
+  <text x="597" y="220" text-anchor="middle" font-size="9.4" fill="#92400e">读取对应 jsonl 文件</text>
+
+  <line x1="745" y1="258" x2="455" y2="258" stroke="#b45309" stroke-width="1.5" stroke-dasharray="5 4"/>
+  <polygon points="-6,-5 -6,5 0,0" fill="#b45309" transform="translate(455,258)"/>
+  <text x="597" y="272" text-anchor="middle" font-size="9.4" fill="#a16207">按行 JSON.parse</text>
+
+  <line x1="450" y1="294" x2="160" y2="294" stroke="#b45309" stroke-width="1.5" stroke-dasharray="5 4"/>
+  <polygon points="-6,-5 -6,5 0,0" fill="#b45309" transform="translate(160,294)"/>
+  <text x="295" y="308" text-anchor="middle" font-size="9.4" fill="#a16207">返回消息数组</text>
+
+  <!-- 第③拍 -->
+  <circle cx="30" cy="345" r="12" fill="#b45309"/>
+  <text x="30" y="349" text-anchor="middle" font-size="11" font-weight="700" fill="#ffffff">3</text>
+  <rect x="60" y="326" width="180" height="42" rx="7" fill="#fffbeb" stroke="#b45309" stroke-width="1.5"/>
+  <text x="150" y="343" text-anchor="middle" font-size="9.3" fill="#92400e">历史 + 新问题一起</text>
+  <text x="150" y="358" text-anchor="middle" font-size="9.3" fill="#92400e">传给 runAgent（内部）</text>
+
+  <!-- 第④拍 -->
+  <circle cx="30" cy="425" r="12" fill="#b45309"/>
+  <text x="30" y="429" text-anchor="middle" font-size="11" font-weight="700" fill="#ffffff">4</text>
+
+  <line x1="150" y1="400" x2="440" y2="400" stroke="#b45309" stroke-width="1.6"/>
+  <polygon points="-6,-5 -6,5 0,0" fill="#b45309" transform="translate(440,400)"/>
+  <text x="295" y="394" text-anchor="middle" font-size="9.3" fill="#92400e">每产生一条新消息</text>
+  <text x="295" y="413" text-anchor="middle" font-size="8.8" fill="#a16207">（循环内 ×N）→ appendSessionEntry(...)</text>
+
+  <line x1="450" y1="444" x2="740" y2="444" stroke="#b45309" stroke-width="1.6"/>
+  <polygon points="-6,-5 -6,5 0,0" fill="#b45309" transform="translate(740,444)"/>
+  <text x="597" y="438" text-anchor="middle" font-size="9.3" fill="#92400e">追加写入同一个 jsonl 文件</text>
+
+  <!-- 第⑤拍 -->
+  <circle cx="30" cy="508" r="12" fill="#166534"/>
+  <text x="30" y="512" text-anchor="middle" font-size="11" font-weight="700" fill="#ffffff">5</text>
+  <rect x="620" y="472" width="250" height="72" rx="7" fill="#f0fdf4" stroke="#166534" stroke-width="1.6"/>
+  <text x="745" y="491" text-anchor="middle" font-size="9.3" fill="#166534">磁盘文件比 resume 时</text>
+  <text x="745" y="506" text-anchor="middle" font-size="9.3" fill="#166534">又多了本轮新增的几行</text>
+  <text x="745" y="521" text-anchor="middle" font-size="9.3" fill="#166534">下次 --resume 同一个 uuid</text>
+  <text x="745" y="536" text-anchor="middle" font-size="9.3" font-weight="700" fill="#166534">会读到更完整的历史</text>
+
+  <!-- 分隔 -->
+  <line x1="60" y1="605" x2="860" y2="605" stroke="#cbd5e1" stroke-width="1.2"/>
+  <text x="460" y="628" text-anchor="middle" font-size="13" font-weight="700" fill="#92400e">Layer B —— 备忘录读取 + 模型主动写入链路</text>
+
+  <!-- ============ Layer B ============ -->
+  <rect x="60" y="644" width="180" height="38" rx="7" fill="#fffbeb" stroke="#b45309" stroke-width="1.7"/>
+  <text x="150" y="668" text-anchor="middle" font-size="12.5" font-weight="700" fill="#92400e">systemPrompt.ts</text>
+
+  <rect x="360" y="644" width="180" height="38" rx="7" fill="#fffbeb" stroke="#b45309" stroke-width="1.7"/>
+  <text x="450" y="668" text-anchor="middle" font-size="12.5" font-weight="700" fill="#92400e">memdir.ts</text>
+
+  <rect x="630" y="644" width="230" height="38" rx="7" fill="#fffbeb" stroke="#b45309" stroke-width="1.7"/>
+  <text x="745" y="668" text-anchor="middle" font-size="12.5" font-weight="700" fill="#92400e">模型</text>
+
+  <g stroke="#cbd5e1" stroke-width="1.4" stroke-dasharray="4 4">
+    <line x1="150" y1="682" x2="150" y2="1160"/>
+    <line x1="450" y1="682" x2="450" y2="1160"/>
+    <line x1="745" y1="682" x2="745" y2="1160"/>
+  </g>
+
+  <!-- 第①拍 -->
+  <circle cx="30" cy="722" r="12" fill="#b45309"/>
+  <text x="30" y="726" text-anchor="middle" font-size="11" font-weight="700" fill="#ffffff">1</text>
+  <line x1="150" y1="722" x2="440" y2="722" stroke="#b45309" stroke-width="1.6"/>
+  <polygon points="-6,-5 -6,5 0,0" fill="#b45309" transform="translate(440,722)"/>
+  <text x="295" y="716" text-anchor="middle" font-size="9.4" fill="#92400e">loadMemoryPrompt(cwd)</text>
+
+  <!-- 第②拍 -->
+  <circle cx="30" cy="790" r="12" fill="#b45309"/>
+  <text x="30" y="794" text-anchor="middle" font-size="11" font-weight="700" fill="#ffffff">2</text>
+  <rect x="360" y="750" width="180" height="80" rx="7" fill="#fffbeb" stroke="#b45309" stroke-width="1.5"/>
+  <text x="450" y="770" text-anchor="middle" font-size="9.3" fill="#92400e">findGitRoot 定位仓库根</text>
+  <text x="450" y="786" text-anchor="middle" font-size="9.3" fill="#92400e">→ memDir 路径</text>
+  <text x="450" y="802" text-anchor="middle" font-size="9.3" fill="#92400e">读取当前 MEMORY.md</text>
+  <text x="450" y="818" text-anchor="middle" font-size="9.3" fill="#92400e">索引内容</text>
+
+  <!-- 第③拍 -->
+  <circle cx="30" cy="875" r="12" fill="#b45309"/>
+  <text x="30" y="879" text-anchor="middle" font-size="11" font-weight="700" fill="#ffffff">3</text>
+
+  <line x1="450" y1="854" x2="160" y2="854" stroke="#b45309" stroke-width="1.5" stroke-dasharray="5 4"/>
+  <polygon points="-6,-5 -6,5 0,0" fill="#b45309" transform="translate(160,854)"/>
+  <text x="295" y="848" text-anchor="middle" font-size="8.8" fill="#a16207">MEMORY_INSTRUCTIONS + 索引拼成一段</text>
+
+  <line x1="150" y1="900" x2="740" y2="900" stroke="#b45309" stroke-width="1.6"/>
+  <polygon points="-6,-5 -6,5 0,0" fill="#b45309" transform="translate(740,900)"/>
+  <text x="450" y="894" text-anchor="middle" font-size="9.3" fill="#92400e">混进这一轮 system 字符串，随请求发给模型</text>
+
+  <!-- 第④拍 -->
+  <circle cx="30" cy="955" r="12" fill="#b45309"/>
+  <text x="30" y="959" text-anchor="middle" font-size="11" font-weight="700" fill="#ffffff">4</text>
+  <rect x="630" y="930" width="230" height="54" rx="7" fill="#fffbeb" stroke="#b45309" stroke-width="2"/>
+  <text x="745" y="951" text-anchor="middle" font-size="9.6" font-weight="700" fill="#92400e">模型主动发起 write_file</text>
+  <text x="745" y="967" text-anchor="middle" font-size="9.1" fill="#a16207">写新主题文件 feedback_xxx.md</text>
+
+  <!-- 第⑤拍 -->
+  <circle cx="30" cy="1020" r="12" fill="#b45309"/>
+  <text x="30" y="1024" text-anchor="middle" font-size="11" font-weight="700" fill="#ffffff">5</text>
+  <rect x="630" y="996" width="230" height="52" rx="7" fill="#fffbeb" stroke="#b45309" stroke-width="2"/>
+  <text x="745" y="1017" text-anchor="middle" font-size="9.6" font-weight="700" fill="#92400e">模型再次发起 write_file</text>
+  <text x="745" y="1033" text-anchor="middle" font-size="9.1" fill="#a16207">更新 MEMORY.md 索引</text>
+
+  <!-- 第⑥拍 -->
+  <circle cx="30" cy="1108" r="12" fill="#166534"/>
+  <text x="30" y="1112" text-anchor="middle" font-size="11" font-weight="700" fill="#ffffff">6</text>
+  <rect x="345" y="1064" width="210" height="90" rx="7" fill="#f0fdf4" stroke="#166534" stroke-width="1.6"/>
+  <text x="450" y="1083" text-anchor="middle" font-size="9" fill="#166534">下一次全新对话</text>
+  <text x="450" y="1098" text-anchor="middle" font-size="9" fill="#166534">（哪怕是全新的 --session-id）</text>
+  <text x="450" y="1113" text-anchor="middle" font-size="9" fill="#166534">再次调用 loadMemoryPrompt</text>
+  <text x="450" y="1128" text-anchor="middle" font-size="9" fill="#166534">时，会读到刚才写入的索引</text>
+  <text x="450" y="1145" text-anchor="middle" font-size="9.3" font-weight="700" fill="#166534">备忘录持续生效</text>
+
+  <!-- 结论 -->
+  <rect x="60" y="1190" width="800" height="94" rx="10" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.8"/>
+  <text x="460" y="1214" text-anchor="middle" font-size="12" font-weight="700" fill="#1e293b">两条链路唯一的交汇点：index.ts 里的同一个 cwd 变量</text>
+  <text x="460" y="1236" text-anchor="middle" font-size="10.3" fill="#475569">Layer A 直接用 cwd 本身分桶——对话历史天然该按你在哪个目录跑来区分</text>
+  <text x="460" y="1256" text-anchor="middle" font-size="10.3" fill="#475569">Layer B 用 findGitRoot(cwd) 的结果分桶——项目经验理应跨子目录 / worktree 共享</text>
+  <text x="460" y="1274" text-anchor="middle" font-size="10.3" font-weight="700" fill="#334155">分桶方式从这一个共同起点开始彻底分叉</text>
+</svg>
