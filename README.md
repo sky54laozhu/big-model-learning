@@ -2,7 +2,7 @@
 
 > 一个全栈开发者从零开始理解大模型原理的学习记录 · 从直觉到工程，每学一块写一篇博客
 >
-> **进度：概念系列 32 篇正文 + 2 番外 · 完结 🎉 ｜ 实战卷《从 0 写一个 Harness》进行中（12/20）｜ 独立系列《从 0 到精通 TypeScript》进行中（3/21）**
+> **进度：概念系列 32 篇正文 + 2 番外 · 完结 🎉 ｜ 实战卷《从 0 写一个 Harness》进行中（13/20）｜ 独立系列《从 0 到精通 TypeScript》进行中（3/21）**
 
 ## 学习理念
 
@@ -101,6 +101,7 @@
 | 实战10 | [跨会话状态：关掉重开，接着干](blogs/实战10-cross-session-state.md) | ✅ |
 | 实战11 | [TodoWrite 与 system-reminder：状态线自己开口提醒](blogs/实战11-todowrite-system-reminder.md) | ✅ |
 | 实战12 | [子agent编排：一个函数递归调自己](blogs/实战12-subagent-orchestration.md) | ✅ |
+| 实战13 | [子agent转后台：一个参数，把「调用就得等」变成「愿等才等」](blogs/实战13-background-task-dispatch.md) | ✅ |
 
 ### 独立系列 · 从 0 到精通 TypeScript
 > 🏁 里程碑：读懂任何库的类型定义、自己写类型体操（21 篇，配填空练习仓 `code/ts-course/`）｜ 暗线：类型 = 一组允许的值（集合）

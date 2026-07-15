@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 900" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t" aria-describedby="d">
+  <title id="t">骨架定位图：task.ts 新增模块级登记表与分叉的 execute，loop.ts 新增每轮开工前的登记表检查</title>
+  <desc id="d">新增 CompletedBackgroundTask 登记表（模块级 Map&lt;string,string&gt;，声明在 tools/task.ts 里、createTaskTool 工厂函数外面）+ nextBackgroundTaskId 自增计数器。createTaskTool 返回的 Tool.parameters 新增 background:boolean 字段。execute 分叉成两条路：background 不传或 false，原样 await runAgent(...) 走实战12 老路；background:true 时生成 bg-N 任务ID，runAgent(...).then(结果写入登记表).catch(错误以 error: 前缀写入同一张登记表)，execute 立即返回一句"已提交"确认，不等待。task.ts 新增导出函数 drainCompletedBackgroundTasks()：遍历登记表收集所有已完工条目、边收集边从表里删除（防重复上报），多条目拼成一条消息返回，没有条目时返回 null。loop.ts 主循环每轮开口前（跟 shouldAutoCompact/shouldRemindTodo 同一位置）调用 drainCompletedBackgroundTasks()，非 null 时包成跟实战11 todo提醒同款的 role:'user'+isMeta+&lt;system-reminder&gt; 消息 push 进 messages 并 record 落盘。</desc>
+
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+
+  <text x="420" y="28" text-anchor="middle" font-size="19" font-weight="700" fill="#1e293b">骨架定位：task.ts 新增登记表 + 分叉的 execute，loop.ts 新增第三项自检</text>
+  <text x="420" y="48" text-anchor="middle" font-size="12" fill="#475569">■ 琥珀色 = 本章新增/改动　　▨ 灰色虚线 = 沿用旧实现，未改动</text>
+
+  <!-- 模块级登记表 -->
+  <rect x="90" y="62" width="660" height="70" rx="9" fill="#fffbeb" stroke="#b45309" stroke-width="2"/>
+  <text x="420" y="84" text-anchor="middle" font-size="12" font-weight="700" fill="#92400e">tools/task.ts 模块级单例（折叠点④：execute 写、drain 读，唯一的桥）</text>
+  <text x="420" y="102" text-anchor="middle" font-size="10" fill="#92400e">const completedBackgroundTasks = new Map&lt;string, string&gt;()　　let nextBackgroundTaskId = 1</text>
+  <text x="420" y="119" text-anchor="middle" font-size="9" fill="#a16207">声明在 createTaskTool 工厂函数外面——只登记"完工"，取走即删（折叠点⑧：key 只是 bg-N 自增，无落盘无安全顾虑）</text>
+
+  <line x1="420" y1="132" x2="420" y2="154" stroke="#b45309" stroke-width="1.6"/>
+  <polygon points="-6,-5 -6,5 0,0" fill="#b45309" transform="translate(420,158) rotate(90)"/>
+
+  <!-- createTaskTool 工厂函数外框 -->
+  <rect x="60" y="164" width="720" height="280" rx="10" fill="none" stroke="#b45309" stroke-width="1.4" stroke-dasharray="2 3"/>
+  <text x="80" y="184" font-size="10.5" font-weight="700" fill="#b45309">createTaskTool(provider, gate): Tool —— parameters 新增 background:boolean（折叠点①）</text>
+
+  <!-- execute 分叉 -->
+  <text x="420" y="206" text-anchor="middle" font-size="10.6" font-weight="700" fill="#334155">execute(args) 按 args.background 分叉</text>
+
+  <!-- 左：阻塞老路径 -->
+  <rect x="90" y="220" width="320" height="110" rx="8" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.6" stroke-dasharray="4 3"/>
+  <text x="250" y="242" text-anchor="middle" font-size="10.5" font-weight="700" fill="#475569">!background（默认，未改动）</text>
+  <text x="250" y="262" text-anchor="middle" font-size="9.4" fill="#475569">return runAgent(provider,</text>
+  <text x="250" y="278" text-anchor="middle" font-size="9.4" fill="#475569">subagentTools, task, 10, gate)</text>
+  <text x="250" y="298" text-anchor="middle" font-size="8.8" fill="#64748b">原地 await 等它跑完再返回——</text>
+  <text x="250" y="313" text-anchor="middle" font-size="8.8" fill="#64748b">跟实战12 一个字不差</text>
+
+  <!-- 右：后台新路径 -->
+  <rect x="430" y="220" width="320" height="110" rx="8" fill="#fffbeb" stroke="#b45309" stroke-width="1.8"/>
+  <text x="590" y="242" text-anchor="middle" font-size="10.5" font-weight="700" fill="#92400e">background:true（新增，折叠点②）</text>
+  <text x="590" y="262" text-anchor="middle" font-size="9.2" fill="#92400e">taskId=bg-N；runAgent(...)</text>
+  <text x="590" y="278" text-anchor="middle" font-size="9.2" fill="#92400e">.then(登记表.set).catch(登记 error:)</text>
+  <text x="590" y="298" text-anchor="middle" font-size="8.8" fill="#a16207">不 await——立即 return</text>
+  <text x="590" y="313" text-anchor="middle" font-size="8.8" fill="#a16207">"已提交 bg-N" 确认字符串</text>
+
+  <!-- 右路径写入登记表 -->
+  <path d="M 590 330 C 590 360, 460 370, 420 132" fill="none" stroke="#b45309" stroke-width="1.5" stroke-dasharray="5 4"/>
+  <polygon points="-6,-5 -6,5 0,0" fill="#b45309" transform="translate(422,150) rotate(280)"/>
+  <text x="700" y="360" text-anchor="middle" font-size="8.6" fill="#92400e" transform="rotate(-90 700 360)">.then/.catch 异步写入（折叠点⑦：成功/失败共用同一条路径）</text>
+
+  <!-- 汇合到 tool-result -->
+  <line x1="250" y1="330" x2="250" y2="352" stroke="#94a3b8" stroke-width="1.5"/>
+  <polygon points="-5,-8 5,-8 0,0" fill="#94a3b8" transform="translate(250,356)"/>
+  <line x1="590" y1="330" x2="590" y2="352" stroke="#b45309" stroke-width="1.5"/>
+  <polygon points="-5,-8 5,-8 0,0" fill="#b45309" transform="translate(590,356)"/>
+
+  <rect x="130" y="362" width="580" height="60" rx="8" fill="#f0fdf4" stroke="#166534" stroke-width="1.5"/>
+  <text x="420" y="384" text-anchor="middle" font-size="10" font-weight="700" fill="#166534">两条路径的返回值都包成同一种 { role:'tool', toolCallId, content } 消息</text>
+  <text x="420" y="402" text-anchor="middle" font-size="9" fill="#166534">左路是最终结果；右路只是"已提交"——真正结果去了登记表，不占用这次 toolCallId（折叠点③）</text>
+
+  <line x1="420" y1="444" x2="420" y2="468" stroke="#b45309" stroke-width="1.8"/>
+  <polygon points="-6,-5 -6,5 0,0" fill="#b45309" transform="translate(420,472) rotate(90)"/>
+
+  <!-- drainCompletedBackgroundTasks -->
+  <rect x="90" y="478" width="660" height="90" rx="9" fill="#fffbeb" stroke="#b45309" stroke-width="2"/>
+  <text x="420" y="500" text-anchor="middle" font-size="11.5" font-weight="700" fill="#92400e">export function drainCompletedBackgroundTasks(): string | null —— 本章新增导出</text>
+  <text x="420" y="518" text-anchor="middle" font-size="9.4" fill="#92400e">遍历登记表收集已完工条目，边收集边 delete（折叠点⑥：取走即删，防重复上报）</text>
+  <text x="420" y="535" text-anchor="middle" font-size="9.4" fill="#92400e">多条目拼成一条消息返回；一个都没有时返回 null</text>
+  <text x="420" y="552" text-anchor="middle" font-size="8.6" fill="#a16207">从登记表"读"——跟 execute 的"写"是模块级变量的两端</text>
+
+  <!-- 登记表读箭头（虚线回指） -->
+  <path d="M 130 478 C 100 400, 100 200, 96 132" fill="none" stroke="#b45309" stroke-width="1.5" stroke-dasharray="5 4"/>
+  <polygon points="-6,-5 -6,5 0,0" fill="#b45309" transform="translate(97,140) rotate(10)"/>
+  <text x="60" y="300" text-anchor="middle" font-size="8.6" fill="#92400e" transform="rotate(-90 60 300)">drain 读取登记表（折叠点④）</text>
+
+  <line x1="420" y1="568" x2="420" y2="592" stroke="#b45309" stroke-width="1.8"/>
+  <polygon points="-6,-5 -6,5 0,0" fill="#b45309" transform="translate(420,596) rotate(90)"/>
+
+  <!-- loop.ts 每轮开工前自检家族 -->
+  <rect x="60" y="606" width="720" height="200" rx="10" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.8" stroke-dasharray="6 4"/>
+  <text x="420" y="628" text-anchor="middle" font-size="11.5" font-weight="700" fill="#334155">loop.ts —— 每轮开工前自检家族（折叠点⑤：第三个成员，不是模型主动轮询）</text>
+
+  <rect x="90" y="638" width="210" height="46" rx="7" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.3" stroke-dasharray="3 3"/>
+  <text x="195" y="658" text-anchor="middle" font-size="9" fill="#475569">shouldAutoCompact</text>
+  <text x="195" y="674" text-anchor="middle" font-size="8.2" fill="#64748b">（实战09，未改动）</text>
+
+  <rect x="315" y="638" width="210" height="46" rx="7" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.3" stroke-dasharray="3 3"/>
+  <text x="420" y="658" text-anchor="middle" font-size="9" fill="#475569">shouldRemindTodo</text>
+  <text x="420" y="674" text-anchor="middle" font-size="8.2" fill="#64748b">（实战11，未改动）</text>
+
+  <rect x="540" y="638" width="210" height="46" rx="7" fill="#fffbeb" stroke="#b45309" stroke-width="1.6"/>
+  <text x="645" y="658" text-anchor="middle" font-size="9" font-weight="700" fill="#92400e">drainCompletedBackgroundTasks</text>
+  <text x="645" y="674" text-anchor="middle" font-size="8.2" fill="#a16207">（本章新增第三项）</text>
+
+  <line x1="645" y1="684" x2="645" y2="704" stroke="#b45309" stroke-width="1.6"/>
+  <polygon points="-5,-8 5,-8 0,0" fill="#b45309" transform="translate(645,708)"/>
+
+  <rect x="400" y="716" width="350" height="72" rx="8" fill="#fffbeb" stroke="#b45309" stroke-width="1.6"/>
+  <text x="575" y="736" text-anchor="middle" font-size="9.4" font-weight="700" fill="#92400e">非 null 时：包成 role:'user'+isMeta</text>
+  <text x="575" y="752" text-anchor="middle" font-size="9.4" font-weight="700" fill="#92400e">+&lt;system-reminder&gt; 消息</text>
+  <text x="575" y="768" text-anchor="middle" font-size="8.6" fill="#a16207">push 进 messages 并 record 落盘</text>
+  <text x="575" y="782" text-anchor="middle" font-size="8.2" fill="#a16207">（跟实战11 todo 提醒同款收口）</text>
+
+  <!-- 结论框 -->
+  <rect x="80" y="822" width="680" height="60" rx="10" fill="#f0fdf4" stroke="#166534" stroke-width="1.6"/>
+  <text x="420" y="844" text-anchor="middle" font-size="10.6" font-weight="700" fill="#166534">模型不需要"查询"，下一轮开口前结果自然出现在输入里</text>
+  <text x="420" y="862" text-anchor="middle" font-size="9.4" fill="#166534">一张表 + 一次顺手检查，没有新架构、没有轮询工具、没有额外的模型主动动作</text>
+</svg>

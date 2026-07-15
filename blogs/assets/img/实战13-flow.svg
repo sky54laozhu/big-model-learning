@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1040" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t" aria-describedby="d">
+  <title id="t">主控制流程图：loop.ts 每轮开口前三连自检，task 的 background 分支异步写回登记表</title>
+  <desc id="d">loop.ts 每一轮开口前，先后做三次自检——shouldAutoCompact（历史顶到阈值就摘要）、shouldRemindTodo（好久没写就提醒）、drainCompletedBackgroundTasks（有后台任务完工就整批取出并清空登记表）。三者是同一个"每轮开工前自检"家族，位置紧挨着，互不依赖。若 drainCompletedBackgroundTasks 返回非 null，包成 role:'user'+isMeta+&lt;system-reminder&gt; 消息 push 进 messages、record 落盘。随后照常发起 streamChat：模型这一轮如果调用 task 且 background:true，execute 生成 bg-N 任务ID、发起 runAgent(...).then/.catch 但不 await，立即返回"已提交"字符串收口成普通 role:'tool' 消息；runAgent 内部的 provider 请求和工具调用在后台异步进行，跟主循环并发，跑完后 .then/.catch 把结果或 error: 前缀字符串写入模块级登记表，等下一轮循环开口前的自检才被看见、清空、转成提醒消息。</desc>
+
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+
+  <text x="450" y="28" text-anchor="middle" font-size="19" font-weight="700" fill="#1e293b">控制流程：每轮开口前三连自检，task 后台分支异步写回登记表</text>
+  <text x="450" y="48" text-anchor="middle" font-size="12" fill="#475569">■ 琥珀色 = 本章新增/改动　　▨ 灰色虚线 = 沿用旧实现，未改动</text>
+
+  <!-- 自检家族外框 -->
+  <rect x="45" y="64" width="810" height="190" rx="12" fill="none" stroke="#94a3b8" stroke-width="1.4" stroke-dasharray="4 3"/>
+  <text x="65" y="84" font-size="10.5" font-weight="700" fill="#334155">loop.ts 每轮开口前的自检家族（三项顺序执行，互不依赖）</text>
+
+  <rect x="65" y="98" width="240" height="60" rx="7" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.3" stroke-dasharray="3 3"/>
+  <text x="185" y="122" text-anchor="middle" font-size="9.6" font-weight="700" fill="#475569">shouldAutoCompact</text>
+  <text x="185" y="138" text-anchor="middle" font-size="8.6" fill="#64748b">历史顶到阈值就摘要</text>
+  <text x="185" y="152" text-anchor="middle" font-size="8.2" fill="#94a3b8">（实战09，未改动）</text>
+
+  <rect x="330" y="98" width="240" height="60" rx="7" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.3" stroke-dasharray="3 3"/>
+  <text x="450" y="122" text-anchor="middle" font-size="9.6" font-weight="700" fill="#475569">shouldRemindTodo</text>
+  <text x="450" y="138" text-anchor="middle" font-size="8.6" fill="#64748b">好久没写 todo 就提醒</text>
+  <text x="450" y="152" text-anchor="middle" font-size="8.2" fill="#94a3b8">（实战11，未改动）</text>
+
+  <rect x="595" y="98" width="240" height="60" rx="7" fill="#fffbeb" stroke="#b45309" stroke-width="1.7"/>
+  <text x="715" y="122" text-anchor="middle" font-size="9.6" font-weight="700" fill="#92400e">drainCompletedBackgroundTasks</text>
+  <text x="715" y="138" text-anchor="middle" font-size="8.6" fill="#92400e">有后台任务完工就整批取出、清空登记表</text>
+  <text x="715" y="152" text-anchor="middle" font-size="8.2" fill="#a16207">（本章新增第三项）</text>
+
+  <text x="450" y="182" text-anchor="middle" font-size="9.4" fill="#475569">三者位置紧挨着，同属"每轮开工前自检"——不是模型主动轮询，模型什么都不用做</text>
+  <text x="450" y="200" text-anchor="middle" font-size="9.4" fill="#475569">就会在下一轮输入里看到结果（回扣实战09/11 折叠点）</text>
+
+  <line x1="450" y1="254" x2="450" y2="278" stroke="#b45309" stroke-width="1.8"/>
+  <polygon points="-5,-8 5,-8 0,0" fill="#b45309" transform="translate(450,282)"/>
+
+  <!-- 若非 null：构造提醒消息 -->
+  <rect x="230" y="292" width="440" height="66" rx="9" fill="#fffbeb" stroke="#b45309" stroke-width="1.8"/>
+  <circle cx="260" cy="322" r="15" fill="#b45309"/>
+  <text x="260" y="327" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff">①</text>
+  <text x="465" y="313" text-anchor="middle" font-size="10.3" font-weight="700" fill="#92400e">非 null 时：包成 role:'user'+isMeta</text>
+  <text x="465" y="329" text-anchor="middle" font-size="10.3" font-weight="700" fill="#92400e">+&lt;system-reminder&gt; 消息 push 进 messages</text>
+  <text x="465" y="346" text-anchor="middle" font-size="8.8" fill="#a16207">并 record 落盘（为 null 时直接跳过，往下走）</text>
+
+  <line x1="450" y1="358" x2="450" y2="382" stroke="#94a3b8" stroke-width="1.6"/>
+  <polygon points="-5,-8 5,-8 0,0" fill="#94a3b8" transform="translate(450,386)"/>
+
+  <!-- streamChat 照常发起 -->
+  <rect x="230" y="396" width="440" height="56" rx="9" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.6" stroke-dasharray="4 3"/>
+  <circle cx="260" cy="424" r="15" fill="#64748b"/>
+  <text x="260" y="429" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff">②</text>
+  <text x="465" y="418" text-anchor="middle" font-size="10.3" fill="#475569">streamChat(messages, tools, system) 照常发起</text>
+  <text x="465" y="435" text-anchor="middle" font-size="9.4" fill="#64748b">事件消费不变：text_delta / tool_call / retry / done</text>
+
+  <line x1="450" y1="452" x2="450" y2="476" stroke="#b45309" stroke-width="1.8"/>
+  <polygon points="-5,-8 5,-8 0,0" fill="#b45309" transform="translate(450,480)"/>
+
+  <!-- 模型请求 task(background:true) -->
+  <rect x="230" y="490" width="440" height="56" rx="9" fill="#fffbeb" stroke="#b45309" stroke-width="1.8"/>
+  <circle cx="260" cy="518" r="15" fill="#b45309"/>
+  <text x="260" y="523" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff">③</text>
+  <text x="465" y="512" text-anchor="middle" font-size="10.3" font-weight="700" fill="#92400e">模型这一轮调用 task({ background: true })</text>
+  <text x="465" y="529" text-anchor="middle" font-size="9.2" fill="#a16207">先记 assistant turn，再并发执行本轮工具调用（沿用实战12）</text>
+
+  <line x1="450" y1="546" x2="450" y2="570" stroke="#b45309" stroke-width="1.8"/>
+  <polygon points="-5,-8 5,-8 0,0" fill="#b45309" transform="translate(450,574)"/>
+
+  <!-- execute 分叉 -->
+  <rect x="200" y="584" width="500" height="82" rx="9" fill="#fffbeb" stroke="#b45309" stroke-width="1.8"/>
+  <circle cx="230" cy="620" r="15" fill="#b45309"/>
+  <text x="230" y="625" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff">④</text>
+  <text x="475" y="604" text-anchor="middle" font-size="10.3" font-weight="700" fill="#92400e">execute 分叉：生成 bg-N 任务ID</text>
+  <text x="475" y="622" text-anchor="middle" font-size="9.4" fill="#92400e">runAgent(...).then(写登记表).catch(error: 写登记表) —— 不 await</text>
+  <text x="475" y="639" text-anchor="middle" font-size="9.4" fill="#a16207">立即 return "已提交 bg-N" 确认字符串</text>
+  <text x="475" y="655" text-anchor="middle" font-size="8.6" fill="#a16207">（这次调用的 tool-result 槽这一刻就已收口）</text>
+
+  <!-- 指向右侧后台侧路 -->
+  <line x1="700" y1="620" x2="726" y2="620" stroke="#b45309" stroke-width="1.8" stroke-dasharray="5 3"/>
+  <polygon points="-5,-8 5,-8 0,0" fill="#b45309" transform="translate(730,620) rotate(90)"/>
+
+  <!-- 右侧独立侧路：后台异步执行 -->
+  <rect x="726" y="566" width="150" height="360" rx="10" fill="#fffbeb" stroke="#b45309" stroke-width="1.6"/>
+  <text x="801" y="586" text-anchor="middle" font-size="9.4" font-weight="700" fill="#92400e">后台异步执行</text>
+  <text x="801" y="600" text-anchor="middle" font-size="8" fill="#a16207">（与主循环并发，不阻塞）</text>
+
+  <rect x="738" y="612" width="126" height="40" rx="6" fill="#ffffff" stroke="#94a3b8" stroke-width="1.3" stroke-dasharray="3 3"/>
+  <text x="801" y="628" text-anchor="middle" font-size="8.4" fill="#475569">provider 流式请求</text>
+  <text x="801" y="642" text-anchor="middle" font-size="8" fill="#64748b">（子agent自己的）</text>
+
+  <rect x="738" y="658" width="126" height="40" rx="6" fill="#ffffff" stroke="#94a3b8" stroke-width="1.3" stroke-dasharray="3 3"/>
+  <text x="801" y="674" text-anchor="middle" font-size="8.4" fill="#475569">工具调用</text>
+  <text x="801" y="688" text-anchor="middle" font-size="8" fill="#64748b">（subagentTools）</text>
+
+  <rect x="738" y="704" width="126" height="40" rx="6" fill="#ffffff" stroke="#94a3b8" stroke-width="1.3" stroke-dasharray="3 3"/>
+  <text x="801" y="720" text-anchor="middle" font-size="8.4" fill="#475569">第二轮流式请求</text>
+  <text x="801" y="734" text-anchor="middle" font-size="8" fill="#64748b">……直到 resolve</text>
+
+  <rect x="738" y="750" width="126" height="46" rx="6" fill="#f0fdf4" stroke="#166534" stroke-width="1.4"/>
+  <text x="801" y="768" text-anchor="middle" font-size="8.6" font-weight="700" fill="#166534">.then / .catch</text>
+  <text x="801" y="782" text-anchor="middle" font-size="8" fill="#166534">写入登记表</text>
+
+  <!-- 曲线虚线：登记表写入的结果，下一轮才被 drain 看见 -->
+  <path d="M 764 796 C 700 900, 500 950, 300 260" fill="none" stroke="#b45309" stroke-width="1.5" stroke-dasharray="5 4"/>
+  <polygon points="-6,-5 -6,5 0,0" fill="#b45309" transform="translate(303,252) rotate(75)"/>
+  <text x="560" y="900" text-anchor="middle" font-size="8.6" fill="#92400e" transform="rotate(-58 560 900)">下一轮开口前的自检才被看见（折叠点⑤⑥）</text>
+
+  <!-- 主路径：merge 成普通 tool 消息 -->
+  <line x1="400" y1="666" x2="400" y2="690" stroke="#94a3b8" stroke-width="1.6"/>
+  <polygon points="-5,-8 5,-8 0,0" fill="#94a3b8" transform="translate(400,694)"/>
+
+  <rect x="200" y="704" width="400" height="56" rx="9" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.6" stroke-dasharray="4 3"/>
+  <circle cx="230" cy="732" r="15" fill="#64748b"/>
+  <text x="230" y="737" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff">⑤</text>
+  <text x="425" y="726" text-anchor="middle" font-size="10" fill="#475569">"已提交"字符串包成普通</text>
+  <text x="425" y="742" text-anchor="middle" font-size="10" fill="#475569">{role:'tool', toolCallId, content} 消息</text>
+
+  <line x1="400" y1="760" x2="400" y2="784" stroke="#94a3b8" stroke-width="1.6"/>
+  <polygon points="-5,-8 5,-8 0,0" fill="#94a3b8" transform="translate(400,788)"/>
+
+  <rect x="200" y="798" width="400" height="52" rx="9" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.6" stroke-dasharray="4 3"/>
+  <text x="400" y="820" text-anchor="middle" font-size="9.8" fill="#475569">本轮其余工具调用照常并发执行（若有）</text>
+  <text x="400" y="836" text-anchor="middle" font-size="9.4" fill="#64748b">随后进入 turn+1，循环回到最上方的自检家族</text>
+
+  <!-- 左侧虚线：循环回到顶部 -->
+  <path d="M 220 810 C 90 700, 90 300, 200 200" fill="none" stroke="#94a3b8" stroke-width="1.4" stroke-dasharray="4 4"/>
+  <polygon points="-6,-5 -6,5 0,0" fill="#94a3b8" transform="translate(203,192) rotate(320)"/>
+  <text x="110" y="500" text-anchor="middle" font-size="8.6" fill="#64748b" transform="rotate(-90 110 500)">下一轮 turn+1，重新走一遍自检家族</text>
+
+  <!-- 结论框 -->
+  <rect x="80" y="866" width="740" height="130" rx="10" fill="#f0fdf4" stroke="#166534" stroke-width="1.6"/>
+  <text x="450" y="892" text-anchor="middle" font-size="12" font-weight="700" fill="#166534">execute 分叉不会让主循环卡住，结果靠"下一轮自检"异步流回</text>
+  <text x="450" y="914" text-anchor="middle" font-size="10.3" fill="#166534">background:true 这次调用在④就已经收口，父agent立刻能继续这一轮剩下的工作；</text>
+  <text x="450" y="932" text-anchor="middle" font-size="10.3" fill="#166534">真正的结果由子agent自己的 runAgent 在后台跑，跑完写进登记表，跟父agent的循环完全不同步——</text>
+  <text x="450" y="950" text-anchor="middle" font-size="9.6" fill="#15803d">谁先谁后不重要，反正下一轮开口前的自检总会把它捞出来，转成模型能看到的提醒消息。</text>
+  <text x="450" y="972" text-anchor="middle" font-size="9.6" fill="#15803d">streamChat、runWithGate、Layer A 落盘的实现细节全部沿用旧代码，未改动。</text>
+
+  <text x="450" y="1020" text-anchor="middle" font-size="9.3" fill="#64748b">■ 琥珀色 = 本章新增/改动　　▨ 灰色虚线 = 沿用旧实现，未改动</text>
+</svg>

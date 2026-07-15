@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 1160" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t" aria-describedby="d">
+  <title id="t">序列图：父agent发起后台子agent bg-1，两条时间线并发推进，结果在父agent下一轮自检才被看见</title>
+  <desc id="d">主生命线 loop.ts + task.ts(execute 里的 bg-1 后台调用) + 模型。第①拍父agent发起 task(background:true)，execute 生成 bg-1、发起 runAgent(...).then/.catch 但不 await，立即返回"已提交"字符串；这次工具调用的 tool-result 槽在这一刻就已经收口。第②拍父agent继续这一轮的其余工具调用（read_file 读 package.json，是本轮模型一并请求的，跟 bg-1 并发但走的是正常阻塞路径）。第③拍父agent进入 turn2，drainCompletedBackgroundTasks() 检查登记表——bg-1 还没完工，返回 null，无事发生，照常执行 bash pwd。同时 bg-1 后台的 runAgent 内部完整走一遍流式请求+工具调用+第二轮流式请求，逐步逼近它自己的最终答案。第④拍父agent进入 turn3/turn4，各自查一次登记表，bg-1 仍未完工（假设耗时较长），照常执行 date/whoami。第⑤拍 bg-1 的 runAgent 终于 resolve，.then 把结果字符串写入登记表这一刻，跟父agent的主循环完全不同步——它可能发生在父agent turn2 和 turn3 之间的任意时刻。第⑥拍父agent进入下一轮（假设是 turn5，做最终总结前），drainCompletedBackgroundTasks() 这次查到 bg-1 已完工，取出结果、从登记表删除、包成 role:'user'+isMeta 的 &lt;system-reminder&gt; 消息 push 进 messages。第⑦拍这一轮 streamChat 请求带着提醒消息发给模型，模型读到后把 bg-1 的结果并入最终汇总一并吐给用户。</desc>
+
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+
+  <text x="460" y="26" text-anchor="middle" font-size="19" font-weight="700" fill="#1e293b">序列：父agent发起后台子agent bg-1，两条时间线并发推进</text>
+  <text x="460" y="45" text-anchor="middle" font-size="12" fill="#475569">■ 琥珀色 = 本章新增/改动　　▨ 灰色虚线 = 沿用旧实现，未改动</text>
+
+  <!-- 3条泳道头部 -->
+  <rect x="40" y="58" width="140" height="40" rx="7" fill="#fffbeb" stroke="#b45309" stroke-width="1.6"/>
+  <text x="110" y="76" text-anchor="middle" font-size="10.5" font-weight="700" fill="#92400e">loop.ts（父agent）</text>
+  <text x="110" y="90" text-anchor="middle" font-size="8.2" fill="#a16207">主循环，turn1…turn5</text>
+
+  <rect x="300" y="58" width="260" height="40" rx="7" fill="#fffbeb" stroke="#b45309" stroke-width="1.6"/>
+  <text x="430" y="76" text-anchor="middle" font-size="10.5" font-weight="700" fill="#92400e">bg-1（task.ts execute 里的后台调用）</text>
+  <text x="430" y="90" text-anchor="middle" font-size="8.2" fill="#a16207">runAgent(...) 异步跑，跟父agent不同步</text>
+
+  <rect x="740" y="58" width="140" height="40" rx="7" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.6" stroke-dasharray="4 3"/>
+  <text x="810" y="82" text-anchor="middle" font-size="11" fill="#475569">模型</text>
+
+  <!-- 生命线 -->
+  <line x1="110" y1="98" x2="110" y2="1030" stroke="#cbd5e1" stroke-width="1.4" stroke-dasharray="4 4"/>
+  <line x1="430" y1="98" x2="430" y2="1030" stroke="#cbd5e1" stroke-width="1.4" stroke-dasharray="4 4"/>
+  <line x1="810" y1="98" x2="810" y2="1030" stroke="#cbd5e1" stroke-width="1.4" stroke-dasharray="4 4"/>
+
+  <!-- 第①拍 -->
+  <circle cx="24" cy="132" r="12" fill="#b45309"/>
+  <text x="24" y="136" text-anchor="middle" font-size="11" font-weight="700" fill="#ffffff">1</text>
+  <rect x="45" y="112" width="150" height="46" rx="6" fill="#fffbeb" stroke="#b45309" stroke-width="1.5"/>
+  <text x="120" y="130" text-anchor="middle" font-size="8.8" font-weight="700" fill="#92400e">turn1: 调用</text>
+  <text x="120" y="144" text-anchor="middle" font-size="8.8" font-weight="700" fill="#92400e">task({background:true})</text>
+
+  <line x1="185" y1="140" x2="296" y2="140" stroke="#b45309" stroke-width="1.6"/>
+  <polygon points="-6,-5 -6,5 0,0" fill="#b45309" transform="translate(300,140)"/>
+  <text x="240" y="132" text-anchor="middle" font-size="8" fill="#92400e">生成 bg-1，发起 .then/.catch（不 await）</text>
+
+  <rect x="300" y="164" width="260" height="42" rx="6" fill="#fffbeb" stroke="#b45309" stroke-width="1.5"/>
+  <text x="430" y="182" text-anchor="middle" font-size="8.8" fill="#92400e">bg-1 后台任务已发起</text>
+  <text x="430" y="197" text-anchor="middle" font-size="8" fill="#a16207">runAgent(...) 开始跑，不等待</text>
+
+  <rect x="45" y="164" width="150" height="52" rx="6" fill="#f0fdf4" stroke="#166534" stroke-width="1.4"/>
+  <text x="120" y="182" text-anchor="middle" font-size="8.4" font-weight="700" fill="#166534">execute 立即 return</text>
+  <text x="120" y="195" text-anchor="middle" font-size="8.2" fill="#166534">"已提交 bg-1"</text>
+  <text x="120" y="208" text-anchor="middle" font-size="7.6" fill="#166534">toolCallId 槽这一刻收口</text>
+
+  <!-- 第②拍 -->
+  <circle cx="24" cy="248" r="12" fill="#94a3b8"/>
+  <text x="24" y="252" text-anchor="middle" font-size="11" font-weight="700" fill="#ffffff">2</text>
+  <rect x="45" y="230" width="330" height="46" rx="6" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4 3"/>
+  <text x="210" y="248" text-anchor="middle" font-size="8.8" fill="#475569">turn1 剩余工具调用：read_file(package.json)</text>
+  <text x="210" y="263" text-anchor="middle" font-size="8.2" fill="#64748b">跟 bg-1 并发，走正常阻塞路径（未改动）</text>
+
+  <!-- 第③拍 -->
+  <circle cx="24" cy="310" r="12" fill="#b45309"/>
+  <text x="24" y="314" text-anchor="middle" font-size="11" font-weight="700" fill="#ffffff">3</text>
+  <rect x="45" y="290" width="330" height="58" rx="6" fill="#fffbeb" stroke="#b45309" stroke-width="1.6"/>
+  <text x="210" y="308" text-anchor="middle" font-size="8.8" font-weight="700" fill="#92400e">turn2: drainCompletedBackgroundTasks()</text>
+  <text x="210" y="323" text-anchor="middle" font-size="8.4" fill="#a16207">bg-1 未完工 → 返回 null，无事发生</text>
+  <text x="210" y="337" text-anchor="middle" font-size="8.4" fill="#a16207">照常执行 bash("pwd")</text>
+
+  <!-- bg-1 长条：内部循环，与父agent时间线并发 -->
+  <rect x="300" y="290" width="260" height="290" rx="10" fill="#fffbeb" stroke="#b45309" stroke-width="1.6"/>
+  <text x="430" y="310" text-anchor="middle" font-size="9.4" font-weight="700" fill="#92400e">runAgent 内部循环（与父agent完全并发）</text>
+
+  <rect x="316" y="320" width="228" height="38" rx="6" fill="#ffffff" stroke="#94a3b8" stroke-width="1.3" stroke-dasharray="3 3"/>
+  <text x="430" y="343" text-anchor="middle" font-size="8.4" fill="#475569">流式请求（子agent自己的 provider）</text>
+
+  <rect x="316" y="364" width="228" height="38" rx="6" fill="#ffffff" stroke="#94a3b8" stroke-width="1.3" stroke-dasharray="3 3"/>
+  <text x="430" y="387" text-anchor="middle" font-size="8.4" fill="#475569">工具调用（读 package.json 等）</text>
+
+  <rect x="316" y="408" width="228" height="38" rx="6" fill="#ffffff" stroke="#94a3b8" stroke-width="1.3" stroke-dasharray="3 3"/>
+  <text x="430" y="431" text-anchor="middle" font-size="8.4" fill="#475569">第二轮流式请求……逼近最终答案</text>
+
+  <rect x="316" y="452" width="228" height="46" rx="6" fill="#f0fdf4" stroke="#166534" stroke-width="1.4"/>
+  <text x="430" y="470" text-anchor="middle" font-size="8.6" font-weight="700" fill="#166534">.then 把结果写入登记表</text>
+  <text x="430" y="484" text-anchor="middle" font-size="7.8" fill="#166534">（第⑤拍——见下方虚线批注）</text>
+
+  <text x="430" y="512" text-anchor="middle" font-size="8" fill="#94a3b8" font-style="italic">这个时刻跟父agent的主循环完全不同步——</text>
+  <text x="430" y="526" text-anchor="middle" font-size="8" fill="#94a3b8" font-style="italic">可能发生在 turn2 与 turn3 之间的任意时刻，仅为示意</text>
+
+  <!-- 第④拍 -->
+  <circle cx="24" cy="412" r="12" fill="#b45309"/>
+  <text x="24" y="416" text-anchor="middle" font-size="11" font-weight="700" fill="#ffffff">4</text>
+  <rect x="45" y="392" width="330" height="44" rx="6" fill="#fffbeb" stroke="#b45309" stroke-width="1.6"/>
+  <text x="210" y="410" text-anchor="middle" font-size="8.8" font-weight="700" fill="#92400e">turn3: drain → null → 照常执行 date</text>
+  <text x="210" y="425" text-anchor="middle" font-size="8.4" fill="#a16207">bg-1 仍未完工（假设耗时较长）</text>
+
+  <rect x="45" y="444" width="330" height="40" rx="6" fill="#fffbeb" stroke="#b45309" stroke-width="1.6"/>
+  <text x="210" y="461" text-anchor="middle" font-size="8.8" font-weight="700" fill="#92400e">turn4: drain → null → 照常执行 whoami</text>
+  <text x="210" y="475" text-anchor="middle" font-size="8.2" fill="#a16207">再查一次，还是没有</text>
+
+  <!-- 第⑤拍标注：跨泳道虚线指向 -->
+  <circle cx="24" cy="500" r="12" fill="#b45309"/>
+  <text x="24" y="504" text-anchor="middle" font-size="11" font-weight="700" fill="#ffffff">5</text>
+  <path d="M 316 475 C 250 470, 220 450, 200 440" fill="none" stroke="#b45309" stroke-width="1.3" stroke-dasharray="4 3"/>
+  <text x="230" y="500" text-anchor="middle" font-size="8" fill="#92400e">bg-1 resolve 的这一刻，</text>
+  <text x="230" y="513" text-anchor="middle" font-size="8" fill="#92400e">父agent还在 turn3/turn4 之间</text>
+
+  <!-- 第⑥拍 -->
+  <circle cx="24" cy="640" r="13" fill="#166534"/>
+  <text x="24" y="644" text-anchor="middle" font-size="11" font-weight="700" fill="#ffffff">6</text>
+
+  <path d="M 430 498 C 430 560, 300 610, 200 630" fill="none" stroke="#166534" stroke-width="1.5" stroke-dasharray="5 4"/>
+  <polygon points="-6,-5 -6,5 0,0" fill="#166534" transform="translate(195,633) rotate(200)"/>
+
+  <rect x="45" y="618" width="480" height="70" rx="7" fill="#f0fdf4" stroke="#166534" stroke-width="1.7"/>
+  <text x="285" y="638" text-anchor="middle" font-size="9.2" font-weight="700" fill="#166534">turn5（做最终总结前）：drainCompletedBackgroundTasks()</text>
+  <text x="285" y="655" text-anchor="middle" font-size="8.8" fill="#166534">这次查到 bg-1 已完工，取出结果、从登记表删除</text>
+  <text x="285" y="672" text-anchor="middle" font-size="8.8" fill="#166534">包成 role:'user'+isMeta 的 &lt;system-reminder&gt; 消息 push 进 messages</text>
+
+  <!-- 第⑦拍 -->
+  <circle cx="24" cy="730" r="13" fill="#166534"/>
+  <text x="24" y="734" text-anchor="middle" font-size="11" font-weight="700" fill="#ffffff">7</text>
+
+  <line x1="200" y1="716" x2="800" y2="716" stroke="#166534" stroke-width="1.6"/>
+  <polygon points="-6,-5 -6,5 0,0" fill="#166534" transform="translate(805,716)"/>
+  <text x="500" y="708" text-anchor="middle" font-size="9.2" fill="#166534">streamChat 带着提醒消息请求模型</text>
+
+  <line x1="800" y1="744" x2="200" y2="744" stroke="#166534" stroke-width="1.4" stroke-dasharray="4 3"/>
+  <polygon points="-6,-5 -6,5 0,0" fill="#166534" transform="translate(196,744) rotate(180)"/>
+  <text x="500" y="762" text-anchor="middle" font-size="9.2" fill="#166534">模型把 bg-1 的结果并入最终汇总，一并吐给用户</text>
+
+  <!-- 结论框 -->
+  <rect x="60" y="830" width="800" height="150" rx="10" fill="#f0fdf4" stroke="#166534" stroke-width="1.6"/>
+  <text x="460" y="856" text-anchor="middle" font-size="12" font-weight="700" fill="#166534">两条时间线互不阻塞，靠一张表和一次自检对齐</text>
+  <text x="460" y="880" text-anchor="middle" font-size="10.3" fill="#166534">bg-1 从第①拍发起到第⑤拍 resolve，跨越了父agent的 turn1 到 turn4——这期间父agent一次都没有</text>
+  <text x="460" y="898" text-anchor="middle" font-size="10.3" fill="#166534">停下来等它，每一轮只是顺手查一眼登记表，查不到就照常干自己的事。真正的"汇合"发生在第⑥拍</text>
+  <text x="460" y="916" text-anchor="middle" font-size="10.3" fill="#166534">——不是 bg-1 完工那一刻，而是父agent下一次开口前的自检轮到的那一刻，两者中间可能隔着好几轮。</text>
+  <text x="460" y="938" text-anchor="middle" font-size="9.6" fill="#15803d">streamChat、runWithGate、Layer A 落盘的实现细节全部沿用旧代码——变的只是多了一张登记表当"信箱"。</text>
+  <text x="460" y="958" text-anchor="middle" font-size="9.6" fill="#15803d">若父agent在 bg-1 完工前就已经收工（toolCalls 为空提前 return），登记表里的结果会静静留到下一次运行。</text>
+
+  <text x="460" y="1030" text-anchor="middle" font-size="9.3" fill="#64748b">■ 琥珀色 = 本章新增/改动　　▨ 灰色虚线 = 沿用旧实现，未改动</text>
+</svg>

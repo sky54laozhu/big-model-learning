@@ -3,6 +3,7 @@ import { checkPermission, askHuman, grantAlways, newSession } from './permission
 import { shouldAutoCompact, compactMessages } from './compact'
 import { shouldRemindTodo, buildTodoReminderMessage } from './todoReminder'
 import { appendSessionEntry } from './session'
+import { drainCompletedBackgroundTasks } from './tools/task'
 
 /**
  * agent loop 骨架 = 把 实战01 的单圈 chat() 套进 while（回扣概念 24：agent 就这么点骨架，无黑魔法）。
@@ -28,6 +29,11 @@ import { appendSessionEntry } from './session'
  * 递归调一次这个函数本身，只是传入子agent自己的一份任务描述和更窄的工具集（去掉 task 自己，
  * 防止无限递归）。子agent不接 cwd/sessionId，不参与 Layer A（回扣折叠点⑤）。同一轮多个工具
  * 调用（含多个 task 调用）现在用 Promise.all 并发跑，不再排队（回扣折叠点④）。
+ * 实战13 新增：task 工具新增 background 参数——默认还是实战12 的阻塞行为，显式传
+ * background:true 才会立刻拿到一句提交确认、子agent转去后台跑。跟压缩检查、todo 提醒同一个
+ * 位置，每轮开口前先问一句 drainCompletedBackgroundTasks()：有后台任务完工了，就把结果包成
+ * 跟 实战11 提醒消息同款的 role:'user'+isMeta 消息塞进 messages（回扣：这是"每轮开工前的
+ * 自检"家族的第三个成员，不单开一条独立检查路径）。
  */
 export async function runAgent(
   provider: ModelProvider,
@@ -70,6 +76,19 @@ export async function runAgent(
       const reminder = buildTodoReminderMessage()
       messages.push(reminder)
       await record(reminder)
+    }
+
+    // 实战13：有后台任务在上一轮之后完工了吗？跟压缩检查、todo 提醒一样，是每轮开工前的
+    // 自检——不是模型主动调用的轮询工具，模型什么都不用做就会看到结果。
+    const backgroundReport = drainCompletedBackgroundTasks()
+    if (backgroundReport) {
+      const notice: Message = {
+        role: 'user',
+        content: `<system-reminder>\n${backgroundReport}\n</system-reminder>`,
+        isMeta: true,
+      }
+      messages.push(notice)
+      await record(notice)
     }
 
     let text = ''
