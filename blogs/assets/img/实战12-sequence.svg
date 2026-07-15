@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 1060" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t" aria-describedby="d">
+  <title id="t">序列图：三个子agent并发执行，Promise.all 汇合后按发起顺序回灌父agent对话</title>
+  <desc id="d">主生命线 loop.ts + task.ts(子agent1/2/3 各一份独立执行) + 模型。第①拍主循环这一轮从 streamChat 收到三个 task 工具调用；第②拍 loop.ts 用 Promise.all 同时对三个调用发起 runWithGate，三条子agent对话从这一刻起并发展开；第③拍子agent1内部循环调用 read_file 读 package.json，走权限确认后拿到结果，很快吐出"mini-harness"收工；第④拍子agent2内部循环调用 bash 执行 pwd，走权限确认后拿到当前目录路径，吐出结果收工；第⑤拍子agent3内部循环调用 list_dir 列出条目、自己数出14个（11文件+3文件夹），吐出结果收工——三条子agent对话完成的先后顺序不确定，取决于各自实际耗时，图中示意子agent1/2最先完成、子agent3稍后；第⑥拍 Promise.all 等三个 Promise 全部结束，按原始发起顺序（子agent1、2、3）把三条 {call, result} 依次包成 role:tool 消息 push 进父agent的 messages 并 record 落盘；第⑦拍父agent这一轮的 streamChat 请求带着三条工具结果发给模型，模型读到后组织成一段汇总文字，直接吐给用户。</desc>
+
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+
+  <text x="460" y="26" text-anchor="middle" font-size="19" font-weight="700" fill="#1e293b">序列：三个子agent并发跑，Promise.all 汇合后按发起顺序回灌对话</text>
+  <text x="460" y="45" text-anchor="middle" font-size="12" fill="#475569">■ 琥珀色 = 本章新增/改动　　▨ 灰色虚线 = 沿用旧实现，未改动</text>
+
+  <!-- 5条泳道头部 -->
+  <rect x="40" y="58" width="120" height="40" rx="7" fill="#fffbeb" stroke="#b45309" stroke-width="1.6"/>
+  <text x="100" y="82" text-anchor="middle" font-size="11" font-weight="700" fill="#92400e">loop.ts（父）</text>
+
+  <rect x="200" y="58" width="130" height="40" rx="7" fill="#fffbeb" stroke="#b45309" stroke-width="1.6"/>
+  <text x="265" y="76" text-anchor="middle" font-size="10.5" font-weight="700" fill="#92400e">子agent1</text>
+  <text x="265" y="90" text-anchor="middle" font-size="8.8" fill="#a16207">read_file</text>
+
+  <rect x="380" y="58" width="130" height="40" rx="7" fill="#fffbeb" stroke="#b45309" stroke-width="1.6"/>
+  <text x="445" y="76" text-anchor="middle" font-size="10.5" font-weight="700" fill="#92400e">子agent2</text>
+  <text x="445" y="90" text-anchor="middle" font-size="8.8" fill="#a16207">bash pwd</text>
+
+  <rect x="560" y="58" width="130" height="40" rx="7" fill="#fffbeb" stroke="#b45309" stroke-width="1.6"/>
+  <text x="625" y="76" text-anchor="middle" font-size="10.5" font-weight="700" fill="#92400e">子agent3</text>
+  <text x="625" y="90" text-anchor="middle" font-size="8.8" fill="#a16207">list_dir</text>
+
+  <rect x="740" y="58" width="140" height="40" rx="7" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.6" stroke-dasharray="4 3"/>
+  <text x="810" y="82" text-anchor="middle" font-size="11" fill="#475569">模型</text>
+
+  <!-- 生命线 -->
+  <line x1="100" y1="98" x2="100" y2="960" stroke="#cbd5e1" stroke-width="1.4" stroke-dasharray="4 4"/>
+  <line x1="265" y1="98" x2="265" y2="960" stroke="#cbd5e1" stroke-width="1.4" stroke-dasharray="4 4"/>
+  <line x1="445" y1="98" x2="445" y2="960" stroke="#cbd5e1" stroke-width="1.4" stroke-dasharray="4 4"/>
+  <line x1="625" y1="98" x2="625" y2="960" stroke="#cbd5e1" stroke-width="1.4" stroke-dasharray="4 4"/>
+  <line x1="810" y1="98" x2="810" y2="960" stroke="#cbd5e1" stroke-width="1.4" stroke-dasharray="4 4"/>
+
+  <!-- 第①拍 -->
+  <circle cx="24" cy="128" r="12" fill="#b45309"/>
+  <text x="24" y="132" text-anchor="middle" font-size="11" font-weight="700" fill="#ffffff">1</text>
+  <rect x="55" y="112" width="220" height="34" rx="6" fill="#fffbeb" stroke="#b45309" stroke-width="1.5"/>
+  <text x="165" y="133" text-anchor="middle" font-size="9.6" fill="#92400e">streamChat 收到 3 个 task 调用</text>
+
+  <!-- 第②拍：Promise.all 三箭齐发 -->
+  <circle cx="24" cy="178" r="12" fill="#b45309"/>
+  <text x="24" y="182" text-anchor="middle" font-size="11" font-weight="700" fill="#ffffff">2</text>
+  <text x="200" y="164" text-anchor="middle" font-size="9.2" fill="#92400e">Promise.all 同时发起 runWithGate</text>
+
+  <line x1="100" y1="176" x2="260" y2="176" stroke="#b45309" stroke-width="1.6"/>
+  <polygon points="-6,-5 -6,5 0,0" fill="#b45309" transform="translate(263,176)"/>
+  <line x1="100" y1="184" x2="440" y2="184" stroke="#b45309" stroke-width="1.6"/>
+  <polygon points="-6,-5 -6,5 0,0" fill="#b45309" transform="translate(443,184)"/>
+  <line x1="100" y1="192" x2="620" y2="192" stroke="#b45309" stroke-width="1.6"/>
+  <polygon points="-6,-5 -6,5 0,0" fill="#b45309" transform="translate(623,192)"/>
+
+  <!-- 第③拍：子agent1 -->
+  <circle cx="24" cy="240" r="12" fill="#b45309"/>
+  <text x="24" y="244" text-anchor="middle" font-size="11" font-weight="700" fill="#ffffff">3</text>
+  <rect x="200" y="216" width="130" height="90" rx="7" fill="#fffbeb" stroke="#b45309" stroke-width="1.6"/>
+  <text x="265" y="234" text-anchor="middle" font-size="9" font-weight="700" fill="#92400e">read_file(package.json)</text>
+  <text x="265" y="250" text-anchor="middle" font-size="8.4" fill="#a16207">权限确认 → 允许</text>
+  <text x="265" y="266" text-anchor="middle" font-size="8.4" fill="#a16207">拿到 name 字段</text>
+  <rect x="212" y="274" width="106" height="26" rx="5" fill="#f0fdf4" stroke="#166534" stroke-width="1.3"/>
+  <text x="265" y="291" text-anchor="middle" font-size="8.6" font-weight="700" fill="#166534">吐出 "mini-harness"</text>
+
+  <!-- 第④拍：子agent2 -->
+  <circle cx="24" cy="358" r="12" fill="#b45309"/>
+  <text x="24" y="362" text-anchor="middle" font-size="11" font-weight="700" fill="#ffffff">4</text>
+  <rect x="380" y="334" width="130" height="90" rx="7" fill="#fffbeb" stroke="#b45309" stroke-width="1.6"/>
+  <text x="445" y="352" text-anchor="middle" font-size="9" font-weight="700" fill="#92400e">bash("pwd")</text>
+  <text x="445" y="368" text-anchor="middle" font-size="8.4" fill="#a16207">权限确认 → 允许</text>
+  <text x="445" y="384" text-anchor="middle" font-size="8.4" fill="#a16207">拿到当前目录路径</text>
+  <rect x="392" y="392" width="106" height="26" rx="5" fill="#f0fdf4" stroke="#166534" stroke-width="1.3"/>
+  <text x="445" y="409" text-anchor="middle" font-size="8.2" font-weight="700" fill="#166534">吐出路径字符串</text>
+
+  <!-- 第⑤拍：子agent3（稍后完成） -->
+  <circle cx="24" cy="480" r="12" fill="#b45309"/>
+  <text x="24" y="484" text-anchor="middle" font-size="11" font-weight="700" fill="#ffffff">5</text>
+  <rect x="560" y="440" width="130" height="120" rx="7" fill="#fffbeb" stroke="#b45309" stroke-width="1.6"/>
+  <text x="625" y="458" text-anchor="middle" font-size="9" font-weight="700" fill="#92400e">list_dir(".")</text>
+  <text x="625" y="474" text-anchor="middle" font-size="8.4" fill="#a16207">列出全部条目</text>
+  <text x="625" y="490" text-anchor="middle" font-size="8.4" fill="#a16207">数出 14 个</text>
+  <text x="625" y="504" text-anchor="middle" font-size="8" fill="#a16207">（11文件+3文件夹）</text>
+  <rect x="572" y="512" width="106" height="38" rx="5" fill="#f0fdf4" stroke="#166534" stroke-width="1.3"/>
+  <text x="625" y="527" text-anchor="middle" font-size="8" font-weight="700" fill="#166534">吐出"共14个条目"</text>
+  <text x="625" y="541" text-anchor="middle" font-size="7.6" fill="#166534">（三者中最后完成）</text>
+
+  <text x="720" y="500" text-anchor="middle" font-size="8.6" fill="#94a3b8" font-style="italic">三条子agent对话完成先后顺序不确定，</text>
+  <text x="720" y="514" text-anchor="middle" font-size="8.6" fill="#94a3b8" font-style="italic">取决于各自实际耗时，仅为示意</text>
+
+  <!-- 第⑥拍：Promise.all 汇合 -->
+  <circle cx="24" cy="610" r="13" fill="#166534"/>
+  <text x="24" y="614" text-anchor="middle" font-size="11" font-weight="700" fill="#ffffff">6</text>
+
+  <line x1="265" y1="560" x2="105" y2="600" stroke="#166534" stroke-width="1.5" stroke-dasharray="4 3"/>
+  <polygon points="-6,-5 -6,5 0,0" fill="#166534" transform="translate(100,603) rotate(220)"/>
+  <line x1="445" y1="440" x2="105" y2="608" stroke="#166534" stroke-width="1.5" stroke-dasharray="4 3"/>
+  <polygon points="-6,-5 -6,5 0,0" fill="#166534" transform="translate(100,610) rotate(195)"/>
+  <line x1="625" y1="562" x2="105" y2="616" stroke="#166534" stroke-width="1.5" stroke-dasharray="4 3"/>
+  <polygon points="-6,-5 -6,5 0,0" fill="#166534" transform="translate(100,617) rotate(170)"/>
+
+  <rect x="55" y="626" width="480" height="52" rx="7" fill="#f0fdf4" stroke="#166534" stroke-width="1.7"/>
+  <text x="295" y="646" text-anchor="middle" font-size="10" font-weight="700" fill="#166534">Promise.all 全部结束，按原始发起顺序（1、2、3）</text>
+  <text x="295" y="664" text-anchor="middle" font-size="9.6" fill="#166534">依次包成 role:'tool' 消息 push 进 messages 并 record 落盘</text>
+
+  <!-- 第⑦拍：发给模型，模型汇总 -->
+  <circle cx="24" cy="712" r="13" fill="#166534"/>
+  <text x="24" y="716" text-anchor="middle" font-size="11" font-weight="700" fill="#ffffff">7</text>
+
+  <line x1="200" y1="700" x2="800" y2="700" stroke="#166534" stroke-width="1.6"/>
+  <polygon points="-6,-5 -6,5 0,0" fill="#166534" transform="translate(805,700)"/>
+  <text x="500" y="694" text-anchor="middle" font-size="9.2" fill="#166534">streamChat 带 3 条工具结果请求模型</text>
+
+  <line x1="800" y1="726" x2="200" y2="726" stroke="#166534" stroke-width="1.4" stroke-dasharray="4 3"/>
+  <polygon points="-6,-5 -6,5 0,0" fill="#166534" transform="translate(196,726) rotate(180)"/>
+  <text x="500" y="742" text-anchor="middle" font-size="9.2" fill="#166534">模型组织成一段汇总文字，直接吐给用户</text>
+
+  <!-- 结论框 -->
+  <rect x="60" y="800" width="800" height="130" rx="10" fill="#f0fdf4" stroke="#166534" stroke-width="1.6"/>
+  <text x="460" y="826" text-anchor="middle" font-size="12" font-weight="700" fill="#166534">交错的内部日志，就是并发真的发生的证据</text>
+  <text x="460" y="850" text-anchor="middle" font-size="10.3" fill="#166534">三条子agent各自的单条工具日志（bash/read_file/list_dir）先后穿插打印，且先于三条 task(...) 汇总</text>
+  <text x="460" y="868" text-anchor="middle" font-size="10.3" fill="#166534">日志出现——若是排队执行，三段内部日志会整段整段分开，不会像这样交叉。</text>
+  <text x="460" y="890" text-anchor="middle" font-size="9.6" fill="#15803d">runWithGate、streamChat、Layer A 落盘的实现细节全部沿用旧代码——变的只是"排队"变"并发"这一层调度方式。</text>
+
+  <text x="460" y="946" text-anchor="middle" font-size="9.3" fill="#64748b">■ 琥珀色 = 本章新增/改动　　▨ 灰色虚线 = 沿用旧实现，未改动</text>
+</svg>

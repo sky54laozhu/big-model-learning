@@ -100,6 +100,7 @@
 | 实战09 | [上下文压缩：历史顶到窗口之前，先自己瘦一圈](blogs/实战09-context-compaction.md) | ✅ |
 | 实战10 | [跨会话状态：关掉重开，接着干](blogs/实战10-cross-session-state.md) | ✅ |
 | 实战11 | [TodoWrite 与 system-reminder：状态线自己开口提醒](blogs/实战11-todowrite-system-reminder.md) | ✅ |
+| 实战12 | [子agent编排：一个函数递归调自己](blogs/实战12-subagent-orchestration.md) | ✅ |
 
 ### 独立系列 · 从 0 到精通 TypeScript
 > 🏁 里程碑：读懂任何库的类型定义、自己写类型体操（21 篇，配填空练习仓 `code/ts-course/`）｜ 暗线：类型 = 一组允许的值（集合）

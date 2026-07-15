@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 720" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t" aria-describedby="d">
+  <title id="t">骨架定位图：task.ts 工厂函数新增，tools/index.ts 与 index.ts 调用点跟随改造，runAgent 递归调用自身</title>
+  <desc id="d">新增 src/tools/task.ts，导出工厂函数 createTaskTool(provider, gate): Tool——execute 内部 await runAgent(provider, subagentTools, args.task, 10, gate)，subagentTools 是直接从六个基础工具模块（read_file/write_file/edit_file/list_dir/bash/todo_write）导入拼成的独立数组，不经过 tools/index.ts，避免循环引用。tools/index.ts 的 allTools 常量数组改造成工厂函数 createAllTools(provider, gate): Tool[]，内部调用 createTaskTool(provider, gate) 拼进其余六个工具。index.ts 调用点从 import { allTools } 改成先 const provider = makeProvider()，再 createAllTools(provider, true)。底部灰色虚线框是 runAgent 函数本体：这一次调用既可能是父agent发起的最外层调用，也可能是 task 工具内部递归发起的子agent调用——同一个函数、同一份实现。其内部原来排队执行工具调用的 for 循环，改成 Promise.all 并发执行（用琥珀色小框标出），其余部分（streamChat 消费、压缩检查、todo提醒检查、权限闸门、Layer A 落盘）全部沿用实战02-11，一个字没改。图右侧用红色虚线箭头标出递归路径：task.ts 的 execute 调用 runAgent，若这次子agent自己又调用了 task 工具——但因为 subagentTools 里没有 task 这一项，这条递归路径在子agent这一层就被静态截断。</desc>
+
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+
+  <text x="420" y="28" text-anchor="middle" font-size="19" font-weight="700" fill="#1e293b">骨架定位：新增 task.ts 工厂函数，牵连 tools/index.ts 与 index.ts，runAgent 递归调用自身</text>
+  <text x="420" y="48" text-anchor="middle" font-size="12" fill="#475569">■ 琥珀色 = 本章新增/改动　　▨ 灰色虚线 = 沿用旧实现，未改动</text>
+
+  <!-- index.ts -->
+  <rect x="220" y="64" width="400" height="56" rx="9" fill="#fffbeb" stroke="#b45309" stroke-width="1.8"/>
+  <text x="420" y="86" text-anchor="middle" font-size="11.5" font-weight="700" fill="#92400e">index.ts —— 调用点改造（折叠点⑧）</text>
+  <text x="420" y="104" text-anchor="middle" font-size="9.6" fill="#92400e">const provider = makeProvider(); const tools = createAllTools(provider, true)</text>
+
+  <line x1="420" y1="120" x2="420" y2="140" stroke="#b45309" stroke-width="1.6"/>
+  <polygon points="-6,-5 -6,5 0,0" fill="#b45309" transform="translate(420,144) rotate(90)"/>
+
+  <!-- tools/index.ts -->
+  <rect x="170" y="150" width="500" height="72" rx="9" fill="#fffbeb" stroke="#b45309" stroke-width="1.8"/>
+  <text x="420" y="172" text-anchor="middle" font-size="11.5" font-weight="700" fill="#92400e">tools/index.ts —— 常量数组变工厂函数（折叠点⑧）</text>
+  <text x="420" y="190" text-anchor="middle" font-size="9.6" fill="#92400e">export function createAllTools(provider, gate): Tool[]</text>
+  <text x="420" y="207" text-anchor="middle" font-size="9.3" fill="#a16207">return [read_file, write_file, edit_file, list_dir, bash, todo_write, createTaskTool(provider, gate)]</text>
+
+  <line x1="420" y1="222" x2="420" y2="242" stroke="#b45309" stroke-width="1.6"/>
+  <polygon points="-6,-5 -6,5 0,0" fill="#b45309" transform="translate(420,246) rotate(90)"/>
+
+  <!-- task.ts 主体 -->
+  <rect x="90" y="252" width="660" height="176" rx="10" fill="#fffbeb" stroke="#b45309" stroke-width="2.2"/>
+  <text x="420" y="276" text-anchor="middle" font-size="12.5" font-weight="700" fill="#92400e">src/tools/task.ts —— 本章新增</text>
+
+  <rect x="120" y="288" width="600" height="46" rx="7" fill="#fef3c7" stroke="#94a3b8" stroke-width="1.4" stroke-dasharray="3 3"/>
+  <text x="420" y="307" text-anchor="middle" font-size="9.6" fill="#475569">const subagentTools: Tool[] = [read_file, write_file, edit_file, list_dir, bash, todo_write]</text>
+  <text x="420" y="323" text-anchor="middle" font-size="9" fill="#64748b">直接拼六个基础模块，不含 task 自己——静态防递归（折叠点③），也避开循环引用</text>
+
+  <rect x="120" y="342" width="600" height="72" rx="7" fill="#ffffff" stroke="#b45309" stroke-width="1.6"/>
+  <text x="420" y="362" text-anchor="middle" font-size="10.3" font-weight="700" fill="#92400e">export function createTaskTool(provider, gate): Tool —— 工厂函数（折叠点⑦）</text>
+  <text x="420" y="380" text-anchor="middle" font-size="9.3" fill="#92400e">execute: async (args) =&gt;</text>
+  <text x="420" y="396" text-anchor="middle" font-size="9.6" font-weight="700" fill="#92400e">runAgent(provider, subagentTools, args.task, 10, gate)</text>
+  <text x="420" y="411" text-anchor="middle" font-size="8.6" fill="#a16207">provider/gate 通过闭包被永久记住，模型不需要帮忙传</text>
+
+  <line x1="420" y1="428" x2="420" y2="452" stroke="#b45309" stroke-width="1.8"/>
+  <polygon points="-6,-5 -6,5 0,0" fill="#b45309" transform="translate(420,456) rotate(90)"/>
+  <text x="500" y="444" text-anchor="middle" font-size="9" fill="#92400e">递归调用</text>
+
+  <!-- runAgent 核心（灰虚线，复用），内含 Promise.all 高亮 -->
+  <rect x="60" y="462" width="720" height="176" rx="10" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.8" stroke-dasharray="6 4"/>
+  <text x="420" y="486" text-anchor="middle" font-size="11.5" font-weight="700" fill="#334155">runAgent()（loop.ts）—— 父agent与子agent复用同一个函数</text>
+
+  <rect x="90" y="498" width="660" height="50" rx="7" fill="#fffbeb" stroke="#b45309" stroke-width="1.7"/>
+  <text x="420" y="518" text-anchor="middle" font-size="10" font-weight="700" fill="#92400e">Promise.all(toolCalls.map(call =&gt; runWithGate(...)))（折叠点④）</text>
+  <text x="420" y="535" text-anchor="middle" font-size="9" fill="#a16207">并发跑这一轮所有工具调用（含多个 task）；结果按发起顺序落盘</text>
+
+  <rect x="90" y="556" width="660" height="70" rx="7" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.4" stroke-dasharray="4 3"/>
+  <text x="420" y="576" text-anchor="middle" font-size="9.3" fill="#475569">streamChat 消费 / shouldAutoCompact 压缩 / shouldRemindTodo 提醒 / runWithGate 权限闸门</text>
+  <text x="420" y="592" text-anchor="middle" font-size="9.3" fill="#475569">沿用实战02-11，一个字没改</text>
+  <text x="420" y="611" text-anchor="middle" font-size="9" fill="#b91c1c">子agent不接 cwd/sessionId，Layer A 落盘不参与（折叠点⑤）</text>
+
+  <!-- 递归回路标注（红色虚线，绕回 task.ts） -->
+  <path d="M 760 550 C 810 500, 810 350, 760 340" fill="none" stroke="#b91c1c" stroke-width="1.6" stroke-dasharray="5 4"/>
+  <polygon points="-6,-5 -6,5 0,0" fill="#b91c1c" transform="translate(755,338) rotate(-100)"/>
+  <text x="790" y="450" text-anchor="middle" font-size="8.8" fill="#b91c1c" transform="rotate(90 790 450)">若子agent自身工具集含 task，会再次落进这条递归——但 subagentTools 里没有它</text>
+
+  <!-- 汇聚说明：结果作为普通 tool 消息回灌 -->
+  <line x1="200" y1="638" x2="200" y2="658" stroke="#94a3b8" stroke-width="1.5"/>
+  <polygon points="-5,-8 5,-8 0,0" fill="#94a3b8" transform="translate(200,662)"/>
+  <rect x="70" y="664" width="260" height="42" rx="7" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.5"/>
+  <text x="200" y="686" text-anchor="middle" font-size="9" fill="#475569">返回字符串 → 包成 role:'tool' 消息</text>
+  <text x="200" y="700" text-anchor="middle" font-size="8.4" fill="#64748b">跟其他任何工具结果同形状（折叠点⑥）</text>
+
+  <text x="420" y="716" text-anchor="middle" font-size="9.3" fill="#64748b">■ 琥珀色 = 本章新增/改动　　▨ 灰色虚线 = 沿用旧实现，未改动</text>
+</svg>

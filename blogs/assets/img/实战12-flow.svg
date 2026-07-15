@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 970" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t" aria-describedby="d">
+  <title id="t">主控制流程图：loop.ts 一轮工具调用从排队执行改成 Promise.all 并发，task 执行内部递归调用 runAgent</title>
+  <desc id="d">loop.ts 主循环这一轮从 streamChat 收到若干 toolCalls（其中可能有多个 task 调用），不再用 for 循环排队跑，而是 toolCalls.map 拼出一组 Promise，交给 Promise.all 一起发起。每个 Promise 内部先查 toolByName 找到对应工具，调用 runWithGate 走权限闸门（deny 直接回错、ask 弹出确认、allow 直接执行）。工具是 task 时，runWithGate 最终调用 createTaskTool 闭包住的 execute，execute 内部 await runAgent(provider, subagentTools, task, 10, gate) 递归发起一场完整的子agent对话——子agent自己内部再走一遍 streamChat 消费、工具执行、闸门确认的完整循环，直到吐出一个字符串结果，这一整套子agent内循环画在右侧独立侧路里，用曲线虚线箭头把结果送回主流程。Promise.all 等所有工具调用（含所有子agent）都跑完，按 toolCalls 原始顺序把 {call, result} 数组交还，主循环依次把每条结果包成 role:tool 消息 push 进 messages 并 record 落盘——发起是并发的，写回顺序仍然确定。</desc>
+
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+
+  <text x="450" y="30" text-anchor="middle" font-size="19" font-weight="700" fill="#1e293b">控制流程：一轮工具调用从排队改成并发，task 执行内部递归调用 runAgent</text>
+  <text x="450" y="50" text-anchor="middle" font-size="12" fill="#475569">■ 琥珀色 = 本章新增/改动　　▨ 灰色虚线 = 沿用旧实现，未改动</text>
+
+  <!-- 步骤① -->
+  <rect x="260" y="68" width="380" height="54" rx="9" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.6" stroke-dasharray="4 3"/>
+  <circle cx="290" cy="95" r="15" fill="#64748b"/>
+  <text x="290" y="100" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff">①</text>
+  <text x="470" y="92" text-anchor="middle" font-size="10.6" fill="#475569">streamChat 消费完这一轮</text>
+  <text x="470" y="108" text-anchor="middle" font-size="10.6" fill="#475569">收到若干 toolCalls（可能含多个 task）</text>
+
+  <line x1="450" y1="122" x2="450" y2="146" stroke="#b45309" stroke-width="1.8"/>
+  <polygon points="-5,-8 5,-8 0,0" fill="#b45309" transform="translate(450,150)"/>
+
+  <!-- 外层琥珀色大框：本章改动的并发子系统 -->
+  <rect x="60" y="158" width="780" height="620" rx="12" fill="none" stroke="#b45309" stroke-width="1.4" stroke-dasharray="2 3"/>
+  <text x="80" y="180" font-size="10.5" font-weight="700" fill="#b45309">本章改动范围：toolCalls 的并发执行子系统</text>
+
+  <!-- 步骤② -->
+  <rect x="230" y="192" width="440" height="60" rx="9" fill="#fffbeb" stroke="#b45309" stroke-width="1.8"/>
+  <circle cx="260" cy="222" r="15" fill="#b45309"/>
+  <text x="260" y="227" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff">②</text>
+  <text x="465" y="216" text-anchor="middle" font-size="10.6" font-weight="700" fill="#92400e">toolCalls.map(call =&gt; (async () =&gt; {...})())</text>
+  <text x="465" y="234" text-anchor="middle" font-size="10.3" fill="#92400e">拼出一组 Promise，交给 Promise.all 一起发起</text>
+
+  <line x1="450" y1="252" x2="450" y2="276" stroke="#b45309" stroke-width="1.8"/>
+  <polygon points="-5,-8 5,-8 0,0" fill="#b45309" transform="translate(450,280)"/>
+
+  <!-- 步骤③：runWithGate 分支 -->
+  <rect x="230" y="288" width="440" height="70" rx="9" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.6" stroke-dasharray="4 3"/>
+  <circle cx="260" cy="323" r="15" fill="#64748b"/>
+  <text x="260" y="328" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff">③</text>
+  <text x="465" y="312" text-anchor="middle" font-size="10.6" fill="#475569">每个 Promise 内部：查 toolByName 找到工具</text>
+  <text x="465" y="328" text-anchor="middle" font-size="10.6" fill="#475569">runWithGate(tool, args, session, gate) 走权限闸门</text>
+  <text x="465" y="344" text-anchor="middle" font-size="9.6" fill="#64748b">（deny/ask/allow 三态，沿用实战04-05，未改动）</text>
+
+  <!-- 分支：deny/ask 走左侧短路，allow 继续往下 -->
+  <line x1="330" y1="358" x2="220" y2="392" stroke="#dc2626" stroke-width="1.5"/>
+  <polygon points="-5,-8 5,-8 0,0" fill="#dc2626" transform="translate(212,396) rotate(220)"/>
+  <text x="200" y="380" text-anchor="middle" font-size="9.5" fill="#dc2626">deny/ask拒绝</text>
+  <rect x="90" y="398" width="230" height="46" rx="7" fill="#fef2f2" stroke="#dc2626" stroke-width="1.4"/>
+  <text x="205" y="418" text-anchor="middle" font-size="9.6" fill="#991b1b">直接返回 error 字符串</text>
+  <text x="205" y="434" text-anchor="middle" font-size="9.6" fill="#991b1b">（回灌给模型，不执行 execute）</text>
+
+  <line x1="580" y1="358" x2="620" y2="392" stroke="#16a34a" stroke-width="1.5"/>
+  <polygon points="-5,-8 5,-8 0,0" fill="#16a34a" transform="translate(628,398) rotate(140)"/>
+  <text x="650" y="380" text-anchor="middle" font-size="9.5" fill="#16a34a">allow允许</text>
+
+  <line x1="450" y1="358" x2="450" y2="392" stroke="#b45309" stroke-width="1.8"/>
+  <polygon points="-5,-8 5,-8 0,0" fill="#b45309" transform="translate(450,396)"/>
+
+  <!-- 步骤④：execute 分支，工具是task时递归 -->
+  <rect x="230" y="404" width="440" height="66" rx="9" fill="#fffbeb" stroke="#b45309" stroke-width="1.8"/>
+  <circle cx="260" cy="437" r="15" fill="#b45309"/>
+  <text x="260" y="442" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff">④</text>
+  <text x="465" y="428" text-anchor="middle" font-size="10.6" font-weight="700" fill="#92400e">tool.execute(args) 真正执行</text>
+  <text x="465" y="444" text-anchor="middle" font-size="10" fill="#92400e">工具是 task 时，execute 内部</text>
+  <text x="465" y="459" text-anchor="middle" font-size="9.8" fill="#a16207">await runAgent(provider, subagentTools, task, 10, gate)</text>
+
+  <!-- 指向右侧子agent内循环侧路 -->
+  <line x1="670" y1="437" x2="700" y2="437" stroke="#b45309" stroke-width="1.8" stroke-dasharray="5 3"/>
+  <polygon points="-5,-8 5,-8 0,0" fill="#b45309" transform="translate(704,437) rotate(90)"/>
+
+  <!-- 右侧独立侧路：子agent内循环 -->
+  <rect x="600" y="480" width="220" height="230" rx="10" fill="#fffbeb" stroke="#b45309" stroke-width="1.6"/>
+  <text x="710" y="502" text-anchor="middle" font-size="10.6" font-weight="700" fill="#92400e">子agent内循环（递归实例）</text>
+  <text x="710" y="520" text-anchor="middle" font-size="9.2" fill="#a16207">runAgent(subagentTools, ...)</text>
+
+  <rect x="618" y="530" width="184" height="40" rx="6" fill="#ffffff" stroke="#94a3b8" stroke-width="1.3" stroke-dasharray="3 3"/>
+  <text x="710" y="546" text-anchor="middle" font-size="8.8" fill="#475569">streamChat 消费</text>
+  <text x="710" y="560" text-anchor="middle" font-size="8.8" fill="#475569">（沿用实战06）</text>
+
+  <rect x="618" y="576" width="184" height="40" rx="6" fill="#ffffff" stroke="#94a3b8" stroke-width="1.3" stroke-dasharray="3 3"/>
+  <text x="710" y="592" text-anchor="middle" font-size="8.8" fill="#475569">工具执行 + runWithGate</text>
+  <text x="710" y="606" text-anchor="middle" font-size="8.8" fill="#475569">（subagentTools 里没有 task）</text>
+
+  <rect x="618" y="622" width="184" height="40" rx="6" fill="#ffffff" stroke="#94a3b8" stroke-width="1.3" stroke-dasharray="3 3"/>
+  <text x="710" y="638" text-anchor="middle" font-size="8.8" fill="#475569">toolCalls 为空 → 收工</text>
+  <text x="710" y="652" text-anchor="middle" font-size="8.8" fill="#475569">不接 cwd/sessionId，不落 Layer A</text>
+
+  <rect x="618" y="668" width="184" height="34" rx="6" fill="#f0fdf4" stroke="#166534" stroke-width="1.4"/>
+  <text x="710" y="689" text-anchor="middle" font-size="9.2" font-weight="700" fill="#166534">return 字符串结果</text>
+
+  <!-- 曲线虚线：子agent结果送回主流程 -->
+  <path d="M 618 685 C 520 700, 480 600, 465 470" fill="none" stroke="#b45309" stroke-width="1.5" stroke-dasharray="5 4"/>
+  <polygon points="-6,-5 -6,5 0,0" fill="#b45309" transform="translate(468,478) rotate(70)"/>
+  <text x="530" y="600" text-anchor="middle" font-size="8.8" fill="#92400e" transform="rotate(-78 530 600)">execute 返回值 = { call, result }</text>
+
+  <line x1="450" y1="470" x2="450" y2="494" stroke="#b45309" stroke-width="1.8"/>
+  <polygon points="-5,-8 5,-8 0,0" fill="#b45309" transform="translate(450,498)"/>
+
+  <!-- 步骤⑤：Promise.all 汇合 -->
+  <rect x="230" y="506" width="440" height="62" rx="9" fill="#fffbeb" stroke="#b45309" stroke-width="1.8"/>
+  <circle cx="260" cy="537" r="15" fill="#b45309"/>
+  <text x="260" y="542" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff">⑤</text>
+  <text x="465" y="529" text-anchor="middle" font-size="10.6" font-weight="700" fill="#92400e">Promise.all 等全部完成</text>
+  <text x="465" y="546" text-anchor="middle" font-size="9.8" fill="#92400e">results 数组顺序 = toolCalls 原始发起顺序</text>
+  <text x="465" y="560" text-anchor="middle" font-size="9" fill="#a16207">（与实际完成先后无关）</text>
+
+  <line x1="450" y1="568" x2="450" y2="592" stroke="#b45309" stroke-width="1.8"/>
+  <polygon points="-5,-8 5,-8 0,0" fill="#b45309" transform="translate(450,596)"/>
+
+  <!-- 步骤⑥：依次落盘 -->
+  <rect x="230" y="604" width="440" height="70" rx="9" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.6" stroke-dasharray="4 3"/>
+  <circle cx="260" cy="639" r="15" fill="#64748b"/>
+  <text x="260" y="644" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff">⑥</text>
+  <text x="465" y="628" text-anchor="middle" font-size="10.6" fill="#475569">for ({call, result} of results)</text>
+  <text x="465" y="644" text-anchor="middle" font-size="10.3" fill="#475569">依次包成 role:'tool' 消息 push 进 messages</text>
+  <text x="465" y="660" text-anchor="middle" font-size="9.6" fill="#64748b">并 record 落盘（沿用实战10 Layer A，未改动）</text>
+
+  <line x1="450" y1="674" x2="450" y2="698" stroke="#94a3b8" stroke-width="1.6"/>
+  <polygon points="-5,-8 5,-8 0,0" fill="#94a3b8" transform="translate(450,702)"/>
+
+  <!-- 收尾：下一轮 streamChat -->
+  <rect x="260" y="712" width="380" height="54" rx="9" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.6" stroke-dasharray="4 3"/>
+  <text x="450" y="734" text-anchor="middle" font-size="10.6" fill="#475569">带着全部工具结果，进入下一轮 streamChat</text>
+  <text x="450" y="750" text-anchor="middle" font-size="10.3" fill="#475569">模型读到结果，组织成汇总文字回复</text>
+
+  <!-- 结论框 -->
+  <rect x="80" y="800" width="740" height="120" rx="10" fill="#f0fdf4" stroke="#166534" stroke-width="1.6"/>
+  <text x="450" y="826" text-anchor="middle" font-size="12" font-weight="700" fill="#166534">发起并发、写回有序：Promise.all 不改变对话历史的确定性</text>
+  <text x="450" y="848" text-anchor="middle" font-size="10.3" fill="#166534">三个 task 调用（或任意工具组合）同一时刻发起，谁先跑完不影响 messages 里的顺序——</text>
+  <text x="450" y="866" text-anchor="middle" font-size="10.3" fill="#166534">results 数组永远跟 toolCalls 一一对应，收工时依旧按"发起顺序"落盘，不按"完成顺序"落盘。</text>
+  <text x="450" y="888" text-anchor="middle" font-size="9.6" fill="#15803d">runWithGate、record、streamChat 的具体实现全部沿用旧代码——变的只是"排队"变"并发"这一层调度方式。</text>
+
+  <text x="450" y="944" text-anchor="middle" font-size="9.3" fill="#64748b">■ 琥珀色 = 本章新增/改动　　▨ 灰色虚线 = 沿用旧实现，未改动</text>
+</svg>

@@ -1,6 +1,6 @@
 import { makeProvider } from './provider'
 import { runAgent } from './loop'
-import { allTools } from './tools'
+import { createAllTools } from './tools'
 import { buildSystemPrompt } from './systemPrompt'
 import { validateUuid } from './uuid'
 import { createSessionId, sessionIdExists, loadSessionMessages } from './session'
@@ -60,8 +60,10 @@ if (resumeId !== undefined) {
 const question = parsedQuestion || DEFAULT_QUESTION
 
 // —— 调用方：对 provider 零分支，也对"转了几圈工具"零感知 ——
-// 加工具后这里依然一个字没改：工具清单从注册表 allTools 整份取，不再手拼数组。
+// 实战12 起，工具清单不再是静态 import：task 工具要闭包住 provider/gate，只能等 provider
+// 造出来之后再组装（回扣 tools/index.ts 的 createAllTools 工厂函数）。
 const provider = makeProvider()
+const tools = createAllTools(provider, true)
 
 console.log(`\n[provider] ${provider.name}`)
 console.log(`[session]  ${sessionId}${resumeMessages ? `（接着 ${resumeMessages.length} 条历史往下说）` : ''}`)
@@ -71,4 +73,4 @@ console.log(`[you]      ${question}`)
 const system = await buildSystemPrompt({ cwd })
 
 // 实战05：answer 已经在 runAgent 里边流边打到 stdout 了，这里不用再 console.log 一遍
-await runAgent(provider, allTools, question, 10, true, system, cwd, sessionId, resumeMessages)
+await runAgent(provider, tools, question, 10, true, system, cwd, sessionId, resumeMessages)

@@ -24,6 +24,10 @@ import { appendSessionEntry } from './session'
  * 两把尺子都过线（好久没写、好久没提醒过）就塞一条 role:'user'+isMeta 的提醒消息进 messages
  * （回扣折叠点⑤：摆在这里，而不是另开一条独立的检查路径，因为它跟压缩检查是同一种"每轮开工前
  * 的自检"，没道理分成两处）。
+ * 实战12 新增：新增 task 工具（tools/task.ts 的工厂函数 createTaskTool 产出）——一次调用就是
+ * 递归调一次这个函数本身，只是传入子agent自己的一份任务描述和更窄的工具集（去掉 task 自己，
+ * 防止无限递归）。子agent不接 cwd/sessionId，不参与 Layer A（回扣折叠点⑤）。同一轮多个工具
+ * 调用（含多个 task 调用）现在用 Promise.all 并发跑，不再排队（回扣折叠点④）。
  */
 export async function runAgent(
   provider: ModelProvider,
@@ -106,12 +110,20 @@ export async function runAgent(
 
     console.log() // 跟刚流出来的文本隔开一行，工具日志另起一段
 
-    // 逐个执行，结果作为 tool 消息塞回 messages，供下一轮模型看到
-    for (const call of toolCalls) {
-      const tool = toolByName.get(call.name)
-      const result = tool
-        ? await runWithGate(tool, call.args, session, gate)
-        : `error: 未知工具 ${call.name}`
+    // 实战12：并发执行每个工具调用（回扣折叠点④：task 工具内部会另起一整场子agent对话，
+    // 顺序执行会让"并行查3件事"退化成排队查3件事）。Promise.all 保证结果数组顺序跟 toolCalls
+    // 一致——尽管执行本身是并发的，push/record 进 messages 的顺序仍然是发起时的顺序，不受
+    // 谁先跑完影响。
+    const results = await Promise.all(
+      toolCalls.map(async call => {
+        const tool = toolByName.get(call.name)
+        const result = tool
+          ? await runWithGate(tool, call.args, session, gate)
+          : `error: 未知工具 ${call.name}`
+        return { call, result }
+      }),
+    )
+    for (const { call, result } of results) {
       const preview = result.slice(0, 60).replace(/\s+/g, ' ')
       console.log(`  [turn ${turn}] ${call.name}(${JSON.stringify(call.args)}) -> ${preview}…`)
       const toolTurn: Message = { role: 'tool', toolCallId: call.id, content: result }
