@@ -1,6 +1,7 @@
 import type { ModelProvider, Tool, Message, ToolCall, Usage } from './types'
 import { checkPermission, askHuman, grantAlways, newSession } from './permission'
 import { shouldAutoCompact, compactMessages } from './compact'
+import { shouldRemindTodo, buildTodoReminderMessage } from './todoReminder'
 import { appendSessionEntry } from './session'
 
 /**
@@ -19,6 +20,10 @@ import { appendSessionEntry } from './session'
  * 实战10 新增：cwd/sessionId 齐了才落盘（Layer A）——resumeMessages 是 --resume 读回的历史，
  * 拼在新问题前面；messages 里每新增一条（含这轮的用户提问）都顺手 appendSessionEntry 一次，
  * 不等收工才一次性写完（回扣源码：我们的单发架构没有"来不及写完进程就死了"这道题）。
+ * 实战11 新增：每轮开口前，跟压缩检查同一个位置，再看一眼"该不该提醒用 todo_write"——
+ * 两把尺子都过线（好久没写、好久没提醒过）就塞一条 role:'user'+isMeta 的提醒消息进 messages
+ * （回扣折叠点⑤：摆在这里，而不是另开一条独立的检查路径，因为它跟压缩检查是同一种"每轮开工前
+ * 的自检"，没道理分成两处）。
  */
 export async function runAgent(
   provider: ModelProvider,
@@ -53,6 +58,14 @@ export async function runAgent(
       const compacted = await compactMessages(provider, messages)
       messages.splice(0, messages.length, ...compacted)
       process.stdout.write('[压缩] 完成，继续对话\n[assistant] ')
+    }
+
+    // 实战11：好久没写 todo_write、好久没提醒过——两把尺子都过线才塞一条提醒消息，
+    // 跟其他消息一样 push 进 messages 并 record，让它进入这轮请求也进入 Layer A 落盘
+    if (shouldRemindTodo(messages)) {
+      const reminder = buildTodoReminderMessage()
+      messages.push(reminder)
+      await record(reminder)
     }
 
     let text = ''

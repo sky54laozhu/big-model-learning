@@ -16,9 +16,13 @@ export type Usage = { inputTokens: number; outputTokens: number }
  * 实战09 新增：assistant 消息可选带上这一轮的 usage——压缩阈值判断要读的就是这个字段，
  * 从历史里由近及远找最后一条带 usage 的 assistant 消息，不是另开一个跨轮累加的计数器
  * （回扣源码 tokens.ts 的 tokenCountWithEstimation：用量是消息自身的属性，按需读回）。
+ * 实战11 新增：user 消息可选带 isMeta——true 表示这条不是人类这一轮真正敲的字，是 harness
+ * 自己合成塞进去的（比如 TodoWrite 提醒）。角色仍是 'user'（模型该把它当输入读），但
+ * isMeta 让 Layer A 落盘、未来的回放 UI 等下游消费者能把"真人说的话"和"系统合成的话"分开
+ * （回扣源码 messages.ts：真源码没有单独的 role，靠 UserMessage 上的同名 isMeta 字段区分）。
  */
 export type Message =
-  | { role: 'user'; content: string }
+  | { role: 'user'; content: string; isMeta?: boolean }
   | { role: 'assistant'; content: string; toolCalls?: ToolCall[]; usage?: Usage }
   | { role: 'tool'; toolCallId: string; content: string }
 

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 660" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t" aria-describedby="d">
+  <title id="t">骨架定位图：实战11 新增文件与改动点在整个 harness 里的位置</title>
+  <desc id="d">types.ts 的 Message 联合类型里 user 变体新增可选字段 isMeta。新增两个自包含文件——src/tools/todo_write.ts（TodoItem 类型 + 模块级活对象 currentTodos + getCurrentTodos 读接口 + todoWriteTool 工具定义，注册进 tools/index.ts 的 allTools 数组）与 src/todoReminder.ts（TODO_REMINDER_CONFIG 双阈值常量 + getTodoReminderTurnCounts 倒扫计数 + shouldRemindTodo 双阈值判断 + buildTodoReminderMessage 提醒文案组装，读取 todo_write.ts 导出的 getCurrentTodos）。loop.ts 主循环顶部新增一次 shouldRemindTodo 检查，紧跟在实战09 的 shouldAutoCompact 检查之后、streamChat 调用之前——两次检查是同一种"每轮开口前自检"，共享同一个位置。底部灰色虚线框：streamChat 消费、权限闸门、重试机制、压缩、Layer A/B 持久化全部沿用实战02-10，一个字没改。</desc>
+
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+
+  <text x="420" y="28" text-anchor="middle" font-size="19" font-weight="700" fill="#1e293b">骨架定位图：TodoWrite 工具 + system-reminder 提醒机制落在哪</text>
+  <text x="420" y="48" text-anchor="middle" font-size="12" fill="#475569">琥珀 = 本章新增/改动　·　灰色虚线 = 实战02-10 原样沿用，一个字没改</text>
+
+  <!-- types.ts -->
+  <rect x="40" y="70" width="230" height="70" rx="8" fill="#fffbeb" stroke="#b45309" stroke-width="1.8"/>
+  <text x="155" y="94" text-anchor="middle" font-size="13" font-weight="700" fill="#92400e">types.ts</text>
+  <text x="155" y="114" text-anchor="middle" font-size="10.3" fill="#92400e">Message 的 user 变体</text>
+  <text x="155" y="129" text-anchor="middle" font-size="10.3" font-weight="700" fill="#92400e">新增 isMeta?: boolean</text>
+
+  <!-- todo_write.ts -->
+  <rect x="330" y="70" width="240" height="110" rx="8" fill="#fffbeb" stroke="#b45309" stroke-width="1.8"/>
+  <text x="450" y="94" text-anchor="middle" font-size="13" font-weight="700" fill="#92400e">src/tools/todo_write.ts</text>
+  <text x="450" y="114" text-anchor="middle" font-size="9.6" fill="#92400e">TodoItem 类型（三态+双文本）</text>
+  <text x="450" y="130" text-anchor="middle" font-size="9.6" fill="#92400e">模块级活对象 currentTodos</text>
+  <text x="450" y="146" text-anchor="middle" font-size="9.6" fill="#92400e">getCurrentTodos() 读接口</text>
+  <text x="450" y="162" text-anchor="middle" font-size="9.6" font-weight="700" fill="#92400e">todoWriteTool 工具定义</text>
+
+  <!-- todoReminder.ts -->
+  <rect x="610" y="70" width="200" height="140" rx="8" fill="#fffbeb" stroke="#b45309" stroke-width="1.8"/>
+  <text x="710" y="94" text-anchor="middle" font-size="12.5" font-weight="700" fill="#92400e">src/todoReminder.ts</text>
+  <text x="710" y="114" text-anchor="middle" font-size="9" fill="#92400e">TODO_REMINDER_CONFIG</text>
+  <text x="710" y="129" text-anchor="middle" font-size="9" fill="#92400e">（双阈值常量）</text>
+  <text x="710" y="147" text-anchor="middle" font-size="9" fill="#92400e">getTodoReminderTurnCounts</text>
+  <text x="710" y="162" text-anchor="middle" font-size="9" fill="#92400e">shouldRemindTodo</text>
+  <text x="710" y="177" text-anchor="middle" font-size="9" font-weight="700" fill="#92400e">buildTodoReminderMessage</text>
+  <text x="710" y="196" text-anchor="middle" font-size="8.4" fill="#a16207">读 getCurrentTodos</text>
+
+  <!-- arrow todo_write -> todoReminder -->
+  <line x1="570" y1="140" x2="605" y2="140" stroke="#b45309" stroke-width="1.6"/>
+  <polygon points="-6,-5 -6,5 0,0" fill="#b45309" transform="translate(605,140)"/>
+
+  <!-- tools/index.ts -->
+  <rect x="330" y="220" width="240" height="60" rx="8" fill="#fffbeb" stroke="#b45309" stroke-width="1.6"/>
+  <text x="450" y="244" text-anchor="middle" font-size="12" font-weight="700" fill="#92400e">tools/index.ts</text>
+  <text x="450" y="264" text-anchor="middle" font-size="9.6" fill="#92400e">allTools 数组注册 todoWriteTool</text>
+
+  <line x1="450" y1="180" x2="450" y2="216" stroke="#b45309" stroke-width="1.6"/>
+  <polygon points="-6,-5 -6,5 0,0" fill="#b45309" transform="translate(450,216) rotate(90)"/>
+
+  <!-- loop.ts 主循环 -->
+  <rect x="40" y="320" width="760" height="160" rx="10" fill="#fffbeb" stroke="#b45309" stroke-width="2"/>
+  <text x="420" y="345" text-anchor="middle" font-size="13.5" font-weight="700" fill="#92400e">loop.ts —— for (turn) 主循环顶部</text>
+
+  <rect x="70" y="360" width="330" height="46" rx="7" fill="#fef3c7" stroke="#94a3b8" stroke-width="1.4" stroke-dasharray="3 3"/>
+  <text x="235" y="379" text-anchor="middle" font-size="10" fill="#475569">shouldAutoCompact（实战09）</text>
+  <text x="235" y="395" text-anchor="middle" font-size="9" fill="#475569">历史顶到阈值 → 整段替换压缩</text>
+
+  <line x1="400" y1="383" x2="440" y2="383" stroke="#b45309" stroke-width="1.6"/>
+  <polygon points="-6,-5 -6,5 0,0" fill="#b45309" transform="translate(440,383)"/>
+
+  <rect x="450" y="360" width="330" height="46" rx="7" fill="#fffbeb" stroke="#b45309" stroke-width="1.8"/>
+  <text x="615" y="379" text-anchor="middle" font-size="10" font-weight="700" fill="#92400e">shouldRemindTodo（本章新增）</text>
+  <text x="615" y="395" text-anchor="middle" font-size="9" fill="#92400e">两把尺子过线 → push 提醒消息</text>
+
+  <line x1="235" y1="406" x2="235" y2="430" stroke="#94a3b8" stroke-width="1.4" stroke-dasharray="3 3"/>
+  <line x1="615" y1="406" x2="615" y2="430" stroke="#b45309" stroke-width="1.6"/>
+
+  <text x="420" y="450" text-anchor="middle" font-size="10.3" fill="#334155">两次检查同一个位置：streamChat 调用之前 —— 都是"每轮开口前的自检"</text>
+
+  <line x1="420" y1="460" x2="420" y2="475" stroke="#94a3b8" stroke-width="1.4"/>
+  <polygon points="-6,-5 -6,5 0,0" fill="#94a3b8" transform="translate(420,475) rotate(90)"/>
+
+  <!-- 底部沿用 -->
+  <rect x="40" y="500" width="760" height="140" rx="10" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.6" stroke-dasharray="6 4"/>
+  <text x="420" y="524" text-anchor="middle" font-size="12" font-weight="700" fill="#475569">灰色虚线区：实战02-10 原样沿用，一个字没改</text>
+  <text x="150" y="550" text-anchor="middle" font-size="9.6" fill="#475569">streamChat 消费</text>
+  <text x="150" y="566" text-anchor="middle" font-size="9.6" fill="#475569">（实战05/06）</text>
+  <text x="320" y="550" text-anchor="middle" font-size="9.6" fill="#475569">权限闸门 runWithGate</text>
+  <text x="320" y="566" text-anchor="middle" font-size="9.6" fill="#475569">（实战04）</text>
+  <text x="480" y="550" text-anchor="middle" font-size="9.6" fill="#475569">重试机制</text>
+  <text x="480" y="566" text-anchor="middle" font-size="9.6" fill="#475569">（实战08）</text>
+  <text x="620" y="550" text-anchor="middle" font-size="9.6" fill="#475569">压缩 compactMessages</text>
+  <text x="620" y="566" text-anchor="middle" font-size="9.6" fill="#475569">（实战09）</text>
+  <text x="760" y="550" text-anchor="middle" font-size="9.6" fill="#475569">Layer A/B 持久化</text>
+  <text x="760" y="566" text-anchor="middle" font-size="9.6" fill="#475569">（实战10）</text>
+
+  <line x1="60" y1="596" x2="800" y2="596" stroke="#cbd5e1" stroke-width="1.2"/>
+  <text x="420" y="618" text-anchor="middle" font-size="10.3" fill="#334155">todoReminder.ts 只依赖 types.ts 与 todo_write.ts，不侵入 streamChat/权限/压缩/持久化任何一条既有链路</text>
+  <text x="420" y="638" text-anchor="middle" font-size="9.6" fill="#64748b">■ 琥珀色 = 本章新增/改动　　▨ 灰色虚线 = 沿用旧实现，未改动</text>
+</svg>

@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 1060" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t" aria-describedby="d">
+  <title id="t">序列图：主循环第 10 轮触发 shouldRemindTodo，提醒消息注入到 todo_write 回写清单的完整闭环</title>
+  <desc id="d">单条生命线 loop.ts + todoReminder.ts + todo_write.ts + 模型。第①拍主循环进入第 10 轮，shouldAutoCompact 判断历史未到阈值，跳过压缩；第②拍 shouldRemindTodo 被调用，内部 getTodoReminderTurnCounts 倒扫 messages，发现最近一次 todo_write 调用在 10 轮之前、且从未有过 isMeta 提醒消息，两个计数都过线返回 true；第③拍 buildTodoReminderMessage 被调用，内部 getCurrentTodos() 读到 todo_write.ts 模块级活对象里当前的清单内容，拼出文案、包一层 system-reminder 标签，返回 role:user isMeta:true 的消息对象；第④拍这条消息被 push 进 messages 并 await record 落盘；第⑤拍这一轮的 streamChat 请求携带这条提醒一起发给模型，模型读到后主动调用 todo_write 工具更新清单（不向用户提起这条提醒本身）；第⑥拍 todo_write 的 execute 把新清单整体写入 currentTodos，覆盖掉旧内容；第⑦拍主循环进入下一轮，shouldRemindTodo 再次被调用，这次倒扫会在很近的位置就找到刚才那次 todo_write 调用，turnsSinceLastTodoWrite 从 0 重新计起，暂时不会再触发提醒。</desc>
+
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+
+  <text x="460" y="28" text-anchor="middle" font-size="19" font-weight="700" fill="#1e293b">序列图：一次完整的提醒注入闭环 —— 从触发到回写，再到暂时噤声</text>
+  <text x="460" y="50" text-anchor="middle" font-size="12" fill="#475569">实线 = 调用　·　虚线 = 返回　·　琥珀 = 本章新增　·　绿色 = 落地生效的结果</text>
+
+  <!-- 生命线头部 -->
+  <rect x="60" y="64" width="160" height="38" rx="7" fill="#fffbeb" stroke="#b45309" stroke-width="1.7"/>
+  <text x="140" y="88" text-anchor="middle" font-size="12.5" font-weight="700" fill="#92400e">loop.ts</text>
+
+  <rect x="280" y="64" width="200" height="38" rx="7" fill="#fffbeb" stroke="#b45309" stroke-width="1.7"/>
+  <text x="380" y="88" text-anchor="middle" font-size="12.5" font-weight="700" fill="#92400e">todoReminder.ts</text>
+
+  <rect x="540" y="64" width="180" height="38" rx="7" fill="#fffbeb" stroke="#b45309" stroke-width="1.7"/>
+  <text x="630" y="88" text-anchor="middle" font-size="12.5" font-weight="700" fill="#92400e">todo_write.ts</text>
+
+  <rect x="780" y="64" width="120" height="38" rx="7" fill="#fffbeb" stroke="#b45309" stroke-width="1.7"/>
+  <text x="840" y="88" text-anchor="middle" font-size="12.5" font-weight="700" fill="#92400e">模型</text>
+
+  <g stroke="#cbd5e1" stroke-width="1.4" stroke-dasharray="4 4">
+    <line x1="140" y1="102" x2="140" y2="890"/>
+    <line x1="380" y1="102" x2="380" y2="890"/>
+    <line x1="630" y1="102" x2="630" y2="890"/>
+    <line x1="840" y1="102" x2="840" y2="890"/>
+  </g>
+
+  <!-- 第①拍：内部自检，跳过压缩 -->
+  <circle cx="30" cy="140" r="12" fill="#b45309"/>
+  <text x="30" y="144" text-anchor="middle" font-size="11" font-weight="700" fill="#ffffff">1</text>
+  <rect x="60" y="118" width="160" height="54" rx="7" fill="#fffbeb" stroke="#b45309" stroke-width="1.5"/>
+  <text x="140" y="136" text-anchor="middle" font-size="9.3" fill="#92400e">主循环进入第 10 轮</text>
+  <text x="140" y="150" text-anchor="middle" font-size="9" fill="#92400e">shouldAutoCompact 判断历史</text>
+  <text x="140" y="164" text-anchor="middle" font-size="9" fill="#92400e">未到阈值，跳过压缩（实战09）</text>
+
+  <!-- 第②拍：shouldRemindTodo 调用 + 倒扫 + 返回 true -->
+  <circle cx="30" cy="210" r="12" fill="#b45309"/>
+  <text x="30" y="214" text-anchor="middle" font-size="11" font-weight="700" fill="#ffffff">2</text>
+
+  <text x="260" y="186" text-anchor="middle" font-size="9.4" fill="#92400e">shouldRemindTodo(messages)</text>
+  <line x1="140" y1="192" x2="370" y2="192" stroke="#b45309" stroke-width="1.6"/>
+  <polygon points="-6,-5 -6,5 0,0" fill="#b45309" transform="translate(370,192)"/>
+
+  <rect x="290" y="204" width="180" height="70" rx="7" fill="#fffbeb" stroke="#b45309" stroke-width="1.5"/>
+  <text x="380" y="222" text-anchor="middle" font-size="8.8" fill="#92400e">getTodoReminderTurnCounts 倒扫</text>
+  <text x="380" y="236" text-anchor="middle" font-size="8.6" fill="#92400e">最近一次 todo_write 在 10 轮前</text>
+  <text x="380" y="250" text-anchor="middle" font-size="8.6" fill="#92400e">且从未有过 isMeta 提醒消息</text>
+  <text x="380" y="266" text-anchor="middle" font-size="8.8" font-weight="700" fill="#92400e">两个计数都过线</text>
+
+  <text x="260" y="284" text-anchor="middle" font-size="9.1" fill="#a16207">return true</text>
+  <line x1="380" y1="290" x2="150" y2="290" stroke="#b45309" stroke-width="1.5" stroke-dasharray="5 4"/>
+  <polygon points="-6,-5 -6,5 0,0" fill="#b45309" transform="translate(150,290)"/>
+
+  <!-- 第③拍：buildTodoReminderMessage + 读活对象 + 组装 + 返回消息对象 -->
+  <circle cx="30" cy="340" r="12" fill="#b45309"/>
+  <text x="30" y="344" text-anchor="middle" font-size="11" font-weight="700" fill="#ffffff">3</text>
+
+  <text x="260" y="316" text-anchor="middle" font-size="9.4" fill="#92400e">buildTodoReminderMessage()</text>
+  <line x1="140" y1="322" x2="370" y2="322" stroke="#b45309" stroke-width="1.6"/>
+  <polygon points="-6,-5 -6,5 0,0" fill="#b45309" transform="translate(370,322)"/>
+
+  <text x="505" y="346" text-anchor="middle" font-size="9" fill="#92400e">getCurrentTodos()</text>
+  <line x1="380" y1="352" x2="620" y2="352" stroke="#b45309" stroke-width="1.6"/>
+  <polygon points="-6,-5 -6,5 0,0" fill="#b45309" transform="translate(620,352)"/>
+
+  <text x="505" y="376" text-anchor="middle" font-size="8.8" fill="#a16207">当前清单内容（活对象）</text>
+  <line x1="630" y1="382" x2="390" y2="382" stroke="#b45309" stroke-width="1.5" stroke-dasharray="5 4"/>
+  <polygon points="-6,-5 -6,5 0,0" fill="#b45309" transform="translate(390,382)"/>
+
+  <rect x="290" y="392" width="180" height="56" rx="7" fill="#fffbeb" stroke="#b45309" stroke-width="1.5"/>
+  <text x="380" y="409" text-anchor="middle" font-size="8.6" fill="#92400e">拼出"当前清单内容"段落</text>
+  <text x="380" y="423" text-anchor="middle" font-size="8.6" fill="#92400e">包一层 &lt;system-reminder&gt; 标签</text>
+  <text x="380" y="438" text-anchor="middle" font-size="8.8" font-weight="700" fill="#92400e">组装 role:'user', isMeta:true</text>
+
+  <text x="260" y="458" text-anchor="middle" font-size="9" fill="#a16207">返回消息对象</text>
+  <line x1="380" y1="464" x2="150" y2="464" stroke="#b45309" stroke-width="1.5" stroke-dasharray="5 4"/>
+  <polygon points="-6,-5 -6,5 0,0" fill="#b45309" transform="translate(150,464)"/>
+
+  <!-- 第④拍：push + record -->
+  <circle cx="30" cy="510" r="12" fill="#b45309"/>
+  <text x="30" y="514" text-anchor="middle" font-size="11" font-weight="700" fill="#ffffff">4</text>
+  <rect x="60" y="488" width="160" height="54" rx="7" fill="#fffbeb" stroke="#b45309" stroke-width="1.5"/>
+  <text x="140" y="506" text-anchor="middle" font-size="9.3" fill="#92400e">messages.push(reminder)</text>
+  <text x="140" y="520" text-anchor="middle" font-size="9.3" fill="#92400e">await record(reminder)</text>
+  <text x="140" y="534" text-anchor="middle" font-size="8.4" fill="#a16207">回扣实战10 Layer A：同其他消息一样落盘</text>
+
+  <!-- 第⑤拍：streamChat 携带提醒发给模型 → 模型调用 todo_write -->
+  <circle cx="30" cy="590" r="12" fill="#b45309"/>
+  <text x="30" y="594" text-anchor="middle" font-size="11" font-weight="700" fill="#ffffff">5</text>
+
+  <text x="490" y="566" text-anchor="middle" font-size="9.2" fill="#92400e">streamChat(messages, tools, system) 携带这条提醒</text>
+  <line x1="140" y1="572" x2="830" y2="572" stroke="#b45309" stroke-width="1.6"/>
+  <polygon points="-6,-5 -6,5 0,0" fill="#b45309" transform="translate(830,572)"/>
+
+  <rect x="775" y="584" width="130" height="56" rx="7" fill="#fffbeb" stroke="#b45309" stroke-width="1.5"/>
+  <text x="840" y="601" text-anchor="middle" font-size="8.6" fill="#92400e">模型读到提醒</text>
+  <text x="840" y="615" text-anchor="middle" font-size="8.6" fill="#92400e">决定调用 todo_write</text>
+  <text x="840" y="629" text-anchor="middle" font-size="8" fill="#a16207">不向用户提起提醒本身</text>
+
+  <text x="735" y="654" text-anchor="middle" font-size="8.8" fill="#92400e">调用 todo_write(todos:[...])</text>
+  <line x1="840" y1="658" x2="640" y2="658" stroke="#b45309" stroke-width="1.6"/>
+  <polygon points="-6,-5 -6,5 0,0" fill="#b45309" transform="translate(640,658)"/>
+
+  <!-- 第⑥拍：execute 覆盖 currentTodos -->
+  <circle cx="30" cy="706" r="12" fill="#166534"/>
+  <text x="30" y="710" text-anchor="middle" font-size="11" font-weight="700" fill="#ffffff">6</text>
+  <rect x="550" y="678" width="160" height="56" rx="7" fill="#f0fdf4" stroke="#166534" stroke-width="1.6"/>
+  <text x="630" y="696" text-anchor="middle" font-size="8.8" fill="#166534">execute() 把新清单</text>
+  <text x="630" y="710" text-anchor="middle" font-size="8.8" font-weight="700" fill="#166534">整体写入 currentTodos</text>
+  <text x="630" y="724" text-anchor="middle" font-size="8.6" fill="#166534">覆盖掉旧内容</text>
+
+  <!-- 第⑦拍：下一轮再次调用，倒扫很近，暂不提醒 -->
+  <circle cx="30" cy="790" r="12" fill="#b45309"/>
+  <text x="30" y="794" text-anchor="middle" font-size="11" font-weight="700" fill="#ffffff">7</text>
+
+  <text x="260" y="766" text-anchor="middle" font-size="8.9" fill="#92400e">下一轮 shouldRemindTodo(messages)</text>
+  <line x1="140" y1="772" x2="370" y2="772" stroke="#b45309" stroke-width="1.6"/>
+  <polygon points="-6,-5 -6,5 0,0" fill="#b45309" transform="translate(370,772)"/>
+
+  <rect x="290" y="784" width="180" height="56" rx="7" fill="#fffbeb" stroke="#b45309" stroke-width="1.5"/>
+  <text x="380" y="800" text-anchor="middle" font-size="8.6" fill="#92400e">倒扫在很近位置</text>
+  <text x="380" y="814" text-anchor="middle" font-size="8.6" fill="#92400e">就找到刚才那次 todo_write</text>
+  <text x="380" y="828" text-anchor="middle" font-size="8.8" font-weight="700" fill="#92400e">turnsSinceLastTodoWrite 归 0</text>
+
+  <text x="260" y="850" text-anchor="middle" font-size="9.1" fill="#a16207">return false</text>
+  <line x1="380" y1="856" x2="150" y2="856" stroke="#b45309" stroke-width="1.5" stroke-dasharray="5 4"/>
+  <polygon points="-6,-5 -6,5 0,0" fill="#b45309" transform="translate(150,856)"/>
+
+  <!-- 结论 -->
+  <rect x="60" y="900" width="800" height="130" rx="10" fill="#f0fdf4" stroke="#166534" stroke-width="1.8"/>
+  <text x="460" y="924" text-anchor="middle" font-size="12" font-weight="700" fill="#166534">提醒吐出去之后，不会在接下来几轮里被连续重复戳</text>
+  <text x="460" y="946" text-anchor="middle" font-size="10" fill="#166534">isMeta 消息自己就命中了下一次倒扫的 turnsSinceLastReminder</text>
+  <text x="460" y="966" text-anchor="middle" font-size="10" fill="#166534">不需要等模型真的调用一次 todo_write 才消停（折叠点①的防抖设计）</text>
+  <text x="460" y="986" text-anchor="middle" font-size="10" fill="#166534">两把尺子各管各的事：turnsSinceLastTodoWrite 管"多久没写"</text>
+  <text x="460" y="1006" text-anchor="middle" font-size="10" font-weight="700" fill="#166534">turnsSinceLastReminder 管"多久没提醒"，都过线才真的开口</text>
+</svg>
