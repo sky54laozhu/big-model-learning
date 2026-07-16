@@ -14,7 +14,7 @@ export class OpenAICompatProvider implements ModelProvider {
     readonly model: string,
   ) {}
 
-  async *streamChat(messages: Message[], tools?: Tool[], system?: string): AsyncGenerator<StreamEvent> {
+  async *streamChat(messages: Message[], tools?: Tool[], system?: string, signal?: AbortSignal): AsyncGenerator<StreamEvent> {
     const self = this
     // 实战08：一次尝试的完整逻辑收进 runOnce——withRetry 每重试一次就整个重新调用它一遍，
     // 这就是"无状态协议，重试=整包重发"的字面意思：pending/currentIndex 每次调用都是全新的局部变量。
@@ -40,6 +40,7 @@ export class OpenAICompatProvider implements ModelProvider {
         }))
       }
 
+      // 实战14：跟 anthropic.ts 同一份处理——signal 原样转给 fetch，被 abort 时 fetch 自己抛 AbortError
       const res = await fetch(`${self.base}/chat/completions`, {
         method: 'POST',
         headers: {
@@ -47,6 +48,7 @@ export class OpenAICompatProvider implements ModelProvider {
           authorization: `Bearer ${self.apiKey}`,
         },
         body: JSON.stringify(body),
+        signal,
       })
       // 实战08：不再当场 throw 完事——换成带状态码的 HttpError，交给 withRetry 按状态码分类
       if (!res.ok) throw new HttpError(res.status, `openai-compat ${res.status}: ${await res.text()}`)

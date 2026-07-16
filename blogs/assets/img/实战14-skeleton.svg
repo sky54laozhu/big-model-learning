@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 1230" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t" aria-describedby="d">
+  <title id="t">骨架定位图：新增第二张登记表 controllerRegistry 与单例 cancelTaskTool，signal 一路传到两处阻塞点</title>
+  <desc id="d">tools/task.ts 新增第二张模块级登记表 controllerRegistry（taskId → AbortController），跟 completedBackgroundTasks 平行、生命周期相反——只在"还在跑"时有这一行，.finally 里删除。createTaskTool 的 background:true 分支里，taskId 生成的同一处创建 new AbortController()，controller.signal 传进 runAgent 的新增第 10 个参数 signal。runAgent（loop.ts）把 signal 转给 provider.streamChat 的新增第 4 个参数，也转给 Promise.all 里每个 tool.execute 的新增第 2 个参数。bash.ts 的 execute 把 signal 转给 Bun.spawn 的 signal 选项，并在 proc.exited 后手动检查 signal.aborted（因为 Bun.spawn 被 abort 不会自动抛错，跟 fetch 不同）。anthropic.ts/openai.ts 的 streamChat 把 signal 转给 fetch 的 signal 选项（fetch 被 abort 自动抛 AbortError）。retry.ts 的 withRetry 新增 AbortError 短路：捕获到 AbortError 直接原样抛出，不进入重试等待。新增模块级单例 cancelTaskTool（非工厂函数），execute 查 controllerRegistry：找到就调 controller.abort() 并返回确认；找不到就返回 error。cancelTaskTool 只加进 tools/index.ts 的 createAllTools 顶层清单，不加进 task.ts 的 subagentTools。task.ts 的 .catch 分支新增判断：controller.signal.aborted 为 true 时写入 cancelled: 前缀，否则维持原来的 error: 前缀。</desc>
+
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+
+  <text x="420" y="28" text-anchor="middle" font-size="19" font-weight="700" fill="#1e293b">骨架定位：第二张登记表 + 单例 cancelTaskTool，signal 一路传到两处阻塞点</text>
+  <text x="420" y="48" text-anchor="middle" font-size="12" fill="#475569">■ 琥珀色 = 本章新增/改动　　▨ 灰色虚线 = 沿用旧实现，未改动</text>
+
+  <!-- 两张平行登记表 -->
+  <rect x="60" y="62" width="350" height="86" rx="9" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.6" stroke-dasharray="4 3"/>
+  <text x="235" y="82" text-anchor="middle" font-size="10.3" font-weight="700" fill="#475569">completedBackgroundTasks（实战13，未改动）</text>
+  <text x="235" y="100" text-anchor="middle" font-size="9" fill="#64748b">Map&lt;taskId, result&gt;</text>
+  <text x="235" y="116" text-anchor="middle" font-size="8.4" fill="#64748b">只在"跑完了"才有一行</text>
+  <text x="235" y="132" text-anchor="middle" font-size="8.4" fill="#94a3b8">.then/.catch 写，drain 读走即删</text>
+
+  <rect x="430" y="62" width="350" height="86" rx="9" fill="#fffbeb" stroke="#b45309" stroke-width="2"/>
+  <text x="605" y="82" text-anchor="middle" font-size="10.3" font-weight="700" fill="#92400e">controllerRegistry（本章新增，折叠点④）</text>
+  <text x="605" y="100" text-anchor="middle" font-size="9" fill="#92400e">Map&lt;taskId, AbortController&gt;</text>
+  <text x="605" y="116" text-anchor="middle" font-size="8.4" fill="#a16207">只在"还在跑"才有一行——反过来的生命周期</text>
+  <text x="605" y="132" text-anchor="middle" font-size="8.4" fill="#a16207">创建时 set，.finally 里 delete</text>
+
+  <text x="420" y="160" text-anchor="middle" font-size="9" fill="#64748b">一个任务的一生，从不会同时出现在两张表的同一行</text>
+
+  <line x1="420" y1="172" x2="420" y2="194" stroke="#b45309" stroke-width="1.6"/>
+  <polygon points="-6,-5 -6,5 0,0" fill="#b45309" transform="translate(420,198) rotate(90)"/>
+
+  <!-- background:true 分支：controller 与 taskId 同处诞生 -->
+  <rect x="60" y="204" width="720" height="94" rx="9" fill="#fffbeb" stroke="#b45309" stroke-width="2"/>
+  <text x="420" y="226" text-anchor="middle" font-size="11" font-weight="700" fill="#92400e">task.ts execute 的 background:true 分支（折叠点⑨）</text>
+  <text x="420" y="245" text-anchor="middle" font-size="9.6" fill="#92400e">taskId = `bg-${nextBackgroundTaskId++}`　　同一处：const controller = new AbortController()</text>
+  <text x="420" y="262" text-anchor="middle" font-size="9.6" fill="#92400e">controllerRegistry.set(taskId, controller)</text>
+  <text x="420" y="280" text-anchor="middle" font-size="8.8" fill="#a16207">runAgent(..., controller.signal) 发起但不 await——立即返回"已提交"确认</text>
+
+  <line x1="420" y1="298" x2="420" y2="320" stroke="#b45309" stroke-width="1.6"/>
+  <polygon points="-6,-5 -6,5 0,0" fill="#b45309" transform="translate(420,324) rotate(90)"/>
+
+  <!-- runAgent 新增 signal 参数 -->
+  <rect x="60" y="334" width="720" height="70" rx="9" fill="#fffbeb" stroke="#b45309" stroke-width="2"/>
+  <text x="420" y="356" text-anchor="middle" font-size="10.6" font-weight="700" fill="#92400e">loop.ts：runAgent 新增第 10 个可选参数 signal?: AbortSignal（折叠点⑥）</text>
+  <text x="420" y="376" text-anchor="middle" font-size="9.2" fill="#a16207">一次 runAgent 调用只建一个 controller，signal 同时喂给这一轮的两处阻塞点（折叠点⑧）</text>
+  <text x="420" y="392" text-anchor="middle" font-size="8.4" fill="#a16207">CLI 前台调用不传 signal——可选参数，不影响老路径</text>
+
+  <line x1="420" y1="404" x2="420" y2="426" stroke="#b45309" stroke-width="1.6"/>
+  <polygon points="-6,-5 -6,5 0,0" fill="#b45309" transform="translate(420,430) rotate(90)"/>
+
+  <!-- 两处阻塞点分叉 -->
+  <text x="420" y="450" text-anchor="middle" font-size="10.6" font-weight="700" fill="#334155">signal 分别喂给两处真正卡住不动的地方（折叠点⑦）</text>
+
+  <!-- 左：streamChat/fetch -->
+  <rect x="70" y="464" width="330" height="150" rx="8" fill="#fffbeb" stroke="#b45309" stroke-width="1.8"/>
+  <text x="235" y="486" text-anchor="middle" font-size="10" font-weight="700" fill="#92400e">anthropic.ts / openai.ts</text>
+  <text x="235" y="504" text-anchor="middle" font-size="9" fill="#92400e">streamChat(...,signal) → fetch(url,{signal})</text>
+  <text x="235" y="524" text-anchor="middle" font-size="8.6" fill="#a16207">fetch 被 abort 自动抛 AbortError</text>
+  <text x="235" y="540" text-anchor="middle" font-size="8.6" fill="#a16207">不需要额外判断，标准行为</text>
+  <rect x="90" y="552" width="290" height="48" rx="6" fill="#ffffff" stroke="#94a3b8" stroke-width="1.2" stroke-dasharray="3 3"/>
+  <text x="235" y="572" text-anchor="middle" font-size="8.2" fill="#475569">retry.ts withRetry：捕获 AbortError</text>
+  <text x="235" y="587" text-anchor="middle" font-size="8.2" fill="#475569">直接原样抛出，不进入重试等待</text>
+
+  <!-- 右：bash/Bun.spawn -->
+  <rect x="440" y="464" width="330" height="150" rx="8" fill="#fffbeb" stroke="#b45309" stroke-width="1.8"/>
+  <text x="605" y="486" text-anchor="middle" font-size="10" font-weight="700" fill="#92400e">bash.ts</text>
+  <text x="605" y="504" text-anchor="middle" font-size="9" fill="#92400e">execute(args,signal) → Bun.spawn({...,signal})</text>
+  <text x="605" y="524" text-anchor="middle" font-size="8.6" fill="#a16207">Bun.spawn 被 abort，proc.exited 照样 resolve</text>
+  <text x="605" y="540" text-anchor="middle" font-size="8.6" fill="#a16207">不会自动抛错——跟 fetch 不是同一套约定</text>
+  <rect x="460" y="552" width="290" height="48" rx="6" fill="#ffffff" stroke="#94a3b8" stroke-width="1.2" stroke-dasharray="3 3"/>
+  <text x="605" y="572" text-anchor="middle" font-size="8.2" fill="#475569">await proc.exited 之后手动检查</text>
+  <text x="605" y="587" text-anchor="middle" font-size="8.2" fill="#475569">signal.aborted，手动 throw 命令被取消</text>
+
+  <text x="420" y="632" text-anchor="middle" font-size="8.8" fill="#334155">Tool.execute 签名新增裸的第二参数 (args, signal?)——不包进上下文对象，眼下没有第二样东西要一起传</text>
+
+  <line x1="420" y1="644" x2="420" y2="666" stroke="#b45309" stroke-width="1.6"/>
+  <polygon points="-6,-5 -6,5 0,0" fill="#b45309" transform="translate(420,670) rotate(90)"/>
+
+  <!-- cancelTaskTool 单例 -->
+  <rect x="60" y="680" width="720" height="128" rx="9" fill="#fffbeb" stroke="#b45309" stroke-width="2"/>
+  <text x="420" y="702" text-anchor="middle" font-size="11" font-weight="700" fill="#92400e">export const cancelTaskTool: Tool —— 模块级单例，不是工厂函数（折叠点⑬）</text>
+  <text x="420" y="722" text-anchor="middle" font-size="9.4" fill="#92400e">execute({ taskId }) 只读写 controllerRegistry，不需要闭包 provider/gate</text>
+  <rect x="90" y="734" width="320" height="60" rx="6" fill="#ffffff" stroke="#166534" stroke-width="1.3"/>
+  <text x="250" y="754" text-anchor="middle" font-size="8.8" font-weight="700" fill="#166534">找到 controller</text>
+  <text x="250" y="770" text-anchor="middle" font-size="8.4" fill="#166534">controller.abort()</text>
+  <text x="250" y="784" text-anchor="middle" font-size="8" fill="#166534">"已发出取消信号，会尽快停止"</text>
+  <rect x="430" y="734" width="320" height="60" rx="6" fill="#ffffff" stroke="#94a3b8" stroke-width="1.3" stroke-dasharray="3 3"/>
+  <text x="590" y="754" text-anchor="middle" font-size="8.8" font-weight="700" fill="#475569">没找到（折叠点⑪）</text>
+  <text x="590" y="770" text-anchor="middle" font-size="8.4" fill="#475569">error: 找不到任务</text>
+  <text x="590" y="784" text-anchor="middle" font-size="8" fill="#64748b">（可能不存在，或已经结束——不细分）</text>
+
+  <line x1="420" y1="808" x2="420" y2="830" stroke="#b45309" stroke-width="1.6"/>
+  <polygon points="-6,-5 -6,5 0,0" fill="#b45309" transform="translate(420,834) rotate(90)"/>
+
+  <!-- .catch 分支判断 + 工具清单归属 -->
+  <rect x="60" y="844" width="350" height="100" rx="9" fill="#fffbeb" stroke="#b45309" stroke-width="1.8"/>
+  <text x="235" y="866" text-anchor="middle" font-size="10" font-weight="700" fill="#92400e">.catch 里分辨死因（折叠点⑫）</text>
+  <text x="235" y="884" text-anchor="middle" font-size="8.8" fill="#a16207">controller.signal.aborted 为 true</text>
+  <text x="235" y="899" text-anchor="middle" font-size="8.8" fill="#a16207">→ cancelled: 子agent执行被取消</text>
+  <text x="235" y="914" text-anchor="middle" font-size="8.4" fill="#a16207">否则维持原来的 error: 前缀</text>
+  <text x="235" y="930" text-anchor="middle" font-size="7.8" fill="#a16207">跟真实故障不共用同一句话</text>
+
+  <rect x="430" y="844" width="350" height="100" rx="9" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.6" stroke-dasharray="4 3"/>
+  <text x="605" y="866" text-anchor="middle" font-size="10" font-weight="700" fill="#475569">只进顶层工具清单（折叠点⑭）</text>
+  <text x="605" y="884" text-anchor="middle" font-size="8.8" fill="#64748b">tools/index.ts createAllTools 追加</text>
+  <text x="605" y="899" text-anchor="middle" font-size="8.8" fill="#64748b">不进 task.ts 的 subagentTools</text>
+  <text x="605" y="914" text-anchor="middle" font-size="8.4" fill="#64748b">子agent没有 task，创建不出 bg-N</text>
+  <text x="605" y="930" text-anchor="middle" font-size="7.8" fill="#94a3b8">"谁能取消谁"结构上不成立</text>
+
+  <line x1="420" y1="944" x2="420" y2="966" stroke="#b45309" stroke-width="1.6"/>
+  <polygon points="-6,-5 -6,5 0,0" fill="#b45309" transform="translate(420,970) rotate(90)"/>
+
+  <!-- finally 清理 -->
+  <rect x="130" y="980" width="580" height="60" rx="8" fill="#fffbeb" stroke="#b45309" stroke-width="1.6"/>
+  <text x="420" y="1002" text-anchor="middle" font-size="9.6" font-weight="700" fill="#92400e">.finally(() =&gt; controllerRegistry.delete(taskId))（折叠点⑩）</text>
+  <text x="420" y="1020" text-anchor="middle" font-size="8.8" fill="#a16207">成功/失败/取消都走这一步——已收工的任务不该还能被 abort()</text>
+
+  <line x1="420" y1="1040" x2="420" y2="1062" stroke="#b45309" stroke-width="1.8"/>
+  <polygon points="-6,-5 -6,5 0,0" fill="#b45309" transform="translate(420,1066) rotate(90)"/>
+
+  <!-- 结论框 -->
+  <rect x="80" y="1076" width="680" height="130" rx="10" fill="#f0fdf4" stroke="#166534" stroke-width="1.6"/>
+  <text x="420" y="1100" text-anchor="middle" font-size="11" font-weight="700" fill="#166534">取消不是回滚，是打断"还没发生的部分"（折叠点①②③⑤）</text>
+  <text x="420" y="1120" text-anchor="middle" font-size="9.6" fill="#166534">一个 AbortController/AbortSignal 的把手，一张跟结果表反过来生命周期的登记表，</text>
+  <text x="420" y="1138" text-anchor="middle" font-size="9.6" fill="#166534">signal 光传进去没用——runAgent 内部真正卡住的两处必须都愿意接住它才算数。</text>
+  <text x="420" y="1158" text-anchor="middle" font-size="9.2" fill="#15803d">没有新架构，是往已有阻塞点插一根共同的开关线</text>
+
+  <text x="420" y="1222" text-anchor="middle" font-size="9.3" fill="#64748b">■ 琥珀色 = 本章新增/改动　　▨ 灰色虚线 = 沿用旧实现，未改动</text>
+</svg>

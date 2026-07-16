@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1260" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t" aria-describedby="d">
+  <title id="t">序列图：父agent 提交后台任务后立刻取消，signal 同时打断 streamChat 与 Bun.spawn 两条路径</title>
+  <desc id="d">四条生命线：父agent(loop.ts)、task.ts(controllerRegistry)、bg-1子agent(runAgent内部)、真实子进程(sleep 30)。
+①父agent调用 task(background:true)，task.ts 生成 taskId=bg-1，创建 AbortController 并注册进 controllerRegistry，调用 runAgent(...,controller.signal) 但不等待，execute 立即返回"已提交"确认。
+②bg-1内部 runAgent 这一轮向模型请求，模型决定调用 bash({command:"sleep 30"})，execute 把这一轮共享的 signal 转给 Bun.spawn，真实子进程开始运行 sleep 30。
+③父agent并发执行 bash pwd，走正常阻塞路径，不受影响。
+④父agent拿到 taskId 后立刻调用 cancel_task({taskId:"bg-1"})，task.ts 的 execute 查到 controllerRegistry 里的 controller，调用 controller.abort()，返回"已发出取消信号，会尽快停止"。
+⑤abort() 让 signal.aborted 变为 true 并触发 abort 事件——同时影响两处：真实子进程被 Bun.spawn 内部机制终止；bash.ts 的 execute 在 await proc.exited 之后检查 signal.aborted 为 true，抛出"命令执行被取消"异常，被外层 catch 住返回 error: 前缀字符串。
+⑥这个工具结果流入 bg-1 内部 runAgent 的下一轮，当下一轮 streamChat 请求发起时 signal 已经 aborted，fetch 立即抛出 AbortError，withRetry 识别 AbortError 后短路不重试，原样往上抛，runAgent 的 promise 最终 rejected。
+⑦task.ts 的 .catch 捕获这个 rejection，检查 controller.signal.aborted 为 true，把 completedBackgroundTasks 写成 cancelled: 子agent执行被取消，.finally 从 controllerRegistry 删除 bg-1 这一条。</desc>
+
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+
+  <text x="500" y="26" text-anchor="middle" font-size="19" font-weight="700" fill="#1e293b">序列图：提交即取消——一个 signal 同时打断两条路径</text>
+  <text x="500" y="46" text-anchor="middle" font-size="12" fill="#475569">■ 琥珀色 = 本章新增/改动　　▨ 灰色虚线 = 沿用旧实现，未改动</text>
+
+  <!-- 四条泳道头 -->
+  <rect x="60" y="62" width="180" height="52" rx="8" fill="#fffbeb" stroke="#b45309" stroke-width="1.8"/>
+  <text x="150" y="83" text-anchor="middle" font-size="10.6" font-weight="700" fill="#92400e">父agent</text>
+  <text x="150" y="100" text-anchor="middle" font-size="8.4" fill="#a16207">loop.ts 主循环</text>
+
+  <rect x="310" y="62" width="180" height="52" rx="8" fill="#fffbeb" stroke="#b45309" stroke-width="1.8"/>
+  <text x="400" y="83" text-anchor="middle" font-size="10.6" font-weight="700" fill="#92400e">task.ts</text>
+  <text x="400" y="100" text-anchor="middle" font-size="8.4" fill="#a16207">controllerRegistry</text>
+
+  <rect x="560" y="62" width="180" height="52" rx="8" fill="#fffbeb" stroke="#b45309" stroke-width="1.8"/>
+  <text x="650" y="83" text-anchor="middle" font-size="10.6" font-weight="700" fill="#92400e">bg-1 子agent</text>
+  <text x="650" y="100" text-anchor="middle" font-size="8.4" fill="#a16207">runAgent 内部 · bash 调用</text>
+
+  <rect x="810" y="62" width="150" height="52" rx="8" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.6" stroke-dasharray="4 3"/>
+  <text x="885" y="83" text-anchor="middle" font-size="10.6" font-weight="700" fill="#475569">真实子进程</text>
+  <text x="885" y="100" text-anchor="middle" font-size="8.4" fill="#64748b">sleep 30</text>
+
+  <!-- 生命线 -->
+  <line x1="150" y1="114" x2="150" y2="1180" stroke="#94a3b8" stroke-width="1.4" stroke-dasharray="4 3"/>
+  <line x1="400" y1="114" x2="400" y2="1180" stroke="#94a3b8" stroke-width="1.4" stroke-dasharray="4 3"/>
+  <line x1="650" y1="114" x2="650" y2="1180" stroke="#94a3b8" stroke-width="1.4" stroke-dasharray="4 3"/>
+  <line x1="885" y1="114" x2="885" y2="1180" stroke="#94a3b8" stroke-width="1.4" stroke-dasharray="4 3"/>
+
+  <!-- beat① -->
+  <circle cx="40" cy="146" r="13" fill="#b45309"/>
+  <text x="40" y="150" text-anchor="middle" font-size="11" font-weight="700" fill="#ffffff">①</text>
+  <line x1="150" y1="146" x2="400" y2="146" stroke="#b45309" stroke-width="1.6"/>
+  <polygon points="-6,-4 -6,4 0,0" fill="#b45309" transform="translate(400,146)"/>
+  <text x="275" y="138" text-anchor="middle" font-size="8.6" fill="#92400e">task(background:true)</text>
+  <rect x="310" y="154" width="180" height="60" rx="6" fill="#fffbeb" stroke="#b45309" stroke-width="1.4"/>
+  <text x="400" y="172" text-anchor="middle" font-size="8.4" fill="#92400e">taskId=bg-1 生成同时</text>
+  <text x="400" y="186" text-anchor="middle" font-size="8.4" fill="#92400e">new AbortController()</text>
+  <text x="400" y="200" text-anchor="middle" font-size="8" fill="#a16207">registry.set(taskId, controller)</text>
+  <line x1="400" y1="214" x2="650" y2="214" stroke="#b45309" stroke-width="1.4" stroke-dasharray="3 2"/>
+  <polygon points="-5,-3 -5,3 0,0" fill="#b45309" transform="translate(650,214)"/>
+  <text x="525" y="228" text-anchor="middle" font-size="8" fill="#a16207">runAgent(...,controller.signal) 发起，不 await</text>
+  <line x1="400" y1="238" x2="150" y2="238" stroke="#166534" stroke-width="1.6"/>
+  <polygon points="-6,-4 -6,4 0,0" fill="#166534" transform="translate(150,238)"/>
+  <text x="275" y="250" text-anchor="middle" font-size="8.4" fill="#166534">立即返回"已提交" bg-1</text>
+
+  <!-- beat② -->
+  <circle cx="40" cy="284" r="13" fill="#b45309"/>
+  <text x="40" y="288" text-anchor="middle" font-size="11" font-weight="700" fill="#ffffff">②</text>
+  <rect x="560" y="266" width="180" height="76" rx="6" fill="#fffbeb" stroke="#b45309" stroke-width="1.6"/>
+  <text x="650" y="286" text-anchor="middle" font-size="8.6" font-weight="700" fill="#92400e">这一轮模型请求</text>
+  <text x="650" y="302" text-anchor="middle" font-size="8.2" fill="#a16207">决定调用 bash</text>
+  <text x="650" y="316" text-anchor="middle" font-size="8" fill="#a16207">{command:"sleep 30"}</text>
+  <text x="650" y="330" text-anchor="middle" font-size="7.6" fill="#a16207">signal 转给 Bun.spawn</text>
+  <line x1="650" y1="342" x2="885" y2="342" stroke="#b45309" stroke-width="1.6"/>
+  <polygon points="-6,-4 -6,4 0,0" fill="#b45309" transform="translate(885,342)"/>
+  <text x="767" y="356" text-anchor="middle" font-size="8" fill="#a16207">开始运行 sleep 30</text>
+
+  <!-- beat③ -->
+  <circle cx="40" cy="392" r="13" fill="#94a3b8"/>
+  <text x="40" y="396" text-anchor="middle" font-size="11" font-weight="700" fill="#ffffff">③</text>
+  <rect x="70" y="374" width="160" height="46" rx="6" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.4" stroke-dasharray="3 3"/>
+  <text x="150" y="392" text-anchor="middle" font-size="8.4" fill="#475569">父agent并发执行</text>
+  <text x="150" y="406" text-anchor="middle" font-size="8" fill="#64748b">bash pwd（不受影响）</text>
+  <text x="330" y="400" font-size="8" font-style="italic" fill="#94a3b8">与 bg-1 无关，正常阻塞路径</text>
+
+  <!-- beat④ -->
+  <circle cx="40" cy="450" r="13" fill="#b45309"/>
+  <text x="40" y="454" text-anchor="middle" font-size="11" font-weight="700" fill="#ffffff">④</text>
+  <line x1="150" y1="450" x2="400" y2="450" stroke="#b45309" stroke-width="1.6"/>
+  <polygon points="-6,-4 -6,4 0,0" fill="#b45309" transform="translate(400,450)"/>
+  <text x="275" y="442" text-anchor="middle" font-size="8.6" fill="#92400e">cancel_task({"taskId":"bg-1"})</text>
+  <rect x="310" y="458" width="180" height="60" rx="6" fill="#fffbeb" stroke="#b45309" stroke-width="1.4"/>
+  <text x="400" y="476" text-anchor="middle" font-size="8.4" fill="#92400e">registry 查到 controller</text>
+  <text x="400" y="490" text-anchor="middle" font-size="8.4" fill="#92400e">controller.abort()</text>
+  <line x1="400" y1="524" x2="150" y2="524" stroke="#166534" stroke-width="1.6"/>
+  <polygon points="-6,-4 -6,4 0,0" fill="#166534" transform="translate(150,524)"/>
+  <text x="275" y="536" text-anchor="middle" font-size="8.4" fill="#166534">"已发出取消信号，会尽快停止"</text>
+
+  <!-- beat⑤ -->
+  <circle cx="40" cy="560" r="13" fill="#b45309"/>
+  <text x="40" y="564" text-anchor="middle" font-size="11" font-weight="700" fill="#ffffff">⑤</text>
+  <text x="500" y="558" text-anchor="middle" font-size="9.4" font-weight="700" fill="#334155">abort() 同时触发两处（signal.aborted → true）</text>
+
+  <line x1="400" y1="572" x2="885" y2="572" stroke="#b45309" stroke-width="1.4" stroke-dasharray="3 2"/>
+  <polygon points="-5,-3 -5,3 0,0" fill="#b45309" transform="translate(885,572)"/>
+  <rect x="770" y="580" width="200" height="46" rx="6" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.4"/>
+  <text x="885" y="598" text-anchor="middle" font-size="8" fill="#475569">Bun.spawn 内部机制终止</text>
+  <text x="885" y="612" text-anchor="middle" font-size="8" fill="#64748b">子进程结束（无输出）</text>
+
+  <rect x="560" y="580" width="180" height="66" rx="6" fill="#fffbeb" stroke="#b45309" stroke-width="1.6"/>
+  <text x="650" y="598" text-anchor="middle" font-size="8.2" fill="#92400e">await proc.exited 之后</text>
+  <text x="650" y="612" text-anchor="middle" font-size="8.2" fill="#92400e">检查 signal.aborted 为 true</text>
+  <text x="650" y="626" text-anchor="middle" font-size="7.8" fill="#a16207">手动 throw 命令执行被取消</text>
+  <text x="650" y="640" text-anchor="middle" font-size="7.6" fill="#a16207">外层 catch 返回 error: 前缀</text>
+
+  <!-- beat⑥ -->
+  <circle cx="40" cy="694" r="13" fill="#b45309"/>
+  <text x="40" y="698" text-anchor="middle" font-size="11" font-weight="700" fill="#ffffff">⑥</text>
+  <rect x="560" y="662" width="180" height="128" rx="6" fill="#fffbeb" stroke="#b45309" stroke-width="1.8"/>
+  <text x="650" y="682" text-anchor="middle" font-size="8.6" font-weight="700" fill="#92400e">工具结果流入下一轮</text>
+  <text x="650" y="698" text-anchor="middle" font-size="8" fill="#a16207">下一轮 streamChat 发起</text>
+  <text x="650" y="712" text-anchor="middle" font-size="8" fill="#a16207">signal 已 aborted</text>
+  <text x="650" y="726" text-anchor="middle" font-size="8" fill="#a16207">fetch 立即抛 AbortError</text>
+  <rect x="576" y="736" width="148" height="42" rx="5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.1" stroke-dasharray="3 3"/>
+  <text x="650" y="752" text-anchor="middle" font-size="7.6" fill="#475569">withRetry 识别 AbortError</text>
+  <text x="650" y="766" text-anchor="middle" font-size="7.6" fill="#475569">短路，不重试，原样上抛</text>
+
+  <line x1="650" y1="790" x2="400" y2="790" stroke="#b45309" stroke-width="1.6"/>
+  <polygon points="-6,-4 -6,4 0,0" fill="#b45309" transform="translate(400,790)"/>
+  <text x="525" y="804" text-anchor="middle" font-size="8.4" fill="#92400e">runAgent 的 promise 最终 rejected</text>
+
+  <!-- beat⑦ -->
+  <circle cx="40" cy="850" r="13" fill="#166534"/>
+  <text x="40" y="854" text-anchor="middle" font-size="11" font-weight="700" fill="#ffffff">⑦</text>
+  <rect x="310" y="822" width="180" height="118" rx="6" fill="#f0fdf4" stroke="#166534" stroke-width="1.8"/>
+  <text x="400" y="844" text-anchor="middle" font-size="8.8" font-weight="700" fill="#166534">.catch(e =&gt; ...)</text>
+  <text x="400" y="860" text-anchor="middle" font-size="8" fill="#166534">controller.signal.aborted</text>
+  <text x="400" y="874" text-anchor="middle" font-size="8" fill="#166534">为 true</text>
+  <text x="400" y="890" text-anchor="middle" font-size="7.8" fill="#15803d">completedBackgroundTasks.set(</text>
+  <text x="400" y="904" text-anchor="middle" font-size="7.8" fill="#15803d">bg-1, "cancelled: 子agent</text>
+  <text x="400" y="918" text-anchor="middle" font-size="7.8" fill="#15803d">执行被取消")</text>
+  <text x="400" y="932" text-anchor="middle" font-size="7.4" fill="#166534">.finally 删除 registry 里的 bg-1</text>
+
+  <line x1="270" y1="920" x2="180" y2="960" stroke="#166534" stroke-width="1.3" stroke-dasharray="3 2" fill="none"/>
+  <path d="M 310 900 C 250 940, 210 950, 180 960" stroke="#166534" stroke-width="1.3" stroke-dasharray="3 2" fill="none"/>
+  <polygon points="-5,-4 -5,4 0,0" fill="#166534" transform="translate(180,960) rotate(140)"/>
+  <text x="130" y="975" font-size="7.6" font-style="italic" fill="#166534">父agent之后主动</text>
+  <text x="130" y="987" font-size="7.6" font-style="italic" fill="#166534">读到这条 cancelled</text>
+
+  <!-- 结论 -->
+  <rect x="90" y="1020" width="820" height="140" rx="10" fill="#f0fdf4" stroke="#166534" stroke-width="1.6"/>
+  <text x="500" y="1046" text-anchor="middle" font-size="11" font-weight="700" fill="#166534">同一个 controller.signal，同时握着两条完全不同的物理阻塞点</text>
+  <text x="500" y="1068" text-anchor="middle" font-size="9.6" fill="#166534">真实子进程被 Bun.spawn 直接终止，是"外部世界"的中断；</text>
+  <text x="500" y="1086" text-anchor="middle" font-size="9.6" fill="#166534">fetch 抛 AbortError 走 JS 异常通道，是"内部世界"的中断——两条路径互不知道对方的存在，</text>
+  <text x="500" y="1104" text-anchor="middle" font-size="9.6" fill="#166534">全靠 abort() 这一次调用同时点燃，最后又靠同一个 signal.aborted 拍板，判定这次结束该叫"取消"。</text>
+  <text x="500" y="1126" text-anchor="middle" font-size="9" fill="#15803d">这也是折叠点⑧强调"一个 controller，不是一个阻塞点一个"的原因：分开建就分不清是不是同一次取消</text>
+
+  <text x="500" y="1200" text-anchor="middle" font-size="9.3" fill="#64748b">■ 琥珀色 = 本章新增/改动　　▨ 灰色虚线 = 沿用旧实现，未改动</text>
+</svg>

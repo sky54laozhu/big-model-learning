@@ -34,6 +34,10 @@ import { drainCompletedBackgroundTasks } from './tools/task'
  * 位置，每轮开口前先问一句 drainCompletedBackgroundTasks()：有后台任务完工了，就把结果包成
  * 跟 实战11 提醒消息同款的 role:'user'+isMeta 消息塞进 messages（回扣：这是"每轮开工前的
  * 自检"家族的第三个成员，不单开一条独立检查路径）。
+ * 实战14 新增：signal 可选——一次 runAgent 调用只对应一个 AbortController（task.ts 后台分支
+ * 里创建），这一轮的 streamChat 和这一轮 Promise.all 里的每个 tool.execute 共用同一个 signal，
+ * 不是每个阻塞点各自开一个 controller（回扣折叠点⑧）。前台调用（cli 直接跑的那次）不传 signal，
+ * 跟以前一模一样跑不到取消这条路。
  */
 export async function runAgent(
   provider: ModelProvider,
@@ -45,6 +49,7 @@ export async function runAgent(
   cwd?: string,
   sessionId?: string,
   resumeMessages?: Message[],
+  signal?: AbortSignal,
 ): Promise<string> {
   const userMessage: Message = { role: 'user', content: userInput }
   const messages: Message[] = [...(resumeMessages ?? []), userMessage]
@@ -94,7 +99,7 @@ export async function runAgent(
     let text = ''
     const toolCalls: ToolCall[] = []
     let usage: Usage | undefined
-    for await (const event of provider.streamChat(messages, tools, system)) {
+    for await (const event of provider.streamChat(messages, tools, system, signal)) {
       if (event.type === 'text_delta') {
         text += event.delta
         process.stdout.write(event.delta)
@@ -137,7 +142,7 @@ export async function runAgent(
       toolCalls.map(async call => {
         const tool = toolByName.get(call.name)
         const result = tool
-          ? await runWithGate(tool, call.args, session, gate)
+          ? await runWithGate(tool, call.args, session, gate, signal)
           : `error: 未知工具 ${call.name}`
         return { call, result }
       }),
@@ -165,8 +170,9 @@ async function runWithGate(
   args: any,
   session: ReturnType<typeof newSession>,
   gate: boolean,
+  signal?: AbortSignal,
 ): Promise<string> {
-  if (!gate) return tool.execute(args)   // bypass mode：退回实战03 裸奔版
+  if (!gate) return tool.execute(args, signal)   // bypass mode：退回实战03 裸奔版
 
   const decision = checkPermission(tool, args, session)
   if (decision.behavior === 'deny') {
@@ -177,5 +183,5 @@ async function runWithGate(
     if (approval === 'no') return `error: 用户拒绝了这次 ${tool.name} 调用。`
     if (approval === 'always') grantAlways(session, tool.name, args)
   }
-  return tool.execute(args)
+  return tool.execute(args, signal)
 }

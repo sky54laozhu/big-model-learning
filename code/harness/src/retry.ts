@@ -68,6 +68,9 @@ export async function* withRetry(runOnce: () => AsyncGenerator<StreamEvent>): As
       yield* runOnce()
       return
     } catch (err) {
+      // 实战14：主动取消（AbortSignal 触发）不是"这次临时不巧"，重试只会让 cancel_task 的
+      // "尽快停止"多等好几个退避周期——跟 400/401 一样直接原样抛出，不算"耗尽"
+      if (err instanceof Error && err.name === 'AbortError') throw err
       const status = extractHttpStatus(err)
       if (!isRetryable(status)) throw err // 400/401 这类：重试只是原样再犯一次错，直接原样抛出，不算"耗尽"
       if (attempt > MAX_RETRIES) throw new RetryExhaustedError(attempt - 1, err)

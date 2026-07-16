@@ -19,16 +19,19 @@ export const bashTool: Tool = {
     },
     required: ['command'],
   },
-  execute: async (args: { command?: string }) => {
+  execute: async (args: { command?: string }, signal?: AbortSignal) => {
     const command = args?.command
     if (!command) return 'error: 缺少 command 参数'
     try {
-      const proc = Bun.spawn(['bash', '-c', command], { stdout: 'pipe', stderr: 'pipe' })
+      const proc = Bun.spawn(['bash', '-c', command], { stdout: 'pipe', stderr: 'pipe', signal })
       const [out, err] = await Promise.all([
         new Response(proc.stdout).text(),
         new Response(proc.stderr).text(),
       ])
+      // 实战14：Bun.spawn 被 abort 时 proc.exited 照样 resolve（不像 fetch 那样自己抛 AbortError），
+      // 得手动查一遍 signal.aborted 再决定要不要当成"正常跑完"（回扣折叠点⑦）。
       await proc.exited
+      if (signal?.aborted) throw new Error('命令执行被取消')
       const code = proc.exitCode
       const body = [out.trim(), err.trim() && `[stderr]\n${err.trim()}`].filter(Boolean).join('\n')
       return body || `（命令无输出，退出码 ${code}）`

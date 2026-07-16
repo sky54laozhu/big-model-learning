@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1120" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t" aria-describedby="d">
+  <title id="t">控制流程图：一次 abort() 如何分别打断 fetch 与 Bun.spawn 两处阻塞点，最终变成 cancelled 前缀</title>
+  <desc id="d">cancel_task 调用 controller.abort()——signal.aborted 变为 true 并触发 abort 事件。这个信号早已被同一个 controller 分发到两处：runAgent 这一轮的 provider.streamChat（内部转给 fetch 的 signal 选项，fetch 被 abort 自动抛 AbortError）和这一轮 Promise.all 里每个工具的 execute（例如 bashTool 转给 Bun.spawn 的 signal 选项，Bun.spawn 不会自动抛错，需要手动检查 signal.aborted）。runAgent 无论卡在哪一处，abort 事件都让那一处很快通过异常或提前返回结束。最终整个 runAgent 的 promise 落定：withRetry 看到 AbortError 立即原样重新抛出，不进入重试；runAgent 的 promise 变成 rejected。task.ts 的 .catch 检查 controller.signal.aborted 为 true，写入 cancelled 前缀而不是 error 前缀；.finally 删除 controllerRegistry 里的这一条。</desc>
+
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+
+  <text x="450" y="28" text-anchor="middle" font-size="19" font-weight="700" fill="#1e293b">控制流程：一次 abort()，两处阻塞点，一个落地判断</text>
+  <text x="450" y="48" text-anchor="middle" font-size="12" fill="#475569">■ 琥珀色 = 本章新增/改动　　▨ 灰色虚线 = 沿用旧实现，未改动</text>
+
+  <!-- 起点：cancel_task -->
+  <rect x="320" y="64" width="260" height="60" rx="30" fill="#fffbeb" stroke="#b45309" stroke-width="2"/>
+  <text x="450" y="88" text-anchor="middle" font-size="11.5" font-weight="700" fill="#92400e">cancel_task.execute({taskId})</text>
+  <text x="450" y="106" text-anchor="middle" font-size="9.6" fill="#a16207">查到 controllerRegistry 里的 controller</text>
+
+  <line x1="450" y1="124" x2="450" y2="150" stroke="#b45309" stroke-width="1.8"/>
+  <polygon points="-6,-5 -6,5 0,0" fill="#b45309" transform="translate(450,154) rotate(90)"/>
+
+  <rect x="330" y="160" width="240" height="52" rx="8" fill="#fffbeb" stroke="#b45309" stroke-width="2"/>
+  <text x="450" y="184" text-anchor="middle" font-size="11" font-weight="700" fill="#92400e">controller.abort()</text>
+  <text x="450" y="200" text-anchor="middle" font-size="8.8" fill="#a16207">signal.aborted → true，触发 abort 事件</text>
+
+  <line x1="450" y1="212" x2="450" y2="236" stroke="#b45309" stroke-width="1.8"/>
+  <polygon points="-6,-5 -6,5 0,0" fill="#b45309" transform="translate(450,240) rotate(90)"/>
+
+  <text x="450" y="256" text-anchor="middle" font-size="10" fill="#334155">这个 signal 早就被同一个 controller 分发到这一轮的两处（折叠点⑧）</text>
+
+  <!-- 分叉点 -->
+  <line x1="450" y1="266" x2="450" y2="288" stroke="#b45309" stroke-width="1.6"/>
+  <line x1="270" y1="288" x2="630" y2="288" stroke="#b45309" stroke-width="1.6"/>
+  <line x1="270" y1="288" x2="270" y2="310" stroke="#b45309" stroke-width="1.6"/>
+  <line x1="630" y1="288" x2="630" y2="310" stroke="#b45309" stroke-width="1.6"/>
+  <polygon points="-6,-5 -6,5 0,0" fill="#b45309" transform="translate(270,314) rotate(90)"/>
+  <polygon points="-6,-5 -6,5 0,0" fill="#b45309" transform="translate(630,314) rotate(90)"/>
+
+  <!-- 左路：streamChat/fetch -->
+  <rect x="100" y="324" width="340" height="150" rx="8" fill="#fffbeb" stroke="#b45309" stroke-width="1.8"/>
+  <text x="270" y="346" text-anchor="middle" font-size="10.6" font-weight="700" fill="#92400e">这一轮 provider.streamChat</text>
+  <text x="270" y="364" text-anchor="middle" font-size="9" fill="#92400e">↳ fetch(url, {signal})</text>
+  <text x="270" y="384" text-anchor="middle" font-size="9" fill="#a16207">fetch 被 abort 自动抛 AbortError</text>
+  <text x="270" y="400" text-anchor="middle" font-size="8.4" fill="#a16207">标准行为，不需要额外判断</text>
+  <rect x="120" y="412" width="300" height="50" rx="6" fill="#ffffff" stroke="#94a3b8" stroke-width="1.2" stroke-dasharray="3 3"/>
+  <text x="270" y="432" text-anchor="middle" font-size="8.6" fill="#475569">withRetry 捕获 AbortError</text>
+  <text x="270" y="448" text-anchor="middle" font-size="8.6" fill="#475569">直接原样重新抛出，不进入重试等待</text>
+
+  <!-- 右路：bash/Bun.spawn -->
+  <rect x="460" y="324" width="340" height="150" rx="8" fill="#fffbeb" stroke="#b45309" stroke-width="1.8"/>
+  <text x="630" y="346" text-anchor="middle" font-size="10.6" font-weight="700" fill="#92400e">这一轮 Promise.all 里的 tool.execute</text>
+  <text x="630" y="364" text-anchor="middle" font-size="9" fill="#92400e">↳ bashTool → Bun.spawn({signal})</text>
+  <text x="630" y="384" text-anchor="middle" font-size="9" fill="#a16207">Bun.spawn 被 abort，proc.exited 照样 resolve</text>
+  <text x="630" y="400" text-anchor="middle" font-size="8.4" fill="#a16207">不会自动抛错，跟 fetch 不是同一套约定</text>
+  <rect x="480" y="412" width="300" height="50" rx="6" fill="#ffffff" stroke="#94a3b8" stroke-width="1.2" stroke-dasharray="3 3"/>
+  <text x="630" y="432" text-anchor="middle" font-size="8.6" fill="#475569">await proc.exited 后手动检查 signal.aborted</text>
+  <text x="630" y="448" text-anchor="middle" font-size="8.6" fill="#475569">手动 throw 命令执行被取消</text>
+
+  <text x="450" y="490" text-anchor="middle" font-size="9.4" fill="#334155">无论 runAgent 卡在哪一处，abort 事件都让那一处很快通过异常或提前返回结束（折叠点⑤⑦）</text>
+
+  <!-- 汇合 -->
+  <line x1="270" y1="474" x2="270" y2="510" stroke="#b45309" stroke-width="1.6"/>
+  <line x1="630" y1="474" x2="630" y2="510" stroke="#b45309" stroke-width="1.6"/>
+  <line x1="270" y1="510" x2="630" y2="510" stroke="#b45309" stroke-width="1.6"/>
+  <line x1="450" y1="510" x2="450" y2="530" stroke="#b45309" stroke-width="1.8"/>
+  <polygon points="-6,-5 -6,5 0,0" fill="#b45309" transform="translate(450,534) rotate(90)"/>
+
+  <rect x="290" y="544" width="320" height="56" rx="8" fill="#fffbeb" stroke="#b45309" stroke-width="2"/>
+  <text x="450" y="566" text-anchor="middle" font-size="10.6" font-weight="700" fill="#92400e">runAgent 的 promise 最终 rejected</text>
+  <text x="450" y="584" text-anchor="middle" font-size="8.6" fill="#a16207">这一轮阻塞点抛出的异常沿调用栈一路上抛</text>
+
+  <line x1="450" y1="600" x2="450" y2="624" stroke="#b45309" stroke-width="1.8"/>
+  <polygon points="-6,-5 -6,5 0,0" fill="#b45309" transform="translate(450,628) rotate(90)"/>
+
+  <!-- .catch 判断 -->
+  <rect x="200" y="638" width="500" height="86" rx="9" fill="#fffbeb" stroke="#b45309" stroke-width="2"/>
+  <text x="450" y="660" text-anchor="middle" font-size="10.8" font-weight="700" fill="#92400e">task.ts 的 .catch(e =&gt; ...)（折叠点⑫）</text>
+  <text x="450" y="680" text-anchor="middle" font-size="9.4" fill="#a16207">检查 controller.signal.aborted</text>
+  <text x="450" y="698" text-anchor="middle" font-size="9" fill="#a16207">true → 是我们自己叫停的，不是真的坏了</text>
+  <text x="450" y="714" text-anchor="middle" font-size="8.2" fill="#a16207">false → 维持原来的判断路径（实战13）</text>
+
+  <line x1="450" y1="724" x2="450" y2="748" stroke="#b45309" stroke-width="1.8"/>
+  <line x1="290" y1="748" x2="610" y2="748" stroke="#b45309" stroke-width="1.6"/>
+  <line x1="290" y1="748" x2="290" y2="770" stroke="#b45309" stroke-width="1.6"/>
+  <line x1="610" y1="748" x2="610" y2="770" stroke="#94a3b8" stroke-width="1.4" stroke-dasharray="4 3"/>
+  <polygon points="-6,-5 -6,5 0,0" fill="#b45309" transform="translate(290,774) rotate(90)"/>
+  <polygon points="-5,-4 -5,4 0,0" fill="#94a3b8" transform="translate(610,774) rotate(90)"/>
+
+  <rect x="120" y="784" width="340" height="70" rx="8" fill="#fffbeb" stroke="#b45309" stroke-width="1.8"/>
+  <text x="290" y="806" text-anchor="middle" font-size="10" font-weight="700" fill="#92400e">signal.aborted 为 true</text>
+  <text x="290" y="824" text-anchor="middle" font-size="9" fill="#a16207">completedBackgroundTasks.set(taskId,</text>
+  <text x="290" y="840" text-anchor="middle" font-size="9" fill="#a16207">`cancelled: 子agent执行被取消`)</text>
+
+  <rect x="460" y="784" width="340" height="70" rx="8" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.6" stroke-dasharray="4 3"/>
+  <text x="630" y="806" text-anchor="middle" font-size="10" font-weight="700" fill="#475569">signal.aborted 为 false（未改动路径）</text>
+  <text x="630" y="824" text-anchor="middle" font-size="9" fill="#64748b">completedBackgroundTasks.set(taskId,</text>
+  <text x="630" y="840" text-anchor="middle" font-size="9" fill="#64748b">`error: ...`)</text>
+
+  <line x1="290" y1="854" x2="290" y2="876" stroke="#b45309" stroke-width="1.6"/>
+  <line x1="630" y1="854" x2="630" y2="876" stroke="#94a3b8" stroke-width="1.4" stroke-dasharray="4 3"/>
+  <line x1="290" y1="876" x2="630" y2="876" stroke="#b45309" stroke-width="1.6"/>
+  <line x1="450" y1="876" x2="450" y2="896" stroke="#b45309" stroke-width="1.8"/>
+  <polygon points="-6,-5 -6,5 0,0" fill="#b45309" transform="translate(450,900) rotate(90)"/>
+
+  <rect x="290" y="910" width="320" height="52" rx="8" fill="#fffbeb" stroke="#b45309" stroke-width="1.8"/>
+  <text x="450" y="932" text-anchor="middle" font-size="10.2" font-weight="700" fill="#92400e">.finally(() =&gt; controllerRegistry.delete(taskId))</text>
+  <text x="450" y="948" text-anchor="middle" font-size="8.6" fill="#a16207">收工的任务不该还能被再次 abort()</text>
+
+  <line x1="450" y1="962" x2="450" y2="984" stroke="#b45309" stroke-width="1.8"/>
+  <polygon points="-6,-5 -6,5 0,0" fill="#b45309" transform="translate(450,988) rotate(90)"/>
+
+  <!-- 结论 -->
+  <rect x="120" y="1000" width="660" height="100" rx="10" fill="#f0fdf4" stroke="#166534" stroke-width="1.6"/>
+  <text x="450" y="1024" text-anchor="middle" font-size="11" font-weight="700" fill="#166534">一个 abort()，走两条完全不同的物理路径，落地时汇成一句话</text>
+  <text x="450" y="1044" text-anchor="middle" font-size="9.4" fill="#166534">fetch 的自动抛错和 Bun.spawn 的手动检查，表面协议不同，但都在给同一个 signal 让路；</text>
+  <text x="450" y="1062" text-anchor="middle" font-size="9.4" fill="#166534">最后靠同一个 controller.signal.aborted 拍板，决定这次结束该叫"取消"还是"故障"。</text>
+
+  <text x="450" y="1112" text-anchor="middle" font-size="9.3" fill="#64748b">■ 琥珀色 = 本章新增/改动　　▨ 灰色虚线 = 沿用旧实现，未改动</text>
+</svg>

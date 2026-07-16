@@ -32,8 +32,12 @@ export type Tool = {
   description: string
   /** JSON Schema，描述参数长什么样——这部分被剥出来塞进请求，给模型看 */
   parameters: object
-  /** 干活的手：模型点名要它时，harness 按名字找到并调用 */
-  execute: (args: any) => Promise<string>
+  /**
+   * 干活的手：模型点名要它时，harness 按名字找到并调用。
+   * 实战14 新增：signal 可选——runAgent 这一轮唯一的 AbortSignal，工具自己决定要不要接、
+   * 接了之后怎么响应中断（bash.ts 转给 Bun.spawn；不需要中断能力的工具原样忽略这个参数）。
+   */
+  execute: (args: any, signal?: AbortSignal) => Promise<string>
 }
 
 /**
@@ -82,6 +86,9 @@ export interface ModelProvider {
    * system 可选（实战07 新增）：一整段拼好的系统提示词字符串，独立于 messages 之外传入——
    * 两端协议接它的方式不同（Anthropic 是请求体顶层 system 字段，OpenAI 兼容是 messages
    * 数组最前面一条 role:'system'），差异烂在各自 provider 实现里，调用方不用关心。
+   *
+   * signal 可选（实战14 新增）：跟这一轮 execute 收到的是同一个 AbortSignal——runAgent
+   * 一次只创建一个 AbortController，流式请求和这一轮的工具调用共用它的 signal。
    */
-  streamChat(messages: Message[], tools?: Tool[], system?: string): AsyncGenerator<StreamEvent>
+  streamChat(messages: Message[], tools?: Tool[], system?: string, signal?: AbortSignal): AsyncGenerator<StreamEvent>
 }

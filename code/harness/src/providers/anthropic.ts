@@ -17,7 +17,7 @@ export class AnthropicProvider implements ModelProvider {
     readonly model: string,
   ) {}
 
-  async *streamChat(messages: Message[], tools?: Tool[], system?: string): AsyncGenerator<StreamEvent> {
+  async *streamChat(messages: Message[], tools?: Tool[], system?: string, signal?: AbortSignal): AsyncGenerator<StreamEvent> {
     const self = this
     // 实战08：一次尝试的完整逻辑收进 runOnce——withRetry 每重试一次就整个重新调用它一遍，
     // 这就是"无状态协议，重试=整包重发"的字面意思：blocks/stopReason 每次调用都是全新的局部变量。
@@ -49,10 +49,13 @@ export class AnthropicProvider implements ModelProvider {
         }))
       }
 
+      // 实战14：signal 原样转给 fetch——一旦被 abort，fetch 自己抛 AbortError，
+      // 不需要我们额外判断（跟下面 bash.ts 的 Bun.spawn 不是同一种行为，那边要手动查）
       const res = await fetch(`${self.base}/v1/messages`, {
         method: 'POST',
         headers,
         body: JSON.stringify(body),
+        signal,
       })
       // 实战08：不再当场 throw 完事——换成带状态码的 HttpError，交给 withRetry 按状态码分类
       if (!res.ok) throw new HttpError(res.status, `anthropic ${res.status}: ${await res.text()}`)

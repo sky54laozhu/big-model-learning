@@ -32,6 +32,14 @@ const completedBackgroundTasks = new Map<string, string>()
 let nextBackgroundTaskId = 1
 
 /**
+ * 实战14 新增：taskId → AbortController，跟 completedBackgroundTasks 平行的第二张登记表。
+ * 只登记"还在跑"的后台任务——一旦 .then/.catch 落地（不管成功、失败还是被取消），这一行就被
+ * 删掉，跟 completedBackgroundTasks 反过来（那张表是"跑完了才有一行"，这张表是"还没跑完才有
+ * 一行"），因为 cancelTaskTool 只关心"这个 taskId 现在还能不能被 abort"。
+ */
+const controllerRegistry = new Map<string, AbortController>()
+
+/**
  * 工厂函数：`provider`/`gate` 只有 index.ts 启动时才拿得到，但 `Tool.execute` 的签名只收模型给的
  * `args`，没有第三个位置塞这两者。用闭包把它们焊进返回的 `Tool` 对象里——调用方（index.ts）只用
  * 调一次 `createTaskTool(provider, gate)`，之后模型每次调 `task`，`execute` 都记得住它俩
@@ -80,14 +88,23 @@ export function createTaskTool(provider: ModelProvider, gate: boolean): Tool {
       // 不是任务的最终结果；真正的结果由 .then/.catch 写进登记表，等下一次
       // drainCompletedBackgroundTasks 被调用时才浮出水面。
       const taskId = `bg-${nextBackgroundTaskId++}`
-      runAgent(provider, subagentTools, task, 10, gate)
+      // 实战14：controller 在 taskId 诞生的同一处诞生——这个子agent这一整次 runAgent 调用
+      // （它这一轮的 streamChat + 这一轮的每个工具 execute）都共用这一个 signal。
+      const controller = new AbortController()
+      controllerRegistry.set(taskId, controller)
+      runAgent(provider, subagentTools, task, 10, gate, undefined, undefined, undefined, undefined, controller.signal)
         .then(result => completedBackgroundTasks.set(taskId, result))
         .catch((err: unknown) => {
-          // 失败和成功共用同一条登记路径（同一个 Map、同一个字符串类型），只是内容
-          // 换成 error: 前缀，不单独开失败分支。
-          const message = err instanceof Error ? err.message : String(err)
-          completedBackgroundTasks.set(taskId, `error: 子agent后台执行失败——${message}`)
+          // 实战14：controller.signal.aborted 分辨"被 cancel_task 主动叫停"和"真的跑失败了"——
+          // 前者不是意外，不该跟真失败共用 error: 前缀，免得模型以为子agent自己出了故障。
+          if (controller.signal.aborted) {
+            completedBackgroundTasks.set(taskId, `cancelled: 子agent执行被取消`)
+          } else {
+            const message = err instanceof Error ? err.message : String(err)
+            completedBackgroundTasks.set(taskId, `error: 子agent后台执行失败——${message}`)
+          }
         })
+        .finally(() => controllerRegistry.delete(taskId))
 
       return `已提交后台任务 ${taskId}，子agent正在执行，完成后会自动提醒你结果。`
     },
@@ -109,4 +126,34 @@ export function drainCompletedBackgroundTasks(): string | null {
 
   const body = completed.map(({ id, result }) => `- 任务 ${id} 已完成，结果：\n${result}`).join('\n\n')
   return `以下后台任务已经跑完：\n\n${body}`
+}
+
+/**
+ * 实战14 新增：模型取消一个还在跑的后台任务的接口。跟 bashTool 一样是模块级单例，不是工厂函数——
+ * execute 只需要读写 controllerRegistry 这张模块级登记表，不需要闭包 provider/gate（回扣折叠点⑬）。
+ *
+ * 只出现在 index.ts 的顶层工具清单，不进 subagentTools（回扣折叠点⑭）：子agent的工具集里本来就
+ * 没有 task 工具本身，所以子agent永远创建不出 bg-N 任务，"子agent A 取消子agent B 的任务"这个
+ * 顾虑不需要额外代码去堵，结构上就不成立。
+ */
+export const cancelTaskTool: Tool = {
+  name: 'cancel_task',
+  description: '取消一个还在后台执行的子agent任务。只发出取消信号，不保证立刻停止——子agent会尽快响应中断。',
+  parameters: {
+    type: 'object',
+    properties: {
+      taskId: { type: 'string', description: '要取消的后台任务 id（形如 bg-1）' },
+    },
+    required: ['taskId'],
+  },
+  execute: async (args: { taskId?: string }) => {
+    const taskId = args?.taskId
+    if (!taskId) return 'error: 缺少 taskId 参数'
+
+    const controller = controllerRegistry.get(taskId)
+    if (!controller) return `error: 找不到任务 ${taskId}（可能不存在，或已经结束）`
+
+    controller.abort()
+    return `已发出取消信号，${taskId} 会尽快停止`
+  },
 }
