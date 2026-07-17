@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 1400" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t" aria-describedby="d">
+  <title id="t">骨架定位图：两张登记表合一张 taskRegistry，新增 task_status 查询工具</title>
+  <desc id="d">tools/task.ts 把实战13 的 completedBackgroundTasks（结果表）和实战14 的 controllerRegistry（控制柄表）合并成一张登记表 taskRegistry: Map&lt;string, TaskRecord&gt;。TaskRecord 字段：taskId、task、status（四选一：running/completed/cancelled/error）、notified（终态是否已被看过，标记不删除）、outputOffset（transcript 读到第几条消息）、turnCount（累计轮数，跨查询持久化）、controller?（仅 running 时有）、result?（仅终态时有）。新增 buildIncrementalLog(cwd, record) 函数：调用实战10 的 loadSessionMessages(cwd, taskId) 整份读回子agent自己的 transcript，按 outputOffset 切片出新增部分，assistant.toolCalls[] 跟 tool 消息按 ToolCall.id 配对（不是数组下标），轮数从 record.turnCount 接着累加。新增工厂函数 createTaskStatusTool(cwd)，闭包住 cwd（跟 createTaskTool 的 provider/gate/cwd 同一个模式）。execute 分两种问法：不传 taskId 时遍历 taskRegistry 输出每个任务一行的概览；传 taskId 时查这一行，调用 buildIncrementalLog 拿增量日志，把 outputOffset/turnCount 写回、并把 notified 置为 true（终态时）。drainCompletedBackgroundTasks 同步改为标记 notified 而非删除这一行。task_status 只加进 tools/index.ts 的顶层清单 createAllTools，不加进 task.ts 的 subagentTools。</desc>
+
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+
+  <text x="420" y="28" text-anchor="middle" font-size="19" font-weight="700" fill="#1e293b">骨架定位：两张登记表合一张，架一个能主动问的新工具</text>
+  <text x="420" y="48" text-anchor="middle" font-size="12" fill="#475569">■ 琥珀色 = 本章新增/改动　　▨ 灰色虚线 = 沿用旧实现，未改动</text>
+
+  <!-- 两张旧表 -->
+  <rect x="60" y="62" width="350" height="94" rx="9" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.6" stroke-dasharray="4 3"/>
+  <text x="235" y="84" text-anchor="middle" font-size="10.3" font-weight="700" fill="#475569">completedBackgroundTasks（实战13）</text>
+  <text x="235" y="102" text-anchor="middle" font-size="9" fill="#64748b">只在"跑完了"才有一行</text>
+  <text x="235" y="118" text-anchor="middle" font-size="8.4" fill="#64748b">.then/.catch 写，drain 读走即删</text>
+  <text x="235" y="134" text-anchor="middle" font-size="8" fill="#94a3b8">（折叠点①）</text>
+
+  <rect x="430" y="62" width="350" height="94" rx="9" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.6" stroke-dasharray="4 3"/>
+  <text x="605" y="84" text-anchor="middle" font-size="10.3" font-weight="700" fill="#475569">controllerRegistry（实战14）</text>
+  <text x="605" y="102" text-anchor="middle" font-size="9" fill="#64748b">只在"还在跑"才有一行——反过来的生命周期</text>
+  <text x="605" y="118" text-anchor="middle" font-size="8.4" fill="#64748b">创建时 set，.finally 里 delete</text>
+  <text x="605" y="134" text-anchor="middle" font-size="8" fill="#94a3b8">（折叠点①）</text>
+
+  <text x="420" y="164" text-anchor="middle" font-size="9" fill="#64748b">同一件事拆成两半——"这个任务现在是什么状态"被硬拆成两种隐式编码去猜</text>
+
+  <line x1="235" y1="156" x2="410" y2="188" stroke="#b45309" stroke-width="1.5"/>
+  <line x1="605" y1="156" x2="430" y2="188" stroke="#b45309" stroke-width="1.5"/>
+  <polygon points="-6,-5 -6,5 0,0" fill="#b45309" transform="translate(420,196) rotate(90)"/>
+
+  <!-- 合并后的 taskRegistry + TaskRecord -->
+  <rect x="60" y="206" width="720" height="152" rx="9" fill="#fffbeb" stroke="#b45309" stroke-width="2"/>
+  <text x="420" y="228" text-anchor="middle" font-size="11" font-weight="700" fill="#92400e">taskRegistry: Map&lt;string, TaskRecord&gt;（合一张表，折叠点①②）</text>
+  <text x="420" y="247" text-anchor="middle" font-size="9.4" fill="#92400e">status: 'running' | 'completed' | 'cancelled' | 'error'——status 字段自己就是状态机</text>
+  <rect x="80" y="258" width="330" height="86" rx="6" fill="#ffffff" stroke="#b45309" stroke-width="1.2"/>
+  <text x="245" y="276" text-anchor="middle" font-size="8.8" font-weight="700" fill="#92400e">running 时才有</text>
+  <text x="245" y="292" text-anchor="middle" font-size="8.4" fill="#a16207">taskId / task / status</text>
+  <text x="245" y="307" text-anchor="middle" font-size="8.4" fill="#a16207">controller?: AbortController</text>
+  <text x="245" y="322" text-anchor="middle" font-size="8" fill="#a16207">(仅 running 才有，跑完即清)</text>
+  <rect x="430" y="258" width="330" height="86" rx="6" fill="#ffffff" stroke="#b45309" stroke-width="1.2"/>
+  <text x="595" y="276" text-anchor="middle" font-size="8.8" font-weight="700" fill="#92400e">终态才有</text>
+  <text x="595" y="292" text-anchor="middle" font-size="8.4" fill="#a16207">result?: string</text>
+  <text x="595" y="307" text-anchor="middle" font-size="8.4" fill="#a16207">(仅终态才有，非工具日志能推出)</text>
+  <text x="595" y="322" text-anchor="middle" font-size="8" fill="#a16207">一个 taskId 全程只对应一行</text>
+
+  <line x1="420" y1="358" x2="420" y2="380" stroke="#b45309" stroke-width="1.6"/>
+  <polygon points="-6,-5 -6,5 0,0" fill="#b45309" transform="translate(420,384) rotate(90)"/>
+
+  <!-- notified 标记 -->
+  <rect x="60" y="394" width="720" height="86" rx="9" fill="#fffbeb" stroke="#b45309" stroke-width="2"/>
+  <text x="420" y="416" text-anchor="middle" font-size="11" font-weight="700" fill="#92400e">notified: boolean——终态标记，不再删除这一行（折叠点③）</text>
+  <text x="420" y="435" text-anchor="middle" font-size="9.2" fill="#a16207">drainCompletedBackgroundTasks 上报后只把它翻成 true，不删这一行</text>
+  <text x="420" y="452" text-anchor="middle" font-size="8.6" fill="#a16207">"已读"和"删除"是两个不同动作——终态结果之后还能被 task_status 按 taskId 反复查到</text>
+  <text x="420" y="467" text-anchor="middle" font-size="8" fill="#a16207">（跟真实源码 TaskStateBase 的同名字段殊途同归，见"翻源码"第3点）</text>
+
+  <line x1="420" y1="480" x2="420" y2="502" stroke="#b45309" stroke-width="1.6"/>
+  <polygon points="-6,-5 -6,5 0,0" fill="#b45309" transform="translate(420,506) rotate(90)"/>
+
+  <!-- buildIncrementalLog -->
+  <rect x="60" y="516" width="720" height="196" rx="9" fill="#fffbeb" stroke="#b45309" stroke-width="2"/>
+  <text x="420" y="538" text-anchor="middle" font-size="11" font-weight="700" fill="#92400e">buildIncrementalLog(cwd, record)——只回答状态不够，还要带出这一路干了什么（折叠点④）</text>
+  <text x="420" y="556" text-anchor="middle" font-size="9" fill="#a16207">复用实战10 loadSessionMessages(cwd, taskId) 整份读回子agent自己的 transcript</text>
+  <rect x="80" y="566" width="330" height="132" rx="6" fill="#ffffff" stroke="#b45309" stroke-width="1.2"/>
+  <text x="245" y="586" text-anchor="middle" font-size="8.8" font-weight="700" fill="#92400e">outputOffset（折叠点⑤）</text>
+  <text x="245" y="602" text-anchor="middle" font-size="8.2" fill="#a16207">记"读到第几条消息"，不是字节偏移量</text>
+  <text x="245" y="617" text-anchor="middle" font-size="8.2" fill="#a16207">messages.slice(outputOffset) 切增量段</text>
+  <text x="245" y="632" text-anchor="middle" font-size="8.2" fill="#a16207">不新开按字节 seek 的读文件路径</text>
+  <text x="245" y="650" text-anchor="middle" font-size="8" fill="#94a3b8">（这个 harness 一份 transcript 顶多几十条</text>
+  <text x="245" y="663" text-anchor="middle" font-size="8" fill="#94a3b8">消息，KISS/YAGNI，不预先修性能路）</text>
+  <rect x="430" y="566" width="330" height="132" rx="6" fill="#ffffff" stroke="#b45309" stroke-width="1.2"/>
+  <text x="595" y="586" text-anchor="middle" font-size="8.8" font-weight="700" fill="#92400e">配对与计数（折叠点⑥⑦）</text>
+  <text x="595" y="602" text-anchor="middle" font-size="8.2" fill="#a16207">按 ToolCall.id 配对 tool 结果，不是</text>
+  <text x="595" y="616" text-anchor="middle" font-size="8.2" fill="#a16207">数组下标——并发调用落地顺序不保证</text>
+  <text x="595" y="630" text-anchor="middle" font-size="8.2" fill="#a16207">跟声明顺序一致</text>
+  <text x="595" y="648" text-anchor="middle" font-size="8.2" fill="#a16207">turnCount 从 record.turnCount 接着</text>
+  <text x="595" y="662" text-anchor="middle" font-size="8.2" fill="#a16207">往上累加，不是每次归零</text>
+
+  <line x1="420" y1="712" x2="420" y2="734" stroke="#b45309" stroke-width="1.6"/>
+  <polygon points="-6,-5 -6,5 0,0" fill="#b45309" transform="translate(420,738) rotate(90)"/>
+
+  <!-- createTaskStatusTool 工厂 -->
+  <rect x="60" y="748" width="720" height="80" rx="9" fill="#fffbeb" stroke="#b45309" stroke-width="2"/>
+  <text x="420" y="770" text-anchor="middle" font-size="11" font-weight="700" fill="#92400e">createTaskStatusTool(cwd)——工厂函数，闭包住 cwd（折叠点⑧）</text>
+  <text x="420" y="789" text-anchor="middle" font-size="9" fill="#a16207">跟 createTaskTool(provider, gate, cwd) 同一个闭包模式——cwd 进程内只有一份，不按 taskId 各存一份</text>
+  <text x="420" y="805" text-anchor="middle" font-size="8.4" fill="#a16207">execute 只收模型给的 args，闭包把 cwd 焊进返回的 Tool 对象里</text>
+
+  <line x1="420" y1="828" x2="420" y2="850" stroke="#b45309" stroke-width="1.6"/>
+  <polygon points="-6,-5 -6,5 0,0" fill="#b45309" transform="translate(420,854) rotate(90)"/>
+
+  <!-- 两种问法 -->
+  <text x="420" y="874" text-anchor="middle" font-size="10.6" font-weight="700" fill="#334155">execute 分两种问法——同一个工具，两种粒度（折叠点⑨）</text>
+
+  <rect x="70" y="888" width="330" height="112" rx="8" fill="#fffbeb" stroke="#b45309" stroke-width="1.8"/>
+  <text x="235" y="910" text-anchor="middle" font-size="10" font-weight="700" fill="#92400e">不传 taskId——概览</text>
+  <text x="235" y="928" text-anchor="middle" font-size="8.6" fill="#a16207">遍历 taskRegistry 全部</text>
+  <text x="235" y="944" text-anchor="middle" font-size="8.6" fill="#a16207">每行：id + [状态] + 描述</text>
+  <text x="235" y="960" text-anchor="middle" font-size="8.6" fill="#a16207">（终态附结果预览）</text>
+  <text x="235" y="978" text-anchor="middle" font-size="8" fill="#a16207">不记得 taskId 时先扫一眼全局</text>
+  <text x="235" y="992" text-anchor="middle" font-size="8" fill="#a16207">不该被当成一个错误</text>
+
+  <rect x="440" y="888" width="330" height="112" rx="8" fill="#fffbeb" stroke="#b45309" stroke-width="1.8"/>
+  <text x="605" y="910" text-anchor="middle" font-size="10" font-weight="700" fill="#92400e">传 taskId——详情</text>
+  <text x="605" y="928" text-anchor="middle" font-size="8.6" fill="#a16207">状态 +（终态才有的）完整结果</text>
+  <text x="605" y="944" text-anchor="middle" font-size="8.6" fill="#a16207">+ 自上次查询以来的增量日志</text>
+  <text x="605" y="960" text-anchor="middle" font-size="8.6" fill="#a16207">写回 outputOffset/turnCount</text>
+  <text x="605" y="978" text-anchor="middle" font-size="8" fill="#a16207">终态时把 notified 置为 true</text>
+  <text x="605" y="992" text-anchor="middle" font-size="8" fill="#a16207">（查过就不用 drain 再报一遍）</text>
+
+  <line x1="420" y1="1000" x2="420" y2="1022" stroke="#b45309" stroke-width="1.6"/>
+  <polygon points="-6,-5 -6,5 0,0" fill="#b45309" transform="translate(420,1026) rotate(90)"/>
+
+  <!-- 工具清单归属 -->
+  <rect x="60" y="1036" width="350" height="94" rx="9" fill="#fffbeb" stroke="#b45309" stroke-width="1.8"/>
+  <text x="235" y="1058" text-anchor="middle" font-size="10" font-weight="700" fill="#92400e">只进顶层工具清单（折叠点⑩）</text>
+  <text x="235" y="1076" text-anchor="middle" font-size="8.6" fill="#a16207">tools/index.ts createAllTools 追加</text>
+  <text x="235" y="1092" text-anchor="middle" font-size="8.6" fill="#a16207">createAllTools 第三个参数新增 cwd</text>
+  <text x="235" y="1108" text-anchor="middle" font-size="8" fill="#a16207">跟 cancel_task 同一个理由</text>
+
+  <rect x="430" y="1036" width="350" height="94" rx="9" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.6" stroke-dasharray="4 3"/>
+  <text x="605" y="1058" text-anchor="middle" font-size="10" font-weight="700" fill="#475569">不进 task.ts 的 subagentTools</text>
+  <text x="605" y="1076" text-anchor="middle" font-size="8.6" fill="#64748b">子agent工具集里没有 task 本身</text>
+  <text x="605" y="1092" text-anchor="middle" font-size="8.6" fill="#64748b">创建不出任何 bg-N 后台任务</text>
+  <text x="605" y="1108" text-anchor="middle" font-size="8" fill="#94a3b8">"查谁的进度"这个顾虑结构上不成立</text>
+
+  <line x1="420" y1="1130" x2="420" y2="1152" stroke="#b45309" stroke-width="1.8"/>
+  <polygon points="-6,-5 -6,5 0,0" fill="#b45309" transform="translate(420,1156) rotate(90)"/>
+
+  <!-- 结论框 -->
+  <rect x="80" y="1166" width="680" height="150" rx="10" fill="#f0fdf4" stroke="#166534" stroke-width="1.6"/>
+  <text x="420" y="1190" text-anchor="middle" font-size="11" font-weight="700" fill="#166534">合并登记表，架一个能主动问的工具（折叠点①②③④⑤⑥⑦⑧⑨⑩）</text>
+  <text x="420" y="1210" text-anchor="middle" font-size="9.6" fill="#166534">两张平行表合成一张，status 字段自己就是状态机；notified 从删除改成标记；</text>
+  <text x="420" y="1228" text-anchor="middle" font-size="9.6" fill="#166534">task_status 借道子agent自己的 transcript，用增量日志回答"这一路在忙什么"；</text>
+  <text x="420" y="1246" text-anchor="middle" font-size="9.6" fill="#166534">不传 taskId 看全局、传 taskId 查细节——同一个工具，两种粒度的问法。</text>
+  <text x="420" y="1268" text-anchor="middle" font-size="9.2" fill="#15803d">没有新架构，是把两张隐式编码的表显式合成一张状态机</text>
+
+  <text x="420" y="1330" text-anchor="middle" font-size="9.3" fill="#64748b">■ 琥珀色 = 本章新增/改动　　▨ 灰色虚线 = 沿用旧实现，未改动</text>
+</svg>

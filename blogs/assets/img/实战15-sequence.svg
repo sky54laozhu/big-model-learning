@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1010" font-family="-apple-system, 'PingFang SC', 'Helvetica Neue', Arial, sans-serif" font-size="13" role="img" aria-labelledby="t" aria-describedby="d">
+  <title id="t">序列图：一次后台任务提交、两次主动查询、一次自动上报的完整时序</title>
+  <desc id="d">序列图：主生命线父agent + task.ts(taskRegistry) + 子agent bg-1 自己的 transcript(bg-1.jsonl)。第①拍父agent调用 task(background:true)，taskRegistry 里新增一行 taskId=bg-1、status=running，runAgent(...,cwd,taskId=sessionId,...) 发起但不 await，子agent这次的每一轮对话都被写进它自己的 bg-1.jsonl。第②拍父agent几乎立刻调用 task_status({})（不传 taskId），execute 遍历 taskRegistry，只找到 bg-1 这一行且 status=running，拼出概览字符串直接返回，没有读取任何 transcript 文件。第③拍子agent这一侧继续跑——第一轮两次 bash 调用先被闸门拒绝，第二轮重新发起 bash pwd 和 bash echo hello 两次调用都成功，子agent产出最终总结文本，runAgent 这次 promise 落地，.then 把 taskRegistry 里 bg-1 这一行更新为 status=completed、写入 result，controller 清空。第④拍下一轮 loop 开口前 drainCompletedBackgroundTasks 发现 bg-1 是终态且 notified=false，把结果拼进 system-reminder 自动上报给父agent，同时把 notified 置为 true（但不删除这一行）。第⑤拍父agent等待几秒后调用 task_status({taskId:"bg-1"})，execute 查到这一行，调用 buildIncrementalLog(cwd, record)：读回 bg-1.jsonl 全部消息，按 record.outputOffset=0 切出全部消息，按 ToolCall.id 把两轮里各自的 bash 调用和结果配对，产出带 turn 编号的日志行；execute 把 outputOffset 更新为消息总数、turnCount 更新为 2、notified 保持 true（已经是 true），拼出"状态+结果+新增工具调用记录"三段返回给父agent。</desc>
+
+  <rect width="100%" height="100%" fill="#ffffff" rx="8"/>
+
+  <text x="450" y="28" text-anchor="middle" font-size="19" font-weight="700" fill="#1e293b">序列图：一次提交、两次主动查询、一次自动上报</text>
+  <text x="450" y="46" text-anchor="middle" font-size="12" fill="#475569">■ 琥珀色实线 = 主动调用　　琥珀色虚线 = 返回值/异步不等待　　▨ 灰色虚线 = 生命线</text>
+
+  <!-- 生命线头 -->
+  <rect x="70" y="60" width="160" height="40" rx="8" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.6"/>
+  <text x="150" y="85" text-anchor="middle" font-size="10.5" font-weight="700" fill="#334155">父agent</text>
+  <rect x="330" y="60" width="240" height="40" rx="8" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.6"/>
+  <text x="450" y="85" text-anchor="middle" font-size="10.5" font-weight="700" fill="#334155">task.ts（taskRegistry）</text>
+  <rect x="620" y="60" width="260" height="40" rx="8" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.6"/>
+  <text x="750" y="79" text-anchor="middle" font-size="9.6" font-weight="700" fill="#334155">子agent bg-1 自己的 transcript</text>
+  <text x="750" y="94" text-anchor="middle" font-size="8.6" fill="#64748b">(bg-1.jsonl)</text>
+
+  <line x1="150" y1="100" x2="150" y2="845" stroke="#94a3b8" stroke-width="1.4" stroke-dasharray="4 3"/>
+  <line x1="450" y1="100" x2="450" y2="845" stroke="#94a3b8" stroke-width="1.4" stroke-dasharray="4 3"/>
+  <line x1="750" y1="100" x2="750" y2="845" stroke="#94a3b8" stroke-width="1.4" stroke-dasharray="4 3"/>
+
+  <!-- ① -->
+  <text x="300" y="132" text-anchor="middle" font-size="9.4" font-weight="700" fill="#92400e">① task(background:true)</text>
+  <line x1="150" y1="140" x2="450" y2="140" stroke="#b45309" stroke-width="1.6"/>
+  <polygon points="-6,-5 -6,5 0,0" fill="#b45309" transform="translate(450,140) rotate(0)"/>
+  <text x="300" y="154" text-anchor="middle" font-size="8.2" fill="#a16207">taskRegistry 新增一行：taskId=bg-1，status=running</text>
+
+  <text x="600" y="177" text-anchor="middle" font-size="8.8" fill="#a16207">runAgent(...cwd, taskId=sessionId...) 发起，不 await</text>
+  <line x1="450" y1="185" x2="750" y2="185" stroke="#b45309" stroke-width="1.6" stroke-dasharray="5 3"/>
+  <polygon points="-6,-5 -6,5 0,0" fill="#b45309" transform="translate(750,185) rotate(0)"/>
+
+  <rect x="650" y="203" width="200" height="42" rx="6" fill="#fffbeb" stroke="#b45309" stroke-width="1.4"/>
+  <text x="750" y="220" text-anchor="middle" font-size="8" fill="#92400e">子agent这次每一轮对话</text>
+  <text x="750" y="234" text-anchor="middle" font-size="8" fill="#92400e">都写进它自己的 bg-1.jsonl</text>
+
+  <!-- ② -->
+  <text x="300" y="272" text-anchor="middle" font-size="9.4" font-weight="700" fill="#92400e">② task_status({})（不传 taskId）</text>
+  <line x1="150" y1="280" x2="450" y2="280" stroke="#b45309" stroke-width="1.6"/>
+  <polygon points="-6,-5 -6,5 0,0" fill="#b45309" transform="translate(450,280) rotate(0)"/>
+
+  <text x="300" y="302" text-anchor="middle" font-size="8.4" fill="#a16207">return：- bg-1 [running] 先执行 shell 命令……（概览）</text>
+  <line x1="450" y1="310" x2="150" y2="310" stroke="#b45309" stroke-width="1.6" stroke-dasharray="5 3"/>
+  <polygon points="-6,-5 -6,5 0,0" fill="#b45309" transform="translate(150,310) rotate(180)"/>
+  <text x="300" y="326" text-anchor="middle" font-size="8" fill="#64748b">只遍历 taskRegistry，没有读取任何 transcript 文件</text>
+
+  <text x="450" y="350" text-anchor="middle" font-size="9" fill="#94a3b8">……子agent在后台持续执行……</text>
+
+  <!-- ③ -->
+  <rect x="640" y="364" width="220" height="112" rx="6" fill="#fffbeb" stroke="#b45309" stroke-width="1.4"/>
+  <text x="750" y="384" text-anchor="middle" font-size="8.6" font-weight="700" fill="#92400e">第③拍：子agent这一侧继续跑</text>
+  <text x="750" y="400" text-anchor="middle" font-size="8" fill="#a16207">第一轮：两次 bash 调用先被闸门拒绝</text>
+  <text x="750" y="415" text-anchor="middle" font-size="8" fill="#a16207">第二轮：bash pwd / bash echo hello</text>
+  <text x="750" y="429" text-anchor="middle" font-size="8" fill="#a16207">都执行成功</text>
+  <text x="750" y="447" text-anchor="middle" font-size="8" fill="#a16207">产出最终总结文本</text>
+  <text x="750" y="462" text-anchor="middle" font-size="8" fill="#a16207">runAgent 这次 promise 落地</text>
+
+  <text x="600" y="490" text-anchor="middle" font-size="9" font-weight="700" fill="#92400e">③ .then 写回登记表</text>
+  <line x1="750" y1="498" x2="450" y2="498" stroke="#b45309" stroke-width="1.6"/>
+  <polygon points="-6,-5 -6,5 0,0" fill="#b45309" transform="translate(450,498) rotate(180)"/>
+  <text x="600" y="514" text-anchor="middle" font-size="8" fill="#a16207">bg-1 → status=completed，写入 result，controller 清空</text>
+
+  <!-- ④ -->
+  <rect x="350" y="530" width="200" height="36" rx="6" fill="#fffbeb" stroke="#b45309" stroke-width="1.4"/>
+  <text x="450" y="545" text-anchor="middle" font-size="8" fill="#92400e">loop.ts 每轮开口前调用</text>
+  <text x="450" y="559" text-anchor="middle" font-size="8" fill="#92400e">drainCompletedBackgroundTasks()</text>
+
+  <text x="300" y="580" text-anchor="middle" font-size="9" font-weight="700" fill="#92400e">④ system-reminder 自动上报『bg-1 已完成』</text>
+  <line x1="450" y1="588" x2="150" y2="588" stroke="#b45309" stroke-width="1.6" stroke-dasharray="5 3"/>
+  <polygon points="-6,-5 -6,5 0,0" fill="#b45309" transform="translate(150,588) rotate(180)"/>
+  <text x="300" y="604" text-anchor="middle" font-size="8" fill="#a16207">同时 notified: false→true（标记，不删除这一行）</text>
+
+  <text x="450" y="628" text-anchor="middle" font-size="9" fill="#94a3b8">……父agent等待几秒后主动发问……</text>
+
+  <!-- ⑤ -->
+  <text x="300" y="650" text-anchor="middle" font-size="9.4" font-weight="700" fill="#92400e">⑤ task_status({taskId:'bg-1'})</text>
+  <line x1="150" y1="658" x2="450" y2="658" stroke="#b45309" stroke-width="1.6"/>
+  <polygon points="-6,-5 -6,5 0,0" fill="#b45309" transform="translate(450,658) rotate(0)"/>
+
+  <text x="600" y="680" text-anchor="middle" font-size="8.6" fill="#a16207">buildIncrementalLog：loadSessionMessages(cwd,'bg-1')</text>
+  <line x1="450" y1="688" x2="750" y2="688" stroke="#b45309" stroke-width="1.6"/>
+  <polygon points="-6,-5 -6,5 0,0" fill="#b45309" transform="translate(750,688) rotate(0)"/>
+  <text x="600" y="704" text-anchor="middle" font-size="8" fill="#64748b">读回 bg-1.jsonl 全部消息（record.outputOffset=0）</text>
+
+  <text x="600" y="726" text-anchor="middle" font-size="8.4" fill="#a16207">按 ToolCall.id 把两轮各自的 bash 调用与结果配对</text>
+  <line x1="750" y1="734" x2="450" y2="734" stroke="#b45309" stroke-width="1.6" stroke-dasharray="5 3"/>
+  <polygon points="-6,-5 -6,5 0,0" fill="#b45309" transform="translate(450,734) rotate(180)"/>
+  <text x="600" y="750" text-anchor="middle" font-size="8" fill="#64748b">产出带 turn 编号的日志行（turnCount 从 0 累加到 2）</text>
+
+  <rect x="350" y="764" width="200" height="36" rx="6" fill="#fffbeb" stroke="#b45309" stroke-width="1.4"/>
+  <text x="450" y="779" text-anchor="middle" font-size="8" fill="#92400e">写回：outputOffset=消息总数</text>
+  <text x="450" y="793" text-anchor="middle" font-size="8" fill="#92400e">turnCount=2，notified 保持 true</text>
+
+  <text x="300" y="814" text-anchor="middle" font-size="8.6" fill="#a16207">return：状态=completed + 完整结果 + 新增工具调用记录</text>
+  <line x1="450" y1="822" x2="150" y2="822" stroke="#b45309" stroke-width="1.6" stroke-dasharray="5 3"/>
+  <polygon points="-6,-5 -6,5 0,0" fill="#b45309" transform="translate(150,822) rotate(180)"/>
+
+  <!-- 结论 -->
+  <rect x="80" y="856" width="740" height="112" rx="10" fill="#f0fdf4" stroke="#166534" stroke-width="1.6"/>
+  <text x="450" y="880" text-anchor="middle" font-size="11" font-weight="700" fill="#166534">两条查询路径互不打架，都读同一张 taskRegistry</text>
+  <text x="450" y="900" text-anchor="middle" font-size="9.4" fill="#166534">drain 的自动上报（④）和 task_status 的主动查询（⑤）共用同一个 notified 标记，</text>
+  <text x="450" y="918" text-anchor="middle" font-size="9.4" fill="#166534">谁先发生都不影响谁——因为标记的是"看过没有"，不是"删了没有"；</text>
+  <text x="450" y="936" text-anchor="middle" font-size="9.4" fill="#166534">而增量日志（⑤）借道子agent自己的 transcript，跟状态查询（②）完全解耦。</text>
+  <text x="450" y="953" text-anchor="middle" font-size="9" fill="#15803d">一张表、两种读法，state 永远只有一份真相</text>
+
+  <text x="450" y="994" text-anchor="middle" font-size="9.3" fill="#64748b">■ 琥珀色实线 = 主动调用　　琥珀色虚线 = 返回值/异步不等待　　▨ 灰色虚线 = 生命线</text>
+</svg>

@@ -5,7 +5,7 @@ import { editFileTool } from './edit_file'
 import { listDirTool } from './list_dir'
 import { bashTool } from './bash'
 import { todoWriteTool } from './todo_write'
-import { createTaskTool, cancelTaskTool } from './task'
+import { createTaskTool, cancelTaskTool, createTaskStatusTool } from './task'
 
 /**
  * 工具注册表：全卷"有哪些工具"的唯一清单。
@@ -20,8 +20,12 @@ import { createTaskTool, cancelTaskTool } from './task'
  *
  * 实战14 新增：cancel_task 只加在这份顶层清单里，不进 task.ts 的 subagentTools——子agent的
  * 工具集里没有 task 本身，自然也创建不出 bg-N，"取消谁"这个问题只有主agent这一层需要回答。
+ *
+ * 实战15 新增：新增第三个闭包参数 cwd——createTaskTool 和 createTaskStatusTool 都要用它
+ * （前者给后台子agent开自己的 transcript，后者读那份 transcript 做增量查询），task_status
+ * 同样只加在顶层清单，不进 subagentTools（理由跟 cancel_task 一样：子agent派生不出 bg-N）。
  */
-export function createAllTools(provider: ModelProvider, gate: boolean): Tool[] {
+export function createAllTools(provider: ModelProvider, gate: boolean, cwd: string): Tool[] {
   return [
     readFileTool,
     writeFileTool,
@@ -29,7 +33,8 @@ export function createAllTools(provider: ModelProvider, gate: boolean): Tool[] {
     listDirTool,
     bashTool,
     todoWriteTool,
-    createTaskTool(provider, gate),
+    createTaskTool(provider, gate, cwd),
     cancelTaskTool,
+    createTaskStatusTool(cwd),
   ]
 }

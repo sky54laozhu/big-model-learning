@@ -63,7 +63,7 @@ const question = parsedQuestion || DEFAULT_QUESTION
 // 实战12 起，工具清单不再是静态 import：task 工具要闭包住 provider/gate，只能等 provider
 // 造出来之后再组装（回扣 tools/index.ts 的 createAllTools 工厂函数）。
 const provider = makeProvider()
-const tools = createAllTools(provider, true)
+const tools = createAllTools(provider, true, cwd)
 
 console.log(`\n[provider] ${provider.name}`)
 console.log(`[session]  ${sessionId}${resumeMessages ? `（接着 ${resumeMessages.length} 条历史往下说）` : ''}`)
